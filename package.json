@@ -90,7 +90,6 @@
     "ipaddr.js": "^1.9.1",
     "is-fullwidth-code-point": "^3.0.0",
     "lightningcss": "^1.32.0",
-    "lightningcss-win32-x64-msvc": "^1.32.0",
     "lucide-react": "^1.8.0",
     "math-intrinsics": "^1.1.0",
     "media-typer": "^0.3.0",
