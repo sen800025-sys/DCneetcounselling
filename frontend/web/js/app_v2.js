@@ -136,9 +136,7 @@ window.refreshGoAffPro = function() {
 };
 
 window.trackGoAffProOrder = function(order) {
-    const backendUrl = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.')) 
-        ? 'http://' + window.location.hostname + ':3000/api' 
-        : window.location.origin + '/api';
+    const backendUrl = window.location.protocol + '//' + window.location.hostname + ':3000/api';
     console.log('Calling API URL:', `${backendUrl}/track-order`);
     fetch(`${backendUrl}/track-order`, {
         method: 'POST',
