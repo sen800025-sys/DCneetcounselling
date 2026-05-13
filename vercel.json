@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "backend/app.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "frontend/web/**/*",
+      "use": "@vercel/static"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/backend/app.js"
+    },
+    {
+      "source": "/submit-counseling-booking",
+      "destination": "/backend/app.js"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/frontend/web/$1"
+    }
+  ]
+}

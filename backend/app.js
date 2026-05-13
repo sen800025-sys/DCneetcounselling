@@ -162,7 +162,12 @@ app.get('/api/sync-affiliates', async (req, res) => {
   }
 });
 
-// Start Server
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Backend server is running on port ${PORT} (exposed to network)`);
-});
+// Start Server (only if not running in a serverless environment like Vercel)
+if (process.env.NODE_ENV !== 'production' || process.env.RENDER) {
+    app.listen(PORT, '0.0.0.0', () => {
+        console.log(`Backend server is running on port ${PORT} (exposed to network)`);
+    });
+}
+
+// Export for Vercel
+module.exports = app;
