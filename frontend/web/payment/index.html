@@ -491,6 +491,13 @@
                     })
                 });
 
+                const contentType = response.headers.get("content-type");
+                if (!contentType || !contentType.includes("application/json")) {
+                    const text = await response.text();
+                    console.error('[Pricing] Non-JSON response received:', text.substring(0, 100));
+                    throw new Error("Cannot connect to backend server. Please check your API URL configuration.");
+                }
+
                 const data = await response.json();
                 console.log('[Pricing] Backend response:', data);
                 if (data.success) {
@@ -668,6 +675,11 @@
                                 })
                             });
                             clearTimeout(timeoutId);
+
+                            const contentType = confirmRes.headers.get("content-type");
+                            if (!contentType || !contentType.includes("application/json")) {
+                                throw new Error("Cannot connect to backend server. Received HTML instead of JSON.");
+                            }
 
                             const data = await confirmRes.json();
                             console.log("[Handshake] Response:", data);
