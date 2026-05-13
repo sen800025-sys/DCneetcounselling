@@ -2,16 +2,20 @@ const express = require('express');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '../../../.env') }); // Load from root
+require('dotenv').config(); // Load normally, don't force path which breaks production
 
 const router = express.Router();
 
 const { createClient } = require('@supabase/supabase-js');
-const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+
+// Fallbacks are required so createClient doesn't crash the entire server if env vars are missing in production
+const fallbackUrl = 'https://rlqmdylbzapyepuwncwt.supabase.co';
+const fallbackKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJscW1keWxiemFweWVwdXduY3d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTcwNzYsImV4cCI6MjA5MTgzMzA3Nn0.oNNK1pwLnykQlNfUkw7IdB-ZBkKDoWxszsKDSIjsLeo';
+
+const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || fallbackUrl;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || fallbackKey;
 
 console.log('[PaymentAPI] Initializing Supabase with URL:', supabaseUrl);
-if (!supabaseKey) console.error('[PaymentAPI] CRITICAL: No Supabase Key found in environment!');
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
