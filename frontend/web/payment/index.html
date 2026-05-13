@@ -520,9 +520,14 @@
                     }
 
                     document.getElementById('d_final_price').textContent = Math.round(finalPrice);
+                } else if (!data.success) {
+                    // if it wasn't successful (e.g. invalid coupon), reset discount amount
+                    discountAmount = 0;
                 }
+                return data;
             } catch (err) {
                 console.error("Pricing error:", err);
+                return { success: false, error: err.message };
             }
         }
 
@@ -543,15 +548,14 @@
             msgEl.className = "message";
 
             try {
-                // We use recalculateTotal to handle the logic and UI update
-                await recalculateTotal(codeInput);
+                const result = await recalculateTotal(codeInput);
                 
-                if (discountAmount > 0) {
+                if (result && result.success && discountAmount > 0) {
                     msgEl.textContent = "Coupon applied successfully!";
                     msgEl.className = "message success";
                     localStorage.setItem('coupon', codeInput);
                 } else {
-                    msgEl.textContent = "Invalid or expired coupon.";
+                    msgEl.textContent = (result && result.error) ? result.error : "Invalid coupon code.";
                     msgEl.className = "message error";
                     resetDiscount();
                 }

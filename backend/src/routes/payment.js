@@ -1,19 +1,25 @@
 const express = require('express');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../../../.env') }); // Load from root
+
 const router = express.Router();
+
+const { createClient } = require('@supabase/supabase-js');
+const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+
+console.log('[PaymentAPI] Initializing Supabase with URL:', supabaseUrl);
+if (!supabaseKey) console.error('[PaymentAPI] CRITICAL: No Supabase Key found in environment!');
+
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Initialize Razorpay
 const razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID || process.env.VITE_RAZORPAY_KEY_ID || 'rzp_live_ShlgHvLVwqmST2',
     key_secret: process.env.RAZORPAY_KEY_SECRET || '2MzRW1BAyaURYGWXiAmPhQqa'
 });
-
-const { createClient } = require('@supabase/supabase-js');
-const supabase = createClient(
-  process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL,
-  process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY
-);
 
 // Get Payment Summary API (calculates all discounts and final price server-side)
 router.post('/payment-summary', async (req, res) => {
@@ -33,9 +39,13 @@ router.post('/payment-summary', async (req, res) => {
             const { data: refCoupon, error: refErr } = await supabase
                 .from('referral_coupons')
                 .select('*')
-                .eq('code', uppercaseCode)
+                .ilike('code', uppercaseCode)
                 .eq('is_used', false)
-                .single();
+                .maybeSingle();
+            
+            console.log(`[SummaryCheck] Searching for: ${uppercaseCode}`);
+            if (refErr) console.error('[SummaryCheck] Supabase Error:', refErr);
+            console.log(`[SummaryCheck] Data Found:`, refCoupon);
             
             if (refCoupon && !refErr) {
                 const now = new Date();
@@ -137,9 +147,13 @@ router.post('/create-order', async (req, res) => {
             const { data: refCoupon, error: refErr } = await supabase
                 .from('referral_coupons')
                 .select('*')
-                .eq('code', uppercaseCode)
+                .ilike('code', uppercaseCode)
                 .eq('is_used', false)
-                .single();
+                .maybeSingle();
+            
+            console.log(`[ReferralCheck] Searching for: ${uppercaseCode}`);
+            if (refErr) console.error('[ReferralCheck] Supabase Error:', refErr);
+            console.log(`[ReferralCheck] Data Found:`, refCoupon);
             
             if (refCoupon && !refErr) {
                 const now = new Date();
@@ -164,9 +178,14 @@ router.post('/create-order', async (req, res) => {
 
                 if (couponData && !couponError) {
                     const now = new Date();
-                    const isValidFrom = !couponData.valid_from || now >= new Date(couponData.valid_from);
-                    const isValidTo = !couponData.valid_to || now <= new Date(couponData.valid_to);
-                    const isLimitValid = couponData.usage_limit === null || couponData.used_count < couponData.usage_limit;
+                    const validFromDate = couponData.valid_from ? new Date(couponData.valid_from) : null;
+                    const validToDate = couponData.valid_to ? new Date(couponData.valid_to) : null;
+                    
+                    const isValidFrom = !validFromDate || now >= validFromDate;
+                    const isValidTo = !validToDate || now <= validToDate;
+                    const isLimitValid = couponData.usage_limit === null || (parseInt(couponData.used_count || 0) < parseInt(couponData.usage_limit));
+
+                    console.log(`[CouponCheck] Code: ${uppercaseCode}, ValidFrom: ${isValidFrom}, ValidTo: ${isValidTo}, Limit: ${isLimitValid}`);
 
                     if (isValidFrom && isValidTo && isLimitValid) {
                         validCoupon = couponData;
@@ -192,7 +211,12 @@ router.post('/create-order', async (req, res) => {
                             }
                         }
                     } else {
-                        return res.status(400).json({ success: false, error: "Invalid or expired coupon" });
+                        let errorMsg = "This coupon is invalid.";
+                        if (!isValidFrom) errorMsg = `This coupon will be active starting ${validFromDate.toLocaleDateString()}.`;
+                        else if (!isValidTo) errorMsg = "This coupon has expired.";
+                        else if (!isLimitValid) errorMsg = "This coupon has reached its usage limit.";
+                        
+                        return res.status(400).json({ success: false, error: errorMsg });
                     }
                 } else {
                     return res.status(400).json({ success: false, error: "Invalid coupon code" });
