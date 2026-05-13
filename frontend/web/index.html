@@ -6900,10 +6900,10 @@
             var hasRewardCoupon = false;
             var referEarnMenuLinks = document.querySelectorAll("[onclick*='profile/refer-earn']");
             
-            // Remove existing badge if present
+            // Remove existing badge if present (remove ALL instances to prevent duplicates)
             referEarnMenuLinks.forEach(function(link) {
-                var existingBadge = link.querySelector('.reward-badge');
-                if (existingBadge) existingBadge.remove();
+                var existingBadges = link.querySelectorAll('.reward-badge');
+                existingBadges.forEach(function(b) { b.remove(); });
             });
 
             if (userData && userData.referred_by) {
@@ -6930,7 +6930,9 @@
 
                         // Notification Badge
                         referEarnMenuLinks.forEach(function(link) {
-                            // Only append if it's not already there (we just removed it, so it's safe)
+                            // FINAL CHECK: Ensure no badge exists yet (prevents race condition duplicates)
+                            if (link.querySelector('.reward-badge')) return;
+
                             var badge = document.createElement('span');
                             badge.className = 'reward-badge';
                             badge.style.cssText = 'background: #ef4444; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; margin-left: 8px; font-weight: 700; vertical-align: middle; display: inline-block;';
@@ -8078,7 +8080,9 @@
                     total: ctx.price,
                     coupon: ctx.appliedCoupon ? ctx.appliedCoupon.code : null
                   };
-                  const backendUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000/api' : 'https://dcneetcounselling.onrender.com/api';
+                  const backendUrl = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.')) 
+                    ? 'http://' + window.location.hostname + ':3000/api' 
+                    : window.location.origin + '/api';
                   console.log('Calling API URL:', `${backendUrl}/track-order`);
                   await fetch(`${backendUrl}/track-order`, {
                     method: 'POST',

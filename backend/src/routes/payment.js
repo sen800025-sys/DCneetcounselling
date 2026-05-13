@@ -253,18 +253,19 @@ router.post('/create-order', async (req, res) => {
             return res.status(500).json({ success: false, error: "Failed to save order" });
         }
 
-        // 4. If it's a counselling product, also insert into counselling_bookings
-        if (product_name && product_name.toLowerCase().includes('counselling')) {
-            await supabase.from('counselling_bookings').insert({
+        // 4. Record the booking details in counselling_bookings table
+        // We always try to insert here for all orders created through this route to ensure no data loss
+        try {
+            const { error: bookingErr } = await supabase.from('counselling_bookings').insert({
                 user_id: user_id || null,
                 full_name: full_name || 'Guest',
                 email: email,
                 mobile: mobile || 'N/A',
                 category: category || null,
                 domicile_state: domicile_state || null,
-                neet_score: parseInt(neet_score) || null,
-                rank: parseInt(rank) || null,
-                plan_name: product_name,
+                neet_score: neet_score ? parseInt(neet_score) : null,
+                rank: rank ? parseInt(rank) : null,
+                plan_name: product_name || 'Counselling Plan',
                 plan_price: parsedAmount,
                 discounted_price: finalAmount,
                 counselling_type: counselling_type || null,
@@ -272,6 +273,15 @@ router.post('/create-order', async (req, res) => {
                 payment_status: 'pending',
                 order_id: newOrder.id.toString()
             });
+
+            if (bookingErr) {
+                console.error("[CreateOrder] Counselling Booking Insert Error:", bookingErr);
+                // We don't return error to user here as the main order was already created
+            } else {
+                console.log("[CreateOrder] Booking recorded in counselling_bookings");
+            }
+        } catch (bookingCatch) {
+            console.error("[CreateOrder] Critical error saving to counselling_bookings:", bookingCatch);
         }
 
         // 5. Update user profile with the provided mobile number if user is logged in
@@ -338,16 +348,21 @@ router.post('/confirm-payment', async (req, res) => {
             razorpay_payment_id: razorpay_payment_id || null
         }).eq('id', order_id).select('*').single();
 
-        if (error) {
-            console.error("Update Order Error:", error);
-            return res.status(500).json({ success: false, error: "Failed to update order status" });
+        if (error || !updatedOrder) {
+            console.error("Update Order Error:", error || "Order not found");
+            return res.status(500).json({ success: false, error: "Order not found or update failed" });
         }
 
         // 2. Update counselling_bookings if it exists
-        await supabase.from('counselling_bookings').update({
-            payment_status: 'paid',
-            razorpay_payment_id: razorpay_payment_id || null
-        }).eq('order_id', order_id.toString());
+        try {
+            await supabase.from('counselling_bookings').update({
+                payment_status: 'paid',
+                razorpay_payment_id: razorpay_payment_id || null
+            }).eq('order_id', order_id.toString());
+        } catch (bookingErr) {
+            console.error("Secondary update (counselling_bookings) failed:", bookingErr);
+            // We continue because the primary order is already updated
+        }
 
         // 2.5 Deduct wallet balance if wallet was used
         // wallet_used = original_amount - discount - final_amount (i.e. the gap paid by wallet)
@@ -455,11 +470,20 @@ router.post('/confirm-payment', async (req, res) => {
                     // If no referral record exists, create one
                     if (!referralRecord) {
                         console.log('[Cashback] No referral record found, creating one...');
+                        
+                        // Fetch both users' details to populate the table properly
+                        const { data: referrerUser } = await supabase.from('users').select('full_name, name, email').eq('id', referrerId).single();
+                        const { data: referredUser } = await supabase.from('users').select('full_name, name, email').eq('id', effectiveUserId).single();
+
                         const { data: newRef, error: newRefErr } = await supabase
                             .from('referrals')
                             .insert({
                                 referrer_id: referrerId,
                                 referred_user_id: effectiveUserId,
+                                referrer_name: referrerUser?.full_name || referrerUser?.name || 'Unknown',
+                                referrer_email: referrerUser?.email || 'N/A',
+                                referred_user_name: referredUser?.full_name || referredUser?.name || updatedOrder.full_name || 'New User',
+                                referred_user_email: referredUser?.email || updatedOrder.email || 'N/A',
                                 status: 'joined'
                             })
                             .select('id')

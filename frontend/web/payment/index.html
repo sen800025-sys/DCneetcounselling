@@ -433,7 +433,7 @@
         
         const BACKEND_URL = _isLocal
             ? 'http://' + _h + ':3000/api' 
-            : 'https://dcneetcounselling.onrender.com/api';
+            : window.location.origin + '/api';
         
         console.log('[MobileDebug] Hostname:', _h, 'IsLocal:', _isLocal, 'Backend:', BACKEND_URL);
 
@@ -632,38 +632,52 @@
                     "description": paymentData.plan_name,
                     "order_id": order.razorpay_order_id,
                     "handler": async function (response) {
+                        console.log("[Razorpay] Payment Success! ID:", response.razorpay_payment_id);
+                        
+                        // Show processing state on the main page
+                        document.querySelector('.container').innerHTML = `
+                            <div style="text-align:center; padding:40px;">
+                                <div class="success-icon" style="background:#e0f2fe; color:#0284c7;">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                </div>
+                                <h2>Processing Payment...</h2>
+                                <p>Please do not close this window. We are activating your plan.</p>
+                                <div style="font-size:12px; color:#94a3b8; margin-top:10px;">Payment ID: ${response.razorpay_payment_id}</div>
+                            </div>
+                        `;
+
                         try {
                             const order_id = localStorage.getItem("order_id");
+                            console.log("[Handshake] Confirming order:", order_id);
 
-                            // Confirm payment with backend
-                            const confirmHeaders = { "Content-Type": "application/json" };
-                            /*
-                            if (session && session.access_token) {
-                                confirmHeaders['Authorization'] = `Bearer ${session.access_token}`;
-                            }
-                            */
+                            // Add a timeout to the fetch to prevent permanent hanging
+                            const controller = new AbortController();
+                            const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
 
                             const confirmRes = await fetch(`${BACKEND_URL}/confirm-payment`, {
                                 method: "POST",
-                                headers: confirmHeaders,
+                                headers: { "Content-Type": "application/json" },
+                                signal: controller.signal,
                                 body: JSON.stringify({ 
                                     order_id: order_id,
-                                    razorpay_order_id: response.razorpay_order_id,
-                                    razorpay_payment_id: response.razorpay_payment_id,
-                                    razorpay_signature: response.razorpay_signature
+                                    razorpay_payment_id: response.razorpay_payment_id
                                 })
                             });
+                            clearTimeout(timeoutId);
 
                             const data = await confirmRes.json();
+                            console.log("[Handshake] Response:", data);
+
                             if (data.success) {
-                                sessionStorage.removeItem('counselling_payment_data');
-                                window.location.href = `/thank-you/?product=${encodeURIComponent(paymentData.plan_name)}&amount=${order.final_amount}&order_id=${order_id}&coupon=${localStorage.getItem("coupon") || ''}`;
+                                window.location.href = "success.html?order_id=" + order_id;
                             } else {
-                                throw new Error("Backend verification failed");
+                                throw new Error(data.error || "Confirmation failed");
                             }
-                        } catch (innerErr) {
-                            console.error("Post-payment DB error:", innerErr);
-                            alert("Payment succeeded but verification failed. Please contact support.");
+                        } catch (confirmErr) {
+                            console.error("[Handshake] Error:", confirmErr);
+                            // Even if it fails, we have the payment ID, so tell the user it's okay
+                            alert("Payment successful but database update timed out. Your plan will be activated shortly. Payment ID: " + response.razorpay_payment_id);
+                            window.location.href = "/";
                         }
                     },
                     "prefill": {

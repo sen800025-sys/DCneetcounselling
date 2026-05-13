@@ -136,7 +136,9 @@ window.refreshGoAffPro = function() {
 };
 
 window.trackGoAffProOrder = function(order) {
-    const backendUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000/api' : 'https://dcneetcounselling.onrender.com/api';
+    const backendUrl = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.')) 
+        ? 'http://' + window.location.hostname + ':3000/api' 
+        : window.location.origin + '/api';
     console.log('Calling API URL:', `${backendUrl}/track-order`);
     fetch(`${backendUrl}/track-order`, {
         method: 'POST',
@@ -278,7 +280,7 @@ function bootApp() {
                     
                     if (user && !user.referred_by && pendingRef) {
                         console.log('[Referral] Linking user to referrer:', pendingRef);
-                        const { data: refUser } = await window.supabaseClient.from('users').select('id').eq('referral_token', pendingRef).maybeSingle();
+                        const { data: refUser } = await window.supabaseClient.from('users').select('id, full_name, name, email').eq('referral_token', pendingRef).maybeSingle();
                         
                         if (refUser && refUser.id !== session.user.id) {
                             await window.supabaseClient.from('users').update({ referred_by: refUser.id }).eq('id', session.user.id);
@@ -290,6 +292,10 @@ function bootApp() {
                                 const { data: newRef } = await window.supabaseClient.from('referrals').insert({
                                     referrer_id: refUser.id,
                                     referred_user_id: session.user.id,
+                                    referrer_name: refUser.full_name || refUser.name || 'Unknown',
+                                    referrer_email: refUser.email || 'N/A',
+                                    referred_user_name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || 'New User',
+                                    referred_user_email: session.user.email,
                                     referral_token: pendingRef,
                                     status: 'joined'
                                 }).select('id').single();
@@ -307,6 +313,10 @@ function bootApp() {
                                     user_id: session.user.id,
                                     discount_percent: 10,
                                     referral_id: referralId,
+                                    referrer_name: refUser.full_name || refUser.name || 'Unknown',
+                                    referrer_email: refUser.email || 'N/A',
+                                    referred_user_name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || 'New User',
+                                    referred_user_email: session.user.email,
                                     expires_at: expiryDate.toISOString()
                                 });
                             }
