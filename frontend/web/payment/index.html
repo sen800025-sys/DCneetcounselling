@@ -586,7 +586,7 @@
                     
                     // Update Proceed Button text
                     const payBtnText = document.getElementById('payBtnText');
-                    if (finalAmount === 0 && walletUsed > 0) {
+                    if (finalPrice === 0 && walletUsed > 0) {
                         payBtnText.textContent = "Pay with Wallet";
                     } else {
                         payBtnText.textContent = "Proceed to Payment";
