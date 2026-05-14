@@ -264,69 +264,104 @@ function bootApp() {
             }
 
             // REFERRAL SYSTEM: Auto-link on first login/signup if pending referral exists
+            // Uses a synchronous global lock to prevent duplicate inserts from concurrent SIGNED_IN events
             if (event === 'SIGNED_IN' && session && session.user) {
                 (async function() {
-                    const pendingRef = localStorage.getItem('pending_referral');
-                    let user = null;
-                    
-                    // Retry fetching user up to 3 times (wait for DB trigger)
-                    for (let i = 0; i < 3; i++) {
-                        const { data } = await window.supabaseClient.from('users').select('referred_by, referral_token').eq('id', session.user.id).single();
-                        if (data) { user = data; break; }
-                        await new Promise(r => setTimeout(r, 1000));
+                    // ── SYNCHRONOUS LOCK: Prevents ANY concurrent execution ──
+                    // This variable is checked synchronously so even two events in the same tick are blocked
+                    if (window.__referralProcessing) {
+                        console.log('[Referral] Already processing, skipping duplicate event.');
+                        return;
                     }
+                    window.__referralProcessing = true;
                     
-                    if (user && !user.referred_by && pendingRef) {
-                        console.log('[Referral] Linking user to referrer:', pendingRef);
-                        const { data: refUser } = await window.supabaseClient.from('users').select('id, full_name, name, email').eq('referral_token', pendingRef).maybeSingle();
+                    try {
+                        const pendingRef = localStorage.getItem('pending_referral');
+                        let user = null;
                         
-                        if (refUser && refUser.id !== session.user.id) {
-                            await window.supabaseClient.from('users').update({ referred_by: refUser.id }).eq('id', session.user.id);
-                            
-                            // Also create referral record if it doesn't exist
-                            const { data: existingRef } = await window.supabaseClient.from('referrals').select('id').eq('referred_user_id', session.user.id).maybeSingle();
-                            let referralId = existingRef ? existingRef.id : null;
-                            if (!existingRef) {
-                                const { data: newRef } = await window.supabaseClient.from('referrals').insert({
-                                    referrer_id: refUser.id,
-                                    referred_user_id: session.user.id,
-                                    referrer_name: refUser.full_name || refUser.name || 'Unknown',
-                                    referrer_email: refUser.email || 'N/A',
-                                    referred_user_name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || 'New User',
-                                    referred_user_email: session.user.email,
-                                    referral_token: pendingRef,
-                                    status: 'joined'
-                                }).select('id').single();
-                                if (newRef) referralId = newRef.id;
-                            }
-                            
-                            // Generate a Welcome Coupon for the new user
-                            if (referralId) {
-                                const welcomeCode = 'WELCOME99-' + Math.random().toString(36).substring(2, 6).toUpperCase();
-                                const expiryDate = new Date();
-                                expiryDate.setDate(expiryDate.getDate() + 15);
-                                
-                                await window.supabaseClient.from('referral_coupons').insert({
-                                    code: welcomeCode,
-                                    user_id: session.user.id,
-                                    discount_percent: 10,
-                                    referral_id: referralId,
-                                    referrer_name: refUser.full_name || refUser.name || 'Unknown',
-                                    referrer_email: refUser.email || 'N/A',
-                                    referred_user_name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || 'New User',
-                                    referred_user_email: session.user.email,
-                                    expires_at: expiryDate.toISOString()
-                                });
-                            }
-                            localStorage.removeItem('pending_referral');
-                            console.log('[Referral] Successfully linked.');
+                        // Retry fetching user up to 4 times (wait for DB trigger)
+                        for (let i = 0; i < 4; i++) {
+                            const { data } = await window.supabaseClient.from('users').select('referred_by, referral_token').eq('id', session.user.id).single();
+                            if (data) { user = data; break; }
+                            await new Promise(r => setTimeout(r, 1000));
                         }
-                    }
-                    
-                    // Generate token if missing
-                    if (user && !user.referral_token) {
-                        const newToken = Math.random().toString(36).substring(2, 11).toLowerCase();
-                        await window.supabaseClient.from('users').update({ referral_token: newToken }).eq('id', session.user.id);
+                        
+                        if (user && !user.referred_by && pendingRef) {
+                            console.log('[Referral] Linking user to referrer:', pendingRef);
+                            const { data: refUser } = await window.supabaseClient.from('users').select('id, full_name, name, email').eq('referral_token', pendingRef).maybeSingle();
+                            
+                            if (refUser && refUser.id !== session.user.id) {
+                                await window.supabaseClient.from('users').update({ referred_by: refUser.id }).eq('id', session.user.id);
+                                
+                                // Check for existing referral AGAIN right before insert (final gate)
+                                const { data: existingRef } = await window.supabaseClient.from('referrals').select('id').eq('referred_user_id', session.user.id).maybeSingle();
+                                let referralId = existingRef ? existingRef.id : null;
+                                
+                                if (!existingRef) {
+                                    const { data: newRef, error: insertErr } = await window.supabaseClient.from('referrals').insert({
+                                        referrer_id: refUser.id,
+                                        referred_user_id: session.user.id,
+                                        referrer_name: refUser.full_name || refUser.name || 'Unknown',
+                                        referrer_email: refUser.email || 'N/A',
+                                        referred_user_name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || 'New User',
+                                        referred_user_email: session.user.email,
+                                        referral_token: pendingRef,
+                                        status: 'joined'
+                                    }).select('id').single();
+                                    
+                                    if (insertErr) {
+                                        console.warn('[Referral] Insert error (likely duplicate):', insertErr.message);
+                                        // If insert failed due to duplicate, fetch existing
+                                        const { data: fallback } = await window.supabaseClient.from('referrals').select('id').eq('referred_user_id', session.user.id).maybeSingle();
+                                        if (fallback) referralId = fallback.id;
+                                    } else if (newRef) {
+                                        referralId = newRef.id;
+                                    }
+                                }
+                                
+                                // Generate a Welcome Coupon ONLY if none exists yet
+                                if (referralId) {
+                                    const { data: existingCoupon } = await window.supabaseClient.from('referral_coupons').select('id').eq('user_id', session.user.id).maybeSingle();
+                                    
+                                    if (!existingCoupon) {
+                                        const welcomeCode = 'WELCOME-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+                                        const expiryDate = new Date();
+                                        expiryDate.setDate(expiryDate.getDate() + 15);
+                                        
+                                        await window.supabaseClient.from('referral_coupons').insert({
+                                            code: welcomeCode,
+                                            user_id: session.user.id,
+                                            discount_percent: 10,
+                                            referral_id: referralId,
+                                            referrer_name: refUser.full_name || refUser.name || 'Unknown',
+                                            referrer_email: refUser.email || 'N/A',
+                                            referred_user_name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || 'New User',
+                                            referred_user_email: session.user.email,
+                                            expires_at: expiryDate.toISOString()
+                                        });
+                                    }
+                                }
+                                
+                                localStorage.removeItem('pending_referral');
+                                console.log('[Referral] Successfully linked.');
+                                
+                                // Refresh the referral UI if the user is on the dashboard
+                                if (typeof window.loadReferralPageData === 'function') {
+                                    window.loadReferralPageData();
+                                }
+                            }
+                        }
+                        
+                        // Generate token if missing
+                        if (user && !user.referral_token) {
+                            const newToken = session.user.id.replace(/-/g, '').substring(0, 9).toLowerCase();
+                            await window.supabaseClient.from('users').update({ referral_token: newToken }).eq('id', session.user.id);
+                        }
+                    } catch(err) {
+                        console.error('[Referral] Error:', err);
+                    } finally {
+                        // Release the lock after a delay to prevent re-entry from subsequent events
+                        setTimeout(function() { window.__referralProcessing = false; }, 5000);
                     }
                 })();
             }

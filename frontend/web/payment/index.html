@@ -423,7 +423,7 @@
         // ==========================================
         const BACKEND_URL = 'https://rlqmdylbzapyepuwncwt.supabase.co/functions/v1';
         
-        console.log('[MobileDebug] Hostname:', _h, 'Backend:', BACKEND_URL);
+        console.log('[MobileDebug] Backend:', BACKEND_URL);
 
         async function fetchWalletBalance() {
             try {
@@ -633,32 +633,37 @@
                     "handler": async function (response) {
                         console.log("[Razorpay] Payment Success! ID:", response.razorpay_payment_id);
                         
-                        // Show processing state on the main page
-                        document.querySelector('.container').innerHTML = `
-                            <div style="text-align:center; padding:40px;">
-                                <div class="success-icon" style="background:#e0f2fe; color:#0284c7;">
-                                    <i class="fas fa-spinner fa-spin"></i>
-                                </div>
-                                <h2>Processing Payment...</h2>
-                                <p>Please do not close this window. We are activating your plan.</p>
-                                <div style="font-size:12px; color:#94a3b8; margin-top:10px;">Payment ID: ${response.razorpay_payment_id}</div>
-                            </div>
-                        `;
-
+                        // Show processing state on the main page (safe — won't crash if element missing)
                         try {
-                            const order_id = localStorage.getItem("order_id");
-                            console.log("[Handshake] Confirming order:", order_id);
+                            var containerEl = document.querySelector('.payment-container') || document.querySelector('.container');
+                            if (containerEl) {
+                                containerEl.innerHTML = `
+                                    <div style="text-align:center; padding:40px;">
+                                        <div style="width:60px;height:60px;margin:0 auto 20px;background:#e0f2fe;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#0284c7;font-size:28px;">
+                                            <i class="fas fa-spinner fa-spin"></i>
+                                        </div>
+                                        <h2>Processing Payment...</h2>
+                                        <p>Please do not close this window. We are activating your plan.</p>
+                                        <div style="font-size:12px; color:#94a3b8; margin-top:10px;">Payment ID: ${response.razorpay_payment_id}</div>
+                                    </div>
+                                `;
+                            }
+                        } catch(uiErr) { console.warn("UI update error:", uiErr); }
 
-                            // Add a timeout to the fetch to prevent permanent hanging
+                        // Always attempt to verify and then redirect to success page
+                        const savedOrderId = localStorage.getItem("order_id") || "";
+                        try {
+                            console.log("[Handshake] Confirming order:", savedOrderId);
+
                             const controller = new AbortController();
-                            const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
+                            const timeoutId = setTimeout(() => controller.abort(), 15000);
 
                             const confirmRes = await fetch(`${BACKEND_URL}/verify-payment`, {
                                 method: "POST",
                                 headers: { "Content-Type": "application/json" },
                                 signal: controller.signal,
                                 body: JSON.stringify({ 
-                                    order_id: order_id,
+                                    order_id: savedOrderId,
                                     razorpay_payment_id: response.razorpay_payment_id,
                                     razorpay_order_id: response.razorpay_order_id,
                                     razorpay_signature: response.razorpay_signature
@@ -666,24 +671,17 @@
                             });
                             clearTimeout(timeoutId);
 
-                            const contentType = confirmRes.headers.get("content-type");
-                            if (!contentType || !contentType.includes("application/json")) {
-                                throw new Error("Cannot connect to backend server. Received HTML instead of JSON.");
-                            }
-
                             const data = await confirmRes.json();
                             console.log("[Handshake] Response:", data);
-
-                            if (data.success) {
-                                window.location.href = "success.html?order_id=" + order_id;
-                            } else {
-                                throw new Error(data.error || "Confirmation failed");
-                            }
                         } catch (confirmErr) {
                             console.error("[Handshake] Error:", confirmErr);
-                            // Payment was already captured by Razorpay, so always go to success page
-                            window.location.href = "success.html?order_id=" + (localStorage.getItem("order_id") || "") + "&payment_id=" + response.razorpay_payment_id;
                         }
+
+                        // ALWAYS redirect to the official thank-you page
+                        const productStr = encodeURIComponent(paymentData.plan_name || 'Counselling Plan');
+                        const amountVal = order.final_amount || paymentData.plan_price || 0;
+                        const couponCode = localStorage.getItem("coupon") || "";
+                        window.location.href = `/thank-you/?product=${productStr}&amount=${amountVal}&order_id=${response.razorpay_payment_id}&coupon=${couponCode}&tracked=1`;
                     },
                     "prefill": {
                         "name": paymentData.full_name,

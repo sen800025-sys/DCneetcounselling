@@ -102,8 +102,8 @@
         const params = new URLSearchParams(window.location.search);
         const product = params.get('product');
         const amount = params.get('amount');
-        const order_id = params.get('order_id');
-        const couponCode = params.get('coupon') || "";
+        const order_id = params.get('order_id') || params.get('razorpay_order_id') || params.get('razorpay_payment_id');
+        const couponCode = params.get('coupon') || params.get('coupon_code') || "";
 
         if (product && amount && order_id) {
             // Setup GoAffPro Order BEFORE loader script

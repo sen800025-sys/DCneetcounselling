@@ -28,7 +28,7 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    const rzpKeySecret = Deno.env.get('RAZORPAY_KEY_SECRET') || ''
+    const rzpKeySecret = Deno.env.get('RAZORPAY_KEY_SECRET') || 'PpUmeviKEcgIyhxojwbCzYI6'
 
     const { order_id, razorpay_payment_id, razorpay_order_id, razorpay_signature } = await req.json()
     if (!order_id) throw new Error("order_id is required")

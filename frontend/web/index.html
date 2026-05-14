@@ -5253,54 +5253,6 @@
                     });
                     if (res.error) throw res.error;
 
-                    // REFERRAL SYSTEM CONNECTION
-                    try {
-                      if (res.data && res.data.user && res.data.user.id) {
-                        const newUserId = res.data.user.id;
-                        
-                        // Wait a moment for auth trigger to create public.users row
-                        await new Promise(r => setTimeout(r, 1000));
-                        
-                        // 1. Generate unique referral token (8-12 chars, lowercase)
-                        const newToken = Math.random().toString(36).substring(2, 11).toLowerCase();
-                        
-                        // 2. Check for pending referral
-                        const pendingReferralToken = localStorage.getItem('pending_referral');
-                        let referrerId = null;
-                        
-                        if (pendingReferralToken) {
-                          // Find matching user using referral_token
-                          const { data: referrerData } = await client.from('users').select('id').eq('referral_token', pendingReferralToken).single();
-                          
-                          if (referrerData && referrerData.id && referrerData.id !== newUserId) {
-                            referrerId = referrerData.id;
-                          }
-                        }
-                        
-                        // 3. Save to users table
-                        const updatePayload = { referral_token: newToken };
-                        if (referrerId) {
-                          updatePayload.referred_by = referrerId;
-                        }
-                        
-                        await client.from('users').update(updatePayload).eq('id', newUserId);
-                        
-                        // 4. Create referral record if referred
-                        if (referrerId) {
-                          await client.from('referrals').insert({
-                            referrer_id: referrerId,
-                            referred_user_id: newUserId,
-                            referral_token: pendingReferralToken,
-                            status: 'joined'
-                          });
-                          // Clear pending token
-                          localStorage.removeItem('pending_referral');
-                        }
-                      }
-                    } catch (refError) {
-                      console.error("Error setting up referral:", refError);
-                    }
-
 
                     if (okBox) {
                       okBox.innerText = "Success! You are now registered.";
@@ -5310,9 +5262,18 @@
                     window.switchAuthTab(false);
                     // Auto sign-in if no email confirmation required
                     if (res.data && res.data.session) {
-                      if (window.updateNavForAuth)
+                      if (window.updateNavForAuth) {
                         window.updateNavForAuth(res.data.session);
-                      window.navigate("home");
+                      }
+                      
+                      // Explicitly refresh the referral UI
+                      if (typeof window.loadReferralPageData === 'function') {
+                        window.loadReferralPageData();
+                      }
+                      
+                      setTimeout(() => {
+                        window.location.hash = "dashboard";
+                      }, 500);
                     }
                     return false;
                   } else {
@@ -6604,7 +6565,7 @@
               </div>
               <div class="rc-body">
                 <div class="rc-code-container">
-                  <div class="rc-code" id="rc-code-display">WELCOME99-X82K</div>
+                  <div class="rc-code" id="rc-code-display">WELCOME-X82K</div>
                   <div class="rc-expiry" id="rc-expiry-display"><i class="fa-regular fa-clock"></i> Expires in 15 days</div>
                 </div>
                 <div class="rc-discount">10% OFF</div>
@@ -6872,8 +6833,9 @@
 
             // If no token yet, generate one now
             if (!token) {
-              token = Math.random().toString(36).substring(2, 11).toLowerCase();
-              await client.from('users').update({ referral_token: token }).eq('id', userId);
+              token = userId.replace(/-/g, '').substring(0, 9).toLowerCase();
+              const { data: updateData, error: updateErr } = await client.from('users').update({ referral_token: token }).eq('id', userId).select();
+              console.log('[Referral] Update token response:', updateData, 'Error:', updateErr);
             }
 
             // 2. Build the referral link
