@@ -4,12 +4,11 @@
   "private": true,
   "workspaces": [
     "frontend/web",
-    "frontend/admin",
-    "backend"
+    "frontend/admin"
   ],
   "scripts": {
     "install:all": "npm install",
-    "dev": "concurrently \"npm run dev -w frontend/web\" \"npm run dev -w frontend/admin\" \"npm run dev -w backend\"",
+    "dev": "concurrently \"npm run dev -w frontend/web\" \"npm run dev -w frontend/admin\"",
     "build": "npm run build -w frontend/web && npm run build -w frontend/admin"
   },
   "devDependencies": {

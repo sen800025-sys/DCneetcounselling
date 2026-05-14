@@ -136,10 +136,7 @@ window.refreshGoAffPro = function() {
 };
 
 window.trackGoAffProOrder = function(order) {
-    const LIVE_BACKEND_URL = '';
-    const backendUrl = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.')) 
-        ? 'http://' + window.location.hostname + ':3000/api' 
-        : (LIVE_BACKEND_URL || window.location.origin + '/api');
+    const backendUrl = 'https://rlqmdylbzapyepuwncwt.supabase.co/functions/v1';
     console.log('Calling API URL:', `${backendUrl}/track-order`);
     fetch(`${backendUrl}/track-order`, {
         method: 'POST',

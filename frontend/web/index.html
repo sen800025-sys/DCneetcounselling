@@ -103,7 +103,7 @@
   <script>
     window.BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
         ? 'http://localhost:3000/api' 
-        : 'https://dcneetcounselling.onrender.com/api';
+        : 'https://rlqmdylbzapyepuwncwt.supabase.co/functions/v1';
 
     window.navigate = function (route) {
       console.log("Navigating to:", route);
@@ -6863,10 +6863,12 @@
               .eq('id', userId)
               .maybeSingle();
 
+            console.log('[Referral] User data:', userData, 'Error:', userErr);
+
             if (userErr) throw userErr;
 
             var token = userData ? userData.referral_token : null;
-            var walletBalance = userData ? (userData.wallet_balance || 0) : 0;
+            var walletBalance = userData ? (parseFloat(userData.wallet_balance) || 0) : 0;
 
             // If no token yet, generate one now
             if (!token) {
@@ -6957,33 +6959,41 @@
               .eq('referrer_id', userId)
               .order('created_at', { ascending: false });
 
+            console.log('[Referral] Referrals found:', referrals, 'Error:', refErr);
+
             if (refErr) throw refErr;
 
-            var referralCount = referrals ? referrals.length : 0;
+            // Count ALL referrals for the "Successful Referrals" stat (total people who joined via link)
             var referralCount = referrals ? referrals.length : 0;
             var totalCashback = 0;
 
             if (document.getElementById('referral-count-val')) document.getElementById('referral-count-val').textContent = referralCount.toString();
 
-            // 7. Fetch referred user names
+            // 7. Build referral history rows using data from the referrals table itself (no extra user lookup needed)
             var historyRows = [];
             if (referrals && referrals.length > 0) {
-              var userIds = referrals.map(function(r) { return r.referred_user_id; });
-              var { data: refUsers } = await client
-                .from('users')
-                .select('id, name, full_name, email')
-                .in('id', userIds);
-
+              // Try to fetch referred user names, but use fallback from referrals table if RLS blocks it
               var userMap = {};
-              if (refUsers) {
-                refUsers.forEach(function(u) {
-                  userMap[u.id] = u.full_name || u.name || (u.email ? u.email.split('@')[0] : 'User');
-                });
+              try {
+                var userIds = referrals.map(function(r) { return r.referred_user_id; });
+                var { data: refUsers } = await client
+                  .from('users')
+                  .select('id, name, full_name, email')
+                  .in('id', userIds);
+
+                if (refUsers) {
+                  refUsers.forEach(function(u) {
+                    userMap[u.id] = u.full_name || u.name || (u.email ? u.email.split('@')[0] : 'User');
+                  });
+                }
+              } catch (e) {
+                console.warn('[Referral] Could not fetch user names, using fallback:', e);
               }
 
               referrals.forEach(function(ref) {
-                var displayName = userMap[ref.referred_user_id] || 'User';
-                var cashback = ref.cashback_amount || 0;
+                // Use user lookup first, then fall back to referrals table columns
+                var displayName = userMap[ref.referred_user_id] || ref.referred_user_name || ref.referred_user_email || 'User';
+                var cashback = parseFloat(ref.cashback_amount) || 0;
                 totalCashback += cashback;
                 historyRows.push({
                   name: displayName,
@@ -6992,6 +7002,8 @@
                 });
               });
             }
+
+            console.log('[Referral] History rows:', historyRows, 'Total cashback:', totalCashback);
 
             if (document.getElementById('cashback-earned-val')) document.getElementById('cashback-earned-val').textContent = '₹' + totalCashback.toLocaleString('en-IN');
 
@@ -7847,7 +7859,7 @@
 
       const backendUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
         ? 'http://localhost:3000/api'
-        : 'https://dcneetcounselling.onrender.com/api';
+        : 'https://rlqmdylbzapyepuwncwt.supabase.co/functions/v1';
 
       let discount = 0;
       let ctx = null;

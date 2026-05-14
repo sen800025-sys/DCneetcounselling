@@ -421,17 +421,7 @@
         // ==========================================
         // 🛑 BACKEND URL CONFIGURATION
         // ==========================================
-        // If your live website is on cPanel, you must put the URL of your Node.js App here.
-        // For example, if you mapped your Node app to a subdomain, put 'https://api.dcneetcounselling.com/api'
-        // If you are using a VPS and your Node is on port 3000, you MUST set up a reverse proxy or use 'http://YOUR_SERVER_IP:3000/api'
-        const LIVE_BACKEND_URL = ''; 
-        
-        const _h = window.location.hostname;
-        const _isLocal = _h === 'localhost' || _h === '127.0.0.1' || _h.startsWith('192.168.');
-        
-        const BACKEND_URL = _isLocal
-            ? 'http://' + _h + ':3000/api' 
-            : (LIVE_BACKEND_URL || window.location.origin + '/api');
+        const BACKEND_URL = 'https://rlqmdylbzapyepuwncwt.supabase.co/functions/v1';
         
         console.log('[MobileDebug] Hostname:', _h, 'Backend:', BACKEND_URL);
 
@@ -478,7 +468,7 @@
 
                 console.log('[Pricing] Fetching summary for:', currentCoupon);
 
-                const response = await fetch(`${BACKEND_URL}/payment-summary`, {
+                const response = await fetch(`${BACKEND_URL}/validate-coupon`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -602,7 +592,7 @@
                 }
                 */
 
-                const createRes = await fetch(`${BACKEND_URL}/create-order`, {
+                const createRes = await fetch(`${BACKEND_URL}/razorpay-payment`, {
                     method: "POST",
                     headers: headers,
                     body: JSON.stringify({
@@ -634,7 +624,7 @@
 
                 // 2. Open Razorpay
                 const options = {
-                    "key": "rzp_live_ShlgHvLVwqmST2", 
+                    "key": order.key_id, 
                     "amount": Math.round(order.final_amount * 100),
                     "currency": "INR",
                     "name": "DC Neet Counselling",
@@ -663,13 +653,15 @@
                             const controller = new AbortController();
                             const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
 
-                            const confirmRes = await fetch(`${BACKEND_URL}/confirm-payment`, {
+                            const confirmRes = await fetch(`${BACKEND_URL}/verify-payment`, {
                                 method: "POST",
                                 headers: { "Content-Type": "application/json" },
                                 signal: controller.signal,
                                 body: JSON.stringify({ 
                                     order_id: order_id,
-                                    razorpay_payment_id: response.razorpay_payment_id
+                                    razorpay_payment_id: response.razorpay_payment_id,
+                                    razorpay_order_id: response.razorpay_order_id,
+                                    razorpay_signature: response.razorpay_signature
                                 })
                             });
                             clearTimeout(timeoutId);
@@ -689,9 +681,8 @@
                             }
                         } catch (confirmErr) {
                             console.error("[Handshake] Error:", confirmErr);
-                            // Even if it fails, we have the payment ID, so tell the user it's okay
-                            alert("Payment successful but database update timed out. Your plan will be activated shortly. Payment ID: " + response.razorpay_payment_id);
-                            window.location.href = "/";
+                            // Payment was already captured by Razorpay, so always go to success page
+                            window.location.href = "success.html?order_id=" + (localStorage.getItem("order_id") || "") + "&payment_id=" + response.razorpay_payment_id;
                         }
                     },
                     "prefill": {
