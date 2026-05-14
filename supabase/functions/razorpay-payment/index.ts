@@ -21,6 +21,20 @@ serve(async (req) => {
       wallet_enabled
     } = await req.json()
 
+    // Step 4: Verify user via Authorization header
+    const authHeader = req.headers.get("Authorization")
+    let authenticatedUser = null
+    if (authHeader) {
+        const tempClient = createClient(supabaseUrl, supabaseKey, {
+            global: { headers: { Authorization: authHeader } }
+        })
+        const { data: { user } } = await tempClient.auth.getUser()
+        authenticatedUser = user
+    }
+
+    const effectiveUserId = authenticatedUser?.id || user_id
+    console.log(`[razorpay-payment] START: email=${email}, req_user=${user_id}, auth_user=${authenticatedUser?.id}`)
+
     if (!amount) throw new Error("Amount is required")
 
     let parsedAmount = parseFloat(amount)
@@ -33,31 +47,35 @@ serve(async (req) => {
 
     if (coupon) {
       const uppercaseCode = coupon.trim().toUpperCase()
+      console.log(`[razorpay-payment] VALIDATING COUPON: "${uppercaseCode}", USER: ${effectiveUserId}`)
+
       const { data: refCoupon, error: refErr } = await supabase
         .from('referral_coupons')
         .select('*')
         .ilike('code', uppercaseCode)
-        .eq('is_used', false)
         .maybeSingle()
 
-      if (refCoupon && !refErr) {
+      if (refCoupon) {
+        if (refCoupon.is_used) throw new Error("This referral coupon has already been used.")
+        if (refCoupon.user_id && (!effectiveUserId || refCoupon.user_id !== effectiveUserId)) {
+            throw new Error("This referral coupon is not assigned to your account.")
+        }
+        if (effectiveUserId) {
+            const { count: previousOrders } = await supabase.from('orders').select('*', { count: 'exact', head: true }).eq('user_id', effectiveUserId).eq('payment_status', 'paid')
+            if (previousOrders && previousOrders > 0) throw new Error("Referral coupon valid only for your first purchase.")
+        }
+
         const now = new Date()
         const isExpired = refCoupon.expires_at && new Date(refCoupon.expires_at) < now
-        if (isExpired) {
-          throw new Error("This referral coupon has expired.")
-        }
+        if (isExpired) throw new Error("This referral coupon has expired.")
+        
         validReferralCoupon = refCoupon
         discount = Math.round(parsedAmount * (parseFloat(refCoupon.discount_percent) / 100))
         subtotal -= discount
       }
 
       if (!validReferralCoupon) {
-        const { data: couponData, error: couponError } = await supabase
-          .from('coupons')
-          .select('*')
-          .eq('coupon_code', uppercaseCode)
-          .single()
-
+        const { data: couponData, error: couponError } = await supabase.from('coupons').select('*').eq('coupon_code', uppercaseCode).single()
         if (couponData && !couponError) {
           const now = new Date()
           const isValidFrom = !couponData.valid_from || now >= new Date(couponData.valid_from)
@@ -67,7 +85,6 @@ serve(async (req) => {
           if (isValidFrom && isValidTo && isLimitValid) {
             validCoupon = couponData
             affiliate_ref = couponData.affiliate_ref || null
-
             if (couponData.discount_type === 'percentage') {
               discount = Math.round(parsedAmount * (parseFloat(couponData.discount_value) / 100))
             } else if (couponData.discount_type === 'fixed') {
@@ -75,29 +92,18 @@ serve(async (req) => {
             }
             subtotal -= discount
             if (subtotal < 0) subtotal = 0
-
-            if (affiliate_ref) {
-              const { data: aff } = await supabase.from('affiliates').select('*').eq('ref_code', affiliate_ref).single()
-              if (aff) {
-                if (aff.commission_type === 'percentage') {
-                  commission = Math.round(subtotal * (parseFloat(aff.commission_value) / 100))
-                } else {
-                  commission = parseFloat(aff.commission_value)
-                }
-              }
-            }
           } else {
-            throw new Error("This coupon is invalid.")
+            throw new Error("This coupon is invalid or expired.")
           }
         } else {
-          throw new Error("Invalid coupon code")
+          throw new Error("Invalid coupon code.")
         }
       }
     }
 
     let walletUsed = 0
-    if (wallet_enabled && user_id) {
-      const { data: walletUser } = await supabase.from('users').select('wallet_balance').eq('id', user_id).single()
+    if (wallet_enabled && effectiveUserId) {
+      const { data: walletUser } = await supabase.from('users').select('wallet_balance').eq('id', effectiveUserId).single()
       if (walletUser && parseFloat(walletUser.wallet_balance) > 0) {
         const walletBalance = parseFloat(walletUser.wallet_balance)
         walletUsed = Math.min(walletBalance, subtotal)
@@ -106,34 +112,34 @@ serve(async (req) => {
       }
     }
 
-    const finalAmount = subtotal
+    const finalAmount = Math.round(subtotal)
+    const paymentMode = (walletUsed > 0 && finalAmount === 0) ? 'WALLET_ONLY' : (walletUsed > 0 ? 'WALLET_PLUS_GATEWAY' : 'GATEWAY_ONLY')
 
-    // Create Razorpay order via REST API
-    const rzpOptions = {
-      amount: Math.round(finalAmount * 100),
-      currency: "INR",
-      receipt: "order_rcptid_" + Date.now()
+    let rzpOrderId = null
+    if (finalAmount > 0) {
+        const rzpOptions = {
+          amount: finalAmount * 100,
+          currency: "INR",
+          receipt: "order_rcptid_" + Date.now()
+        }
+        const rzpRes = await fetch("https://api.razorpay.com/v1/orders", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Basic " + btoa(rzpKeyId + ":" + rzpKeySecret)
+          },
+          body: JSON.stringify(rzpOptions)
+        })
+        if (!rzpRes.ok) throw new Error(`Razorpay Error: ${await rzpRes.text()}`)
+        const rzpOrder = await rzpRes.json()
+        rzpOrderId = rzpOrder.id
+    } else {
+        rzpOrderId = 'WALLET_PAY_' + Date.now()
     }
-
-    const rzpRes = await fetch("https://api.razorpay.com/v1/orders", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Basic " + btoa(rzpKeyId + ":" + rzpKeySecret)
-      },
-      body: JSON.stringify(rzpOptions)
-    })
-
-    if (!rzpRes.ok) {
-      const text = await rzpRes.text()
-      throw new Error(`Razorpay Error: ${text}`)
-    }
-
-    const rzpOrder = await rzpRes.json()
 
     // Save to database
     const { data: newOrder, error: orderErr } = await supabase.from('orders').insert({
-      user_id: user_id || null,
+      user_id: effectiveUserId || null,
       user_email: email,
       email: email,
       full_name: full_name || 'Guest',
@@ -142,20 +148,22 @@ serve(async (req) => {
       amount: parsedAmount,
       amount_paid: finalAmount,
       discount: discount,
+      wallet_used: walletUsed,
       final_amount: finalAmount,
+      payment_mode: paymentMode,
       coupon_code: validReferralCoupon ? validReferralCoupon.code : (validCoupon ? validCoupon.coupon_code : null),
       affiliate_ref: affiliate_ref,
-      commission: commission,
-      status: 'pending',
-      payment_status: 'pending',
-      razorpay_order_id: rzpOrder.id
+      status: finalAmount === 0 ? 'paid' : 'pending',
+      payment_status: finalAmount === 0 ? 'paid' : 'pending',
+      razorpay_order_id: rzpOrderId
     }).select('id').single()
 
-    if (orderErr) throw new Error("Failed to save order")
+    if (orderErr) throw new Error("Failed to save order: " + orderErr.message)
 
+    // Mirror to counselling_bookings
     try {
       await supabase.from('counselling_bookings').insert({
-        user_id: user_id || null,
+        user_id: effectiveUserId || null,
         full_name: full_name || 'Guest',
         email: email,
         mobile: mobile || 'N/A',
@@ -166,28 +174,31 @@ serve(async (req) => {
         plan_name: product_name || 'Counselling Plan',
         plan_price: parsedAmount,
         discounted_price: finalAmount,
-        counselling_type: counselling_type || null,
+        wallet_used: walletUsed,
+        payment_mode: paymentMode,
         coupon_code: validReferralCoupon ? validReferralCoupon.code : (validCoupon ? validCoupon.coupon_code : null),
-        payment_status: 'pending',
+        payment_status: finalAmount === 0 ? 'paid' : 'pending',
         order_id: newOrder.id.toString()
       })
-    } catch (e) {
-      console.error(e)
-    }
+    } catch (e) { console.error(e) }
 
-    if (user_id && mobile && mobile !== 'N/A') {
-      await supabase.from('users').update({ mobile_number: mobile, phone: mobile }).eq('id', user_id)
+    // If WALLET_ONLY, we need to handle the verification logic immediately
+    if (finalAmount === 0) {
+        console.log(`[razorpay-payment] WALLET_ONLY detected for order ${newOrder.id}. Triggering verification logic...`)
+        // We will call the verify-payment function INTERNALLY or just return success and let the frontend call it
+        // To keep it simple and safe, let's return a flag so the frontend knows it's WALLET_ONLY
     }
 
     return new Response(
       JSON.stringify({ 
         success: true, 
         order_id: newOrder.id, 
-        razorpay_order_id: rzpOrder.id,
+        razorpay_order_id: rzpOrderId,
         final_amount: finalAmount,
         wallet_used: walletUsed,
-        order: { id: rzpOrder.id },
-        key_id: rzpKeyId
+        payment_mode: paymentMode,
+        key_id: rzpKeyId,
+        is_wallet_only: finalAmount === 0
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     )

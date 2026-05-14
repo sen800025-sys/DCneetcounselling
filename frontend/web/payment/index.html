@@ -317,7 +317,10 @@
             <h3><i class="fas fa-wallet"></i> Wallet Balance</h3>
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
-                    <span style="font-size: 13px; color: #666;">Available Balance:</span>
+                    <span style="font-size: 13px; color: #666; display: flex; align-items: center; gap: 5px;">
+                        Available Balance:
+                        <i class="fas fa-sync-alt" id="refreshWalletBtn" onclick="fetchWalletBalance()" style="cursor: pointer; font-size: 11px; color: var(--primary-color);"></i>
+                    </span>
                     <div style="font-size: 20px; font-weight: 700; color: #000;">₹<span id="d_wallet_balance">0</span></div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 10px;">
@@ -383,6 +386,15 @@
         let walletUsed = 0;
         let isWalletEnabled = false;
 
+        async function waitForSupabase() {
+            let attempts = 0;
+            while (!window.supabaseClient && attempts < 40) {
+                await new Promise(r => setTimeout(r, 100));
+                attempts++;
+            }
+            return !!window.supabaseClient;
+        }
+
         document.addEventListener("DOMContentLoaded", async () => {
             const dataStr = sessionStorage.getItem('counselling_payment_data');
             if (!dataStr) {
@@ -407,13 +419,17 @@
                 document.getElementById('d_original_price').textContent = originalPrice;
                 document.getElementById('d_final_price').textContent = finalPrice;
 
+                // Wait for Supabase to initialize
+                const isSupabaseReady = await waitForSupabase();
+                if (!isSupabaseReady) console.warn("[Supabase] Client failed to initialize in time.");
+
                 // Fetch Wallet Balance
                 await fetchWalletBalance();
                 
-                // Calculate Pricing
+                // Calculate Pricing (handles automatic coupon application if exists in localStorage)
                 await recalculateTotal();
             } catch (e) {
-                console.error("Data parse error", e);
+                console.error("Initialization error", e);
                 window.location.href = "/";
             }
         });
@@ -422,23 +438,66 @@
         // 🛑 BACKEND URL CONFIGURATION
         // ==========================================
         const BACKEND_URL = 'https://rlqmdylbzapyepuwncwt.supabase.co/functions/v1';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJscW1keWxiemFweWVwdXduY3d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTcwNzYsImV4cCI6MjA5MTgzMzA3Nn0.oNNK1pwLnykQlNfUkw7IdB-ZBkKDoWxszsKDSIjsLeo';
         
         console.log('[MobileDebug] Backend:', BACKEND_URL);
 
         async function fetchWalletBalance() {
-            try {
-                if (!window.supabaseClient) return;
-                const { data: { user } } = await window.supabaseClient.auth.getUser();
-                if (!user) return;
+            const refreshBtn = document.getElementById('refreshWalletBtn');
+            if (refreshBtn) refreshBtn.classList.add('fa-spin');
 
-                const { data, error } = await window.supabaseClient
-                    .from('users')
-                    .select('wallet_balance')
-                    .eq('id', user.id)
-                    .single();
+            try {
+                if (!window.supabaseClient) {
+                    console.warn("[Wallet] Supabase client not ready.");
+                    return;
+                }
+                const { data: { session } } = await window.supabaseClient.auth.getSession();
+                const user = session?.user;
                 
+                if (!user) {
+                    console.log("[Wallet] No session found. User must be logged in to use wallet.");
+                    return;
+                }
+
+                console.log("[Wallet] Fetching for user:", user.email, "ID:", user.id);
+                
+                let { data, error } = await window.supabaseClient
+                    .from('users')
+                    .select('wallet_balance, email')
+                    .eq('id', user.id)
+                    .maybeSingle();
+                
+                if (error) {
+                    console.error("[Wallet] DB Error:", error.message);
+                    return;
+                }
+
+                // If user doesn't exist in public.users, create them
+                if (!data) {
+                    console.warn("[Wallet] Profile missing. Creating...");
+                    const { data: newUser, error: createErr } = await window.supabaseClient
+                        .from('users')
+                        .insert([{
+                            id: user.id,
+                            email: user.email,
+                            full_name: user.user_metadata?.full_name || 'User',
+                            wallet_balance: 0
+                        }])
+                        .select()
+                        .single();
+                    
+                    if (createErr) {
+                        console.error("[Wallet] Failed to create profile:", createErr);
+                    } else {
+                        data = newUser;
+                        console.log("[Wallet] Profile created successfully.");
+                    }
+                }
+
                 walletBalance = data && data.wallet_balance ? parseFloat(data.wallet_balance) : 0;
-                walletBalance = Math.round(walletBalance * 100) / 100; // Clean float
+                walletBalance = Math.round(walletBalance * 100) / 100;
+                console.log("[Wallet] Balance retrieved:", walletBalance);
+
                 document.getElementById('d_wallet_balance').textContent = walletBalance.toFixed(2);
                 document.getElementById('walletCard').style.display = 'block';
 
@@ -447,14 +506,21 @@
                     document.getElementById('walletMessage').textContent = "No balance available";
                     document.getElementById('walletMessage').style.display = 'block';
                     document.getElementById('walletMessage').style.color = '#666';
+                } else {
+                    document.getElementById('useWalletToggle').disabled = false;
+                    document.getElementById('walletMessage').style.display = 'none';
                 }
             } catch (err) {
-                console.error("Error fetching wallet balance:", err);
+                console.error("[Wallet] Unexpected error:", err);
+            } finally {
+                const refreshBtn = document.getElementById('refreshWalletBtn');
+                if (refreshBtn) refreshBtn.classList.remove('fa-spin');
             }
         }
 
         function toggleWallet() {
             isWalletEnabled = document.getElementById('useWalletToggle').checked;
+            console.log('[Wallet] Toggle changed:', isWalletEnabled);
             recalculateTotal();
         }
 
@@ -465,12 +531,14 @@
                 const user = session?.user;
                 
                 let currentCoupon = couponCodeOverride || localStorage.getItem('coupon') || null;
-
-                console.log('[Pricing] Fetching summary for:', currentCoupon);
+                console.log('[Pricing] Validating coupon:', currentCoupon, 'for user:', user?.id);
 
                 const response = await fetch(`${BACKEND_URL}/validate-coupon`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': session?.access_token ? `Bearer ${session.access_token}` : `Bearer ${SUPABASE_ANON_KEY}`
+                    },
                     body: JSON.stringify({
                         user_id: user?.id || null,
                         plan_price: originalPrice,
@@ -515,6 +583,14 @@
                     }
 
                     document.getElementById('d_final_price').textContent = Math.round(finalPrice);
+                    
+                    // Update Proceed Button text
+                    const payBtnText = document.getElementById('payBtnText');
+                    if (finalAmount === 0 && walletUsed > 0) {
+                        payBtnText.textContent = "Pay with Wallet";
+                    } else {
+                        payBtnText.textContent = "Proceed to Payment";
+                    }
                 } else if (!data.success) {
                     // if it wasn't successful (e.g. invalid coupon), reset discount amount
                     discountAmount = 0;
@@ -583,18 +659,12 @@
                 const user = session?.user;
                 
                 // 1. Create order on backend
-                const headers = { "Content-Type": "application/json" };
-                // Removed Authorization header to avoid mobile CORS preflight issues
-                // as the backend doesn't strictly require it for order creation
-                /*
-                if (session && session.access_token) {
-                    headers['Authorization'] = `Bearer ${session.access_token}`;
-                }
-                */
-
                 const createRes = await fetch(`${BACKEND_URL}/razorpay-payment`, {
                     method: "POST",
-                    headers: headers,
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Authorization": session?.access_token ? `Bearer ${session.access_token}` : `Bearer ${SUPABASE_ANON_KEY}`
+                    },
                     body: JSON.stringify({
                         email: paymentData.email,
                         full_name: paymentData.full_name,
@@ -622,7 +692,14 @@
 
                 localStorage.setItem("order_id", order.order_id);
 
-                // 2. Open Razorpay
+                // 2. Handle Wallet Only Payment
+                if (order.is_wallet_only) {
+                    console.log("[Wallet] Wallet fully covers order. Verifying immediately...");
+                    await verifyWalletPayment(order.order_id);
+                    return;
+                }
+
+                // 3. Open Razorpay for remaining amount
                 const options = {
                     "key": order.key_id, 
                     "amount": Math.round(order.final_amount * 100),
@@ -633,55 +710,78 @@
                     "handler": async function (response) {
                         console.log("[Razorpay] Payment Success! ID:", response.razorpay_payment_id);
                         
-                        // Show processing state on the main page (safe — won't crash if element missing)
+                        // Show processing state
                         try {
                             var containerEl = document.querySelector('.payment-container') || document.querySelector('.container');
                             if (containerEl) {
                                 containerEl.innerHTML = `
                                     <div style="text-align:center; padding:40px;">
-                                        <div style="width:60px;height:60px;margin:0 auto 20px;background:#e0f2fe;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#0284c7;font-size:28px;">
+                                        <div style="width:60px;height:60px;margin:0 auto 20px;background:#dcfce7;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#16a34a;font-size:28px;">
                                             <i class="fas fa-spinner fa-spin"></i>
                                         </div>
-                                        <h2>Processing Payment...</h2>
-                                        <p>Please do not close this window. We are activating your plan.</p>
+                                        <h2>Confirming Payment...</h2>
+                                        <p>Please do not close this window.</p>
                                         <div style="font-size:12px; color:#94a3b8; margin-top:10px;">Payment ID: ${response.razorpay_payment_id}</div>
                                     </div>
                                 `;
                             }
                         } catch(uiErr) { console.warn("UI update error:", uiErr); }
 
-                        // Always attempt to verify and then redirect to success page
+                        // ── VERIFY PAYMENT WITH BACKEND ──
                         const savedOrderId = localStorage.getItem("order_id") || "";
-                        try {
-                            console.log("[Handshake] Confirming order:", savedOrderId);
+                        let verifySuccess = false;
+                        
+                        // Retry up to 3 times
+                        for (let attempt = 1; attempt <= 3; attempt++) {
+                            try {
+                                console.log(`[Verify] Attempt ${attempt}/3 for order:`, savedOrderId);
+                                
+                                const controller = new AbortController();
+                                const timeoutId = setTimeout(() => controller.abort(), 15000);
 
-                            const controller = new AbortController();
-                            const timeoutId = setTimeout(() => controller.abort(), 15000);
+                                const confirmRes = await fetch(`${BACKEND_URL}/verify-payment`, {
+                                    method: "POST",
+                                    headers: { 
+                                        "Content-Type": "application/json", 
+                                        "Authorization": session?.access_token ? `Bearer ${session.access_token}` : `Bearer ${SUPABASE_ANON_KEY}`
+                                    },
+                                    signal: controller.signal,
+                                    body: JSON.stringify({ 
+                                        order_id: savedOrderId,
+                                        razorpay_payment_id: response.razorpay_payment_id,
+                                        razorpay_order_id: response.razorpay_order_id,
+                                        razorpay_signature: response.razorpay_signature
+                                    })
+                                });
+                                clearTimeout(timeoutId);
 
-                            const confirmRes = await fetch(`${BACKEND_URL}/verify-payment`, {
-                                method: "POST",
-                                headers: { "Content-Type": "application/json" },
-                                signal: controller.signal,
-                                body: JSON.stringify({ 
-                                    order_id: savedOrderId,
-                                    razorpay_payment_id: response.razorpay_payment_id,
-                                    razorpay_order_id: response.razorpay_order_id,
-                                    razorpay_signature: response.razorpay_signature
-                                })
-                            });
-                            clearTimeout(timeoutId);
-
-                            const data = await confirmRes.json();
-                            console.log("[Handshake] Response:", data);
-                        } catch (confirmErr) {
-                            console.error("[Handshake] Error:", confirmErr);
+                                const data = await confirmRes.json();
+                                console.log("[Verify] Response:", data);
+                                
+                                if (data.success) {
+                                    verifySuccess = true;
+                                    break;
+                                }
+                            } catch (confirmErr) {
+                                console.error(`[Verify] Attempt ${attempt} error:`, confirmErr);
+                                if (attempt < 3) await new Promise(r => setTimeout(r, 1000));
+                            }
+                        }
+                        
+                        if (!verifySuccess) {
+                            console.error("[Verify] All 3 attempts failed. Redirecting anyway.");
                         }
 
-                        // ALWAYS redirect to the official thank-you page
+                        // Mark as verified in sessionStorage to prevent thank-you page from re-verifying
+                        if (savedOrderId) {
+                            sessionStorage.setItem('payment_verified_' + savedOrderId, 'true');
+                        }
+
+                        // Redirect to thank-you page
                         const productStr = encodeURIComponent(paymentData.plan_name || 'Counselling Plan');
                         const amountVal = order.final_amount || paymentData.plan_price || 0;
                         const couponCode = localStorage.getItem("coupon") || "";
-                        window.location.href = `/thank-you/?product=${productStr}&amount=${amountVal}&order_id=${response.razorpay_payment_id}&coupon=${couponCode}&tracked=1`;
+                        window.location.href = `/thank-you/?product=${productStr}&amount=${amountVal}&order_id=${response.razorpay_payment_id}&razorpay_payment_id=${response.razorpay_payment_id}&coupon=${couponCode}&tracked=1`;
                     },
                     "prefill": {
                         "name": paymentData.full_name,
@@ -706,7 +806,39 @@
                 }
             } finally {
                 btn.disabled = false;
-                btnText.textContent = "Proceed to Payment";
+                btnText.textContent = finalPrice === 0 && walletUsed > 0 ? "Pay with Wallet" : "Proceed to Payment";
+            }
+        }
+
+        async function verifyWalletPayment(orderId) {
+            try {
+                const sessionData = window.supabaseClient ? await window.supabaseClient.auth.getSession() : null;
+                const session = sessionData?.data?.session;
+
+                const response = await fetch(`${BACKEND_URL}/verify-payment`, {
+                    method: "POST",
+                    headers: { 
+                        "Content-Type": "application/json", 
+                        "Authorization": session?.access_token ? `Bearer ${session.access_token}` : `Bearer ${SUPABASE_ANON_KEY}`
+                    },
+                    body: JSON.stringify({ 
+                        order_id: orderId,
+                        is_wallet_only: true
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    const productStr = encodeURIComponent(paymentData.plan_name || 'Counselling Plan');
+                    window.location.href = `/thank-you/?product=${productStr}&amount=0&order_id=${orderId}&coupon=${localStorage.getItem("coupon") || ""}&wallet_only=1`;
+                } else {
+                    throw new Error(data.error || "Wallet verification failed");
+                }
+            } catch (err) {
+                console.error("Wallet Verification Error:", err);
+                alert("Error verifying wallet payment: " + err.message);
+                document.getElementById('payBtn').disabled = false;
+                document.getElementById('payBtnText').textContent = "Pay with Wallet";
             }
         }
     </script>

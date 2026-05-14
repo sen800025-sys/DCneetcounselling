@@ -6871,41 +6871,48 @@
             });
 
             if (userData && userData.referred_by) {
-                var { data: activeRewardCoupons } = await client
-                    .from('referral_coupons')
-                    .select('*')
+                // Step 3: Only for NEW users (no previous paid orders)
+                var { count: paidOrders } = await client
+                    .from('orders')
+                    .select('*', { count: 'exact', head: true })
                     .eq('user_id', userId)
-                    .eq('is_used', false)
-                    .order('created_at', { ascending: false });
-                
-                if (activeRewardCoupons && activeRewardCoupons.length > 0) {
-                    var validCoupon = activeRewardCoupons.find(c => !c.expires_at || new Date(c.expires_at) > new Date());
-                    if (validCoupon) {
-                        hasRewardCoupon = true;
-                        document.getElementById('rc-code-display').textContent = validCoupon.code;
-                        
-                        var expiryHtml = validCoupon.expires_at 
-                            ? `<i class="fa-regular fa-clock"></i> Expires ${new Date(validCoupon.expires_at).toLocaleDateString()}` 
-                            : `<i class="fa-solid fa-infinity"></i> No Expiry`;
-                        document.getElementById('rc-expiry-display').innerHTML = expiryHtml;
-                        
-                        document.querySelector('.rc-btn-copy').setAttribute('onclick', `copyMyRewardCoupon('${validCoupon.code}')`);
-                        if (myRewardCouponSection) myRewardCouponSection.style.display = 'block';
+                    .eq('payment_status', 'paid');
 
-                        // Notification Badge
-                        referEarnMenuLinks.forEach(function(link) {
-                            // FINAL CHECK: Ensure no badge exists yet (prevents race condition duplicates)
-                            if (link.querySelector('.reward-badge')) return;
-
-                            var badge = document.createElement('span');
-                            badge.className = 'reward-badge';
-                            badge.style.cssText = 'background: #ef4444; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; margin-left: 8px; font-weight: 700; vertical-align: middle; display: inline-block;';
-                            badge.textContent = '1 Reward';
-                            // To ensure proper layout within div/a tags
-                            link.style.display = 'flex';
-                            link.style.alignItems = 'center';
-                            link.appendChild(badge);
-                        });
+                if (!paidOrders || paidOrders === 0) {
+                    var { data: activeRewardCoupons } = await client
+                        .from('referral_coupons')
+                        .select('*')
+                        .eq('user_id', userId)
+                        .eq('is_used', false)
+                        .order('created_at', { ascending: false });
+                    
+                    if (activeRewardCoupons && activeRewardCoupons.length > 0) {
+                        var validCoupon = activeRewardCoupons.find(c => !c.expires_at || new Date(c.expires_at) > new Date());
+                        if (validCoupon) {
+                            hasRewardCoupon = true;
+                            document.getElementById('rc-code-display').textContent = validCoupon.code;
+                            
+                            var expiryHtml = validCoupon.expires_at 
+                                ? `<i class="fa-regular fa-clock"></i> Expires ${new Date(validCoupon.expires_at).toLocaleDateString()}` 
+                                : `<i class="fa-solid fa-infinity"></i> No Expiry`;
+                            document.getElementById('rc-expiry-display').innerHTML = expiryHtml;
+                            
+                            document.querySelector('.rc-btn-copy').setAttribute('onclick', `copyMyRewardCoupon('${validCoupon.code}')`);
+                            if (myRewardCouponSection) myRewardCouponSection.style.display = 'block';
+    
+                            // Notification Badge
+                            referEarnMenuLinks.forEach(function(link) {
+                                if (link.querySelector('.reward-badge')) return;
+    
+                                var badge = document.createElement('span');
+                                badge.className = 'reward-badge';
+                                badge.style.cssText = 'background: #ef4444; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; margin-left: 8px; font-weight: 700; vertical-align: middle; display: inline-block;';
+                                badge.textContent = '1 Reward';
+                                link.style.display = 'flex';
+                                link.style.alignItems = 'center';
+                                link.appendChild(badge);
+                            });
+                        }
                     }
                 }
             }

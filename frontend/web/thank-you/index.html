@@ -102,18 +102,28 @@
         const params = new URLSearchParams(window.location.search);
         const product = params.get('product');
         const amount = params.get('amount');
-        const order_id = params.get('order_id') || params.get('razorpay_order_id') || params.get('razorpay_payment_id');
         const couponCode = params.get('coupon') || params.get('coupon_code') || "";
+        
+        // Extract ALL possible payment identifiers from URL params
+        const razorpay_payment_id = params.get('razorpay_payment_id') || null;
+        const razorpay_order_id = params.get('razorpay_order_id') || null;
+        const razorpay_signature = params.get('razorpay_signature') || null;
+        const url_order_id = params.get('order_id') || razorpay_payment_id || null;
+        
+        // The actual internal DB order_id (UUID) is in localStorage — this is the critical one
+        const savedOrderId = localStorage.getItem("order_id");
+        
+        console.log('[ThankYou] URL params:', { url_order_id, razorpay_payment_id, razorpay_order_id, savedOrderId });
 
-        if (product && amount && order_id) {
+        if (product && amount && url_order_id) {
             // Setup GoAffPro Order BEFORE loader script
             if (!sessionStorage.getItem('gaff_tracked')) {
-                let orderNumber = order_id;
+                let orderNumber = url_order_id;
                 const prodLower = product.toLowerCase();
                 if (prodLower.includes('ebook')) {
-                    orderNumber = 'EBK_' + order_id;
+                    orderNumber = 'EBK_' + url_order_id;
                 } else if (prodLower.includes('counselling') || prodLower.includes('counseling')) {
-                    orderNumber = 'CNS_' + order_id;
+                    orderNumber = 'CNS_' + url_order_id;
                 }
 
                 window.goaffproOrder = {
@@ -126,11 +136,74 @@
             }
         }
 
+        // ── AUTO-VERIFY PAYMENT ON PAGE LOAD ──
+        // This is the CRITICAL safety net for:
+        //   1. Mobile UPI redirect flows (handler never fires)
+        //   2. Popup flows where handler verification failed due to network
+        //   3. Any other edge case where verify-payment wasn't called
+        (async function autoVerifyPayment() {
+            if (!savedOrderId) {
+                console.log('[AutoVerify] No saved order_id in localStorage. Cannot verify.');
+                return;
+            }
+            
+            // Don't re-verify if the payment page handler already verified this order
+            if (sessionStorage.getItem('payment_verified_' + savedOrderId)) {
+                console.log('[AutoVerify] Order already verified by payment handler. Skipping.');
+                return;
+            }
+            
+            // Set lock immediately
+            sessionStorage.setItem('payment_verified_' + savedOrderId, 'true');
+
+            const BACKEND_URL = 'https://rlqmdylbzapyepuwncwt.supabase.co/functions/v1';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJscW1keWxiemFweWVwdXduY3d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTcwNzYsImV4cCI6MjA5MTgzMzA3Nn0.oNNK1pwLnykQlNfUkw7IdB-ZBkKDoWxszsKDSIjsLeo';
+            
+            // Determine the best payment_id to send
+            const paymentIdToSend = razorpay_payment_id || ('pay_redirect_' + Date.now());
+            
+            console.log('[AutoVerify] Verifying order:', savedOrderId, 'with payment_id:', paymentIdToSend);
+            
+            // Retry up to 3 times with increasing delay
+            for (let attempt = 1; attempt <= 3; attempt++) {
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 15000);
+                    
+                    const res = await fetch(BACKEND_URL + '/verify-payment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+                        signal: controller.signal,
+                        body: JSON.stringify({
+                            order_id: savedOrderId,
+                            razorpay_payment_id: paymentIdToSend,
+                            razorpay_order_id: razorpay_order_id || null,
+                            razorpay_signature: razorpay_signature || null
+                        })
+                    });
+                    clearTimeout(timeoutId);
+                    
+                    const data = await res.json();
+                    console.log(`[AutoVerify] Attempt ${attempt} response:`, data);
+                    
+                    if (data.success) {
+                        console.log('[AutoVerify] ✅ Payment verified successfully!');
+                        break;
+                    }
+                } catch (err) {
+                    console.error(`[AutoVerify] Attempt ${attempt} error:`, err);
+                    if (attempt < 3) {
+                        await new Promise(r => setTimeout(r, attempt * 1000));
+                    }
+                }
+            }
+        })();
+
         document.addEventListener("DOMContentLoaded", function () {
             if (product && amount) {
                 document.getElementById('summary-product').textContent = product;
                 document.getElementById('summary-amount').textContent = amount;
-                document.getElementById('summary-id').textContent = order_id || localStorage.getItem("order_id") || "N/A";
+                document.getElementById('summary-id').textContent = url_order_id || savedOrderId || "N/A";
 
                 if (couponCode) {
                     document.getElementById('summary-coupon').textContent = couponCode;
@@ -140,10 +213,12 @@
                 document.getElementById('order-summary').style.display = 'block';
             }
 
-            // Cleanup LocalStorage
-            localStorage.removeItem("coupon");
-            localStorage.removeItem("affiliate_ref");
-            localStorage.removeItem("order_id");
+            // Cleanup LocalStorage after 5 seconds (plenty of time for autoVerify to finish)
+            setTimeout(function() {
+                localStorage.removeItem("coupon");
+                localStorage.removeItem("affiliate_ref");
+                localStorage.removeItem("order_id");
+            }, 5000);
         });
     </script>
     <script async src="https://static.goaffpro.com/loader.js"></script>
