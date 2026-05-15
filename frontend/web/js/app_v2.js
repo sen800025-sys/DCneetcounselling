@@ -587,23 +587,27 @@ async function renderDashboard() {
     var meta = user.user_metadata || {};
     var name = meta.full_name || meta.name || meta.display_name || (user.email ? user.email.split('@')[0] : 'Student');
     var email = user.email || 'No email';
-    var mobile = '';
-    
+    var mobile = 'Loading...';
     var walletBal = 0;
-    if (user && user.id && window.supabaseClient) {
-        try {
-            var { data } = await window.supabaseClient.from('users').select('mobile_number, wallet_balance').eq('id', user.id).single();
-            if (data) {
-                if (data.mobile_number) mobile = data.mobile_number;
-                walletBal = data.wallet_balance || 0;
-            }
-        } catch(err) {}
-    }
-    
-    var mobileDisplay = mobile ? mobile : 'No Mobile Number';
+
     name = window.sanitizeHTML(name);
     email = window.sanitizeHTML(email);
-    mobileDisplay = window.sanitizeHTML(mobileDisplay);
+
+    // Fetch asynchronously to prevent blocking the initial render
+    if (user && user.id && window.supabaseClient) {
+        window.supabaseClient.from('users').select('mobile_number, wallet_balance').eq('id', user.id).single()
+        .then(({ data }) => {
+            if (data) {
+                var m = data.mobile_number || 'No Mobile Number';
+                var el1 = document.getElementById('dash_mobile_display');
+                if (el1) el1.textContent = m;
+
+                var w = Number(data.wallet_balance || 0).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                var el2 = document.getElementById('dash_wallet_display');
+                if (el2) el2.innerHTML = '<span style="font-size: 14px; font-weight: 600; opacity: 0.8;">₹</span>' + w;
+            }
+        }).catch(err => console.error(err));
+    }
 
     var localStyles = '<style>' +
         '.dashboard-wrapper { display: flex !important; gap: 32px; padding: 120px 20px 60px; max-width: 1200px; margin: 0 auto; min-height: 80vh; color: #fff; }' +
@@ -641,7 +645,7 @@ async function renderDashboard() {
                 '<div class="sidebar-user-info">' +
                     '<div class="sidebar-user-name">' + name + '</div>' +
                     '<div class="sidebar-user-email">' + email + '</div>' +
-                    '<div class="sidebar-user-mobile">' + mobileDisplay + '</div>' +
+                    '<div class="sidebar-user-mobile" id="dash_mobile_display">' + mobileDisplay + '</div>' +
                 '</div>' +
             '</div>' +
             '<nav class="sidebar-menu">' +
@@ -656,7 +660,7 @@ async function renderDashboard() {
                     '</div>' +
                     '<div style="width: 100%; margin-top: 4px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.1);">' +
                         '<div style="font-size: 10px; color: rgba(255,255,255,0.5); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Available Balance</div>' +
-                        '<div style="font-size: 24px; font-weight: 800; color: #facc15; margin-top: 2px; display: flex; align-items: baseline; gap: 4px;">' +
+                        '<div id="dash_wallet_display" style="font-size: 24px; font-weight: 800; color: #facc15; margin-top: 2px; display: flex; align-items: baseline; gap: 4px;">' +
                             '<span style="font-size: 14px; font-weight: 600; opacity: 0.8;">₹</span>' + Number(walletBal).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + 
                         '</div>' +
                         '<div style="margin-top: 12px; display: flex; gap: 8px; width: 100%;">' +
@@ -1061,14 +1065,24 @@ window.submitAuthModal = async function(type) {
 
     try {
         var res;
+        
+        var timeoutPromise = new Promise(function(_, reject) { 
+            setTimeout(function() { reject(new Error('NetworkError when attempting to fetch resource: Request timed out')); }, 15000);
+        });
+
         if (isSignUp) {
-            res = await window.supabaseClient.auth.signUp({
+            console.log("SIGNUP STARTED");
+            var signupPromise = window.supabaseClient.auth.signUp({
                 email: email,
                 password: pass,
                 options: { data: { full_name: name }, emailRedirectTo: window.location.origin }
             });
+            res = await Promise.race([signupPromise, timeoutPromise]);
+            console.log("SIGNUP RESPONSE:", res.data);
+            if (res.error) console.log("SIGNUP ERROR:", res.error);
         } else {
-            res = await window.supabaseClient.auth.signInWithPassword({ email: email, password: pass });
+            var signinPromise = window.supabaseClient.auth.signInWithPassword({ email: email, password: pass });
+            res = await Promise.race([signinPromise, timeoutPromise]);
         }
 
         if (res.error) {
@@ -1082,6 +1096,7 @@ window.submitAuthModal = async function(type) {
             }
         }
     } catch (e) {
+        console.error("SIGNUP FAILED:", e);
         alert('An error occurred: ' + e.message);
     } finally {
         btn.innerText = originalText;
@@ -1203,8 +1218,9 @@ window.handleEmailLogin = async function(e) {
 
     try {
         if (isSignUp) {
-
-            var res = await window.supabaseClient.auth.signUp({ 
+            console.log("SIGNUP STARTED");
+            
+            var signupPromise = window.supabaseClient.auth.signUp({ 
                 email: email, 
                 password: pass, 
                 options: { 
@@ -1215,75 +1231,85 @@ window.handleEmailLogin = async function(e) {
                 } 
             });
 
+            var timeoutPromise = new Promise(function(_, reject) { 
+                setTimeout(function() { reject(new Error('NetworkError when attempting to fetch resource: Signup request timed out')); }, 15000);
+            });
+            
+            var res = await Promise.race([signupPromise, timeoutPromise]);
+            
+            console.log("SIGNUP RESPONSE:", res.data);
+            if (res.error) console.log("SIGNUP ERROR:", res.error);
+
             if (res.error) { 
                 showErr(res.error.message); 
             } else if (res.data && res.data.user && res.data.user.identities && res.data.user.identities.length === 0) {
                 showErr('⚠️ An account with this email already exists. Please switch to Sign In instead.');
             } else { 
-                // ── REFERRAL SYSTEM: Generate token & link referrer ──
-                try {
-                    if (res.data && res.data.user && res.data.user.id) {
-                        // Small delay to let trigger finish
-                        await new Promise(function(r) { setTimeout(r, 1200); });
-                        
-                        var newToken = Math.random().toString(36).substring(2, 11).toLowerCase();
-                        var pendingRef = localStorage.getItem('pending_referral');
-                        var refId = null;
-                        
-                        if (pendingRef) {
-                            var { data: refData } = await window.supabaseClient
-                                .from('users')
-                                .select('id')
-                                .eq('referral_token', pendingRef)
-                                .maybeSingle();
+                // ── REFERRAL SYSTEM: Run in background to prevent blocking UI ──
+                setTimeout(async function() {
+                    try {
+                        if (res.data && res.data.user && res.data.user.id) {
+                            var newToken = Math.random().toString(36).substring(2, 11).toLowerCase();
+                            var pendingRef = localStorage.getItem('pending_referral');
+                            var refId = null;
                             
-                            if (refData && refData.id && refData.id !== res.data.user.id) {
-                                refId = refData.id;
+                            if (pendingRef) {
+                                var { data: refData } = await window.supabaseClient
+                                    .from('users')
+                                    .select('id')
+                                    .eq('referral_token', pendingRef)
+                                    .maybeSingle();
+                                
+                                if (refData && refData.id && refData.id !== res.data.user.id) {
+                                    refId = refData.id;
+                                }
+                            }
+                            
+                            var payload = { referral_token: newToken };
+                            if (refId) payload.referred_by = refId;
+                            
+                            await window.supabaseClient.from('users').update(payload).eq('id', res.data.user.id);
+                            
+                            if (refId) {
+                                var { data: referrerInfo } = await window.supabaseClient
+                                    .from('users')
+                                    .select('email, full_name, name')
+                                    .eq('id', refId)
+                                    .single();
+
+                                await window.supabaseClient.from('referrals').insert({
+                                    referrer_id: refId,
+                                    referred_user_id: res.data.user.id,
+                                    referrer_email: referrerInfo?.email || null,
+                                    referrer_name: referrerInfo?.full_name || referrerInfo?.name || null,
+                                    referred_user_email: email,
+                                    referred_user_name: full || null,
+                                    referral_token: pendingRef,
+                                    status: 'joined'
+                                });
+                                localStorage.removeItem('pending_referral');
+                                console.log('[Referral] Linked to referrer:', refId);
                             }
                         }
-                        
-                        var payload = { referral_token: newToken };
-                        if (refId) payload.referred_by = refId;
-                        
-                        await window.supabaseClient.from('users').update(payload).eq('id', res.data.user.id);
-                        
-                        if (refId) {
-                            // Fetch referrer details to store in referral record
-                            var { data: referrerInfo } = await window.supabaseClient
-                                .from('users')
-                                .select('email, full_name, name')
-                                .eq('id', refId)
-                                .single();
+                    } catch(refErr) { console.error('[Referral] Setup error:', refErr); }
+                }, 500);
 
-                            await window.supabaseClient.from('referrals').insert({
-                                referrer_id: refId,
-                                referred_user_id: res.data.user.id,
-                                referrer_email: referrerInfo?.email || null,
-                                referrer_name: referrerInfo?.full_name || referrerInfo?.name || null,
-                                referred_user_email: email,
-                                referred_user_name: full || null,
-                                referral_token: pendingRef,
-                                status: 'joined'
-                            });
-                            localStorage.removeItem('pending_referral');
-                            console.log('[Referral] Linked to referrer:', refId);
-                        }
-                    }
-                } catch(refErr) { console.error('[Referral] Setup error:', refErr); }
                 if (res.data && res.data.session) {
                     showOk('✅ Account created successfully! Returning to home...');
                     if (window.updateNavForAuth) window.updateNavForAuth(res.data.session);
-                    setTimeout(function() { if (window.activeEbookContext && window.activeEbookContext.course) {
-                    var dest = window.activeEbookContext.origin || 'ebooks';
-                    window.navigate(dest);
-                    setTimeout(function() {
-                        if (window.openEbookPurchaseModal) {
-                            window.openEbookPurchaseModal(window.activeEbookContext.course, window.activeEbookContext.quota, window.activeEbookContext.price, window.activeEbookContext.title);
-                        }
+                    setTimeout(function() { 
+                        if (window.activeEbookContext && window.activeEbookContext.course) {
+                            var dest = window.activeEbookContext.origin || 'ebooks';
+                            window.navigate(dest);
+                            setTimeout(function() {
+                                if (window.openEbookPurchaseModal) {
+                                    window.openEbookPurchaseModal(window.activeEbookContext.course, window.activeEbookContext.quota, window.activeEbookContext.price, window.activeEbookContext.title);
+                                }
+                            }, 500);
+                        } else {
+                            window.navigate('home');
+                        } 
                     }, 500);
-                } else {
-                    window.navigate('home');
-                } }, 1000);
                 } else {
                     showOk('✅ Account created! Please check your email for a confirmation link to sign in.');
                 }
@@ -1294,14 +1320,13 @@ window.handleEmailLogin = async function(e) {
 
             if (res2.error) { showErr(res2.error.message); }
             else {
-                // Successful login — clear rate limit history
                 _loginAttempts = [];
                 if (window.updateNavForAuth) window.updateNavForAuth(res2.data.session);
                 window.navigate('home');
             }
         }
     } catch(err) {
-
+        console.error("SIGNUP FAILED:", err);
         showErr(err.message || 'Something went wrong. Please verify your connection and credentials.');
     } finally {
         if (btn) {

@@ -5240,10 +5240,10 @@
                   }
 
                   var client = window.supabaseClient;
-                  var res;
 
                   if (window._isSignUp) {
-                    res = await client.auth.signUp({
+                    console.log("SIGNUP STARTED");
+                    var signupPromise = client.auth.signUp({
                       email: email,
                       password: pass,
                       options: {
@@ -5251,25 +5251,35 @@
                         emailRedirectTo: window.location.origin,
                       },
                     });
-                    if (res.error) throw res.error;
 
+                    var timeoutPromise = new Promise(function(_, reject) { 
+                        setTimeout(function() { reject(new Error('NetworkError when attempting to fetch resource: Signup request timed out')); }, 15000);
+                    });
+                    
+                    var res = await Promise.race([signupPromise, timeoutPromise]);
+                    
+                    console.log("SIGNUP RESPONSE:", res.data);
+                    if (res.error) console.log("SIGNUP ERROR:", res.error);
+
+                    if (res.error) throw res.error;
 
                     if (okBox) {
                       okBox.innerText = "Success! You are now registered.";
                       okBox.style.display = "block";
                     }
-                    // Wait a tiny bit and switch to sign in view or log them in automatically
+                    
                     window.switchAuthTab(false);
-                    // Auto sign-in if no email confirmation required
+                    
                     if (res.data && res.data.session) {
                       if (window.updateNavForAuth) {
                         window.updateNavForAuth(res.data.session);
                       }
                       
-                      // Explicitly refresh the referral UI
-                      if (typeof window.loadReferralPageData === 'function') {
-                        window.loadReferralPageData();
-                      }
+                      setTimeout(function() {
+                        if (typeof window.loadReferralPageData === 'function') {
+                          window.loadReferralPageData();
+                        }
+                      }, 100);
                       
                       setTimeout(() => {
                         window.location.hash = "dashboard";
@@ -5277,23 +5287,21 @@
                     }
                     return false;
                   } else {
-                    res = await client.auth.signInWithPassword({
+                    var res = await client.auth.signInWithPassword({
                       email: email,
                       password: pass,
                     });
+                    
+                    if (res.error) throw res.error;
+
+                    if (window.updateNavForAuth)
+                      window.updateNavForAuth(res.data.session);
+
+                    window.navigate("home");
+                    window.scrollTo(0, 0);
                   }
-
-                  if (res.error) throw res.error;
-
-                  // Immediately update the Nav to show the Profile Pill
-                  if (window.updateNavForAuth)
-                    window.updateNavForAuth(res.data.session);
-
-                  // Navigate to home section
-                  window.navigate("home");
-                  window.scrollTo(0, 0);
                 } catch (err) {
-                  console.error("Auth Error:", err);
+                  console.error("SIGNUP FAILED:", err);
                   if (errBox) {
                     errBox.innerText =
                       err.message || "Invalid login credentials.";
