@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../../supabaseClient';
 import { motion } from 'framer-motion';
 import { 
   Copy, CheckCircle2, Wallet, Users, Gift, Share2, 
@@ -14,7 +15,7 @@ export function cn(...inputs) {
 
 export default function ReferEarn() {
   const [copied, setCopied] = useState(false);
-  const referralLink = "https://yourdomain.com/signup?ref=demo123";
+  const referralLink = `https://dcneetcounselling.com/?ref=${referralToken}`;
 
   const handleCopy = async () => {
     try {
@@ -160,21 +161,21 @@ export default function ReferEarn() {
             <StatCard 
               icon={<Wallet className="w-6 h-6 text-indigo-500" />}
               title="Wallet Balance"
-              value="₹450"
+              value={`₹${stats.wallet}`}
               bgClass="bg-indigo-50 dark:bg-indigo-950/30"
               iconBg="bg-indigo-100 dark:bg-indigo-900/50"
             />
             <StatCard 
               icon={<Users className="w-6 h-6 text-emerald-500" />}
               title="Successful Referrals"
-              value="12"
+              value={stats.successful.toString()}
               bgClass="bg-emerald-50 dark:bg-emerald-950/30"
               iconBg="bg-emerald-100 dark:bg-emerald-900/50"
             />
             <StatCard 
               icon={<TrendingUp className="w-6 h-6 text-amber-500" />}
               title="Cashback Earned"
-              value="₹2,450"
+              value={`₹${stats.wallet}`}
               bgClass="bg-amber-50 dark:bg-amber-950/30"
               iconBg="bg-amber-100 dark:bg-amber-900/50"
             />

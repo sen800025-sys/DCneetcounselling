@@ -468,15 +468,16 @@
         const urlParams = new URLSearchParams(window.location.search);
         let refToken = urlParams.get('ref');
         
-        if (!refToken && window.location.hash.includes('?ref=')) {
-          const hashSplit = window.location.hash.split('?ref=');
-          if (hashSplit.length > 1) {
-            refToken = hashSplit[1].split('&')[0];
+        if (!refToken && window.location.hash.includes('ref=')) {
+          const hashStr = window.location.hash;
+          const refMatch = hashStr.match(/[#?&]ref=([^&]+)/);
+          if (refMatch && refMatch[1]) {
+            refToken = refMatch[1];
           }
         }
         
         if (refToken) {
-          localStorage.setItem('pending_referral', refToken);
+          localStorage.setItem('referral_code', refToken);
           console.log('Referral token detected and saved:', refToken);
         }
       } catch(e) {
