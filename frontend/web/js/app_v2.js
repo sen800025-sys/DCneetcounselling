@@ -1,3 +1,83 @@
+
+window.processReferralSignup = async function(user, email, fullName) {
+    if (!user || !user.id) return;
+    try {
+        console.log('[Referral] Processing referral for user:', user.id);
+        var newToken = Math.random().toString(36).substring(2, 11).toLowerCase();
+        var pendingRef = localStorage.getItem('referral_code');
+        var refId = null;
+        
+        if (pendingRef) {
+            console.log('REFERRAL LINK FOUND:', pendingRef);
+            var { data: refData } = await window.supabaseClient
+                .from('users')
+                .select('id')
+                .eq('referral_token', pendingRef)
+                .maybeSingle();
+            
+            if (refData && refData.id && refData.id !== user.id) {
+                refId = refData.id;
+                console.log('REFERRER FOUND:', refId);
+            }
+        }
+        
+        var payload = { referral_token: newToken };
+        if (refId) payload.referred_by = refId;
+        
+        await window.supabaseClient.from('users').update(payload).eq('id', user.id);
+        
+        if (refId) {
+            // Prevent duplicate tracking
+            var { data: existingRef } = await window.supabaseClient
+                .from('referrals')
+                .select('id')
+                .eq('referred_user_id', user.id)
+                .maybeSingle();
+
+            if (!existingRef) {
+                var { data: referrerInfo } = await window.supabaseClient
+                    .from('users')
+                    .select('email, full_name, name')
+                    .eq('id', refId)
+                    .single();
+
+                const { data: insertedRef } = await window.supabaseClient.from('referrals').insert({
+                    referrer_id: refId,
+                    referred_user_id: user.id,
+                    referrer_email: referrerInfo?.email || null,
+                    referrer_name: referrerInfo?.full_name || referrerInfo?.name || null,
+                    referred_user_email: email,
+                    referred_user_name: fullName || null,
+                    referral_token: pendingRef,
+                    status: 'joined'
+                }).select('id').single();
+                console.log('TRACKING RECORD INSERTED');
+                
+                if (insertedRef && insertedRef.id) {
+                    const welcomeCode = 'WELCOME-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+                    const expiryDate = new Date();
+                    expiryDate.setDate(expiryDate.getDate() + 15);
+                    
+                    await window.supabaseClient.from('referral_coupons').insert({
+                        code: welcomeCode,
+                        user_id: user.id,
+                        discount_percent: 10,
+                        referral_id: insertedRef.id,
+                        referrer_name: referrerInfo?.full_name || referrerInfo?.name || 'Unknown',
+                        referrer_email: referrerInfo?.email || 'N/A',
+                        referred_user_name: fullName || 'New User',
+                        referred_user_email: email,
+                        expires_at: expiryDate.toISOString()
+                    });
+                    console.log('[Referral] Coupon generated.');
+                }
+                
+                localStorage.removeItem('referral_code');
+            }
+        }
+    } catch(refErr) { console.error('[Referral] Setup error:', refErr); }
+};
+
 // ─── Referral Detection ────────────────────────────────────────────────────────
 (function() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -1111,6 +1191,9 @@ window.submitAuthModal = async function(type) {
         if (res.error) {
             alert(res.error.message);
         } else {
+            if (isSignUp && res.data && res.data.user) {
+                setTimeout(() => window.processReferralSignup(res.data.user, email, name), 500);
+            }
             if (isSignUp && !res.data.session) {
                 alert('Account created! Please check your email for a confirmation link.');
             } else {
@@ -1269,85 +1352,11 @@ window.handleEmailLogin = async function(e) {
                 showErr('⚠️ An account with this email already exists. Please switch to Sign In instead.');
             } else { 
                 // ── REFERRAL SYSTEM: Run in background to prevent blocking UI ──
-                setTimeout(async function() {
-                    try {
-                        if (res.data && res.data.user && res.data.user.id) {
-                            console.log('USER CREATED');
-                            var newToken = Math.random().toString(36).substring(2, 11).toLowerCase();
-                            var pendingRef = localStorage.getItem('referral_code');
-                            var refId = null;
-                            
-                            if (pendingRef) {
-                                console.log('REFERRAL LINK FOUND');
-                                var { data: refData } = await window.supabaseClient
-                                    .from('users')
-                                    .select('id')
-                                    .eq('referral_token', pendingRef)
-                                    .maybeSingle();
-                                
-                                if (refData && refData.id && refData.id !== res.data.user.id) {
-                                    refId = refData.id;
-                                    console.log('REFERRER FOUND');
-                                }
-                            }
-                            
-                            var payload = { referral_token: newToken };
-                            if (refId) payload.referred_by = refId;
-                            
-                            await window.supabaseClient.from('users').update(payload).eq('id', res.data.user.id);
-                            
-                            if (refId) {
-                                // Prevent duplicate tracking
-                                var { data: existingRef } = await window.supabaseClient
-                                    .from('referrals')
-                                    .select('id')
-                                    .eq('referred_user_id', res.data.user.id)
-                                    .maybeSingle();
-
-                                if (!existingRef) {
-                                    var { data: referrerInfo } = await window.supabaseClient
-                                        .from('users')
-                                        .select('email, full_name, name')
-                                        .eq('id', refId)
-                                        .single();
-
-                                    const { data: insertedRef } = await window.supabaseClient.from('referrals').insert({
-                                        referrer_id: refId,
-                                        referred_user_id: res.data.user.id,
-                                        referrer_email: referrerInfo?.email || null,
-                                        referrer_name: referrerInfo?.full_name || referrerInfo?.name || null,
-                                        referred_user_email: email,
-                                        referred_user_name: full || null,
-                                        referral_token: pendingRef,
-                                        status: 'joined'
-                                    }).select('id').single();
-                                    console.log('TRACKING RECORD INSERTED');
-                                    
-                                    if (insertedRef && insertedRef.id) {
-                                        const welcomeCode = 'WELCOME-' + Math.random().toString(36).substring(2, 6).toUpperCase();
-                                        const expiryDate = new Date();
-                                        expiryDate.setDate(expiryDate.getDate() + 15);
-                                        
-                                        await window.supabaseClient.from('referral_coupons').insert({
-                                            code: welcomeCode,
-                                            user_id: res.data.user.id,
-                                            discount_percent: 10,
-                                            referral_id: insertedRef.id,
-                                            referrer_name: referrerInfo?.full_name || referrerInfo?.name || 'Unknown',
-                                            referrer_email: referrerInfo?.email || 'N/A',
-                                            referred_user_name: full || 'New User',
-                                            referred_user_email: email,
-                                            expires_at: expiryDate.toISOString()
-                                        });
-                                        console.log('[Referral] Coupon generated.');
-                                    }
-                                    
-                                    localStorage.removeItem('referral_code');
-                                }
-                            }
-                        }
-                    } catch(refErr) { console.error('[Referral] Setup error:', refErr); }
-                }, 500);
+                setTimeout(function() {
+    if (res.data && res.data.user) {
+        window.processReferralSignup(res.data.user, email, full);
+    }
+}, 500);
 
                 if (res.data && res.data.session) {
                     showOk('✅ Account created successfully! Returning to home...');
