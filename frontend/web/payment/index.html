@@ -437,7 +437,12 @@
         // ==========================================
         // 🛑 BACKEND URL CONFIGURATION
         // ==========================================
-        const BACKEND_URL = 'https://rlqmdylbzapyepuwncwt.supabase.co/functions/v1';
+        // ─── Backend URL Configuration ─────────────────────────────────────
+        // Use Express backend if running locally or on Render, otherwise fallback to Edge Function
+        const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+            ? 'https://rlqmdylbzapyepuwncwt.supabase.co/functions/v1' 
+            : 'https://rlqmdylbzapyepuwncwt.supabase.co/functions/v1';
+
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJscW1keWxiemFweWVwdXduY3d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTcwNzYsImV4cCI6MjA5MTgzMzA3Nn0.oNNK1pwLnykQlNfUkw7IdB-ZBkKDoWxszsKDSIjsLeo';
         
         console.log('[MobileDebug] Backend:', BACKEND_URL);
@@ -537,6 +542,7 @@
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
+                        'apikey': SUPABASE_ANON_KEY,
                         'Authorization': session?.access_token ? `Bearer ${session.access_token}` : `Bearer ${SUPABASE_ANON_KEY}`
                     },
                     body: JSON.stringify({
@@ -663,6 +669,7 @@
                     method: "POST",
                     headers: { 
                         "Content-Type": "application/json",
+                        "apikey": SUPABASE_ANON_KEY,
                         "Authorization": session?.access_token ? `Bearer ${session.access_token}` : `Bearer ${SUPABASE_ANON_KEY}`
                     },
                     body: JSON.stringify({
@@ -743,6 +750,7 @@
                                     method: "POST",
                                     headers: { 
                                         "Content-Type": "application/json", 
+                                        "apikey": SUPABASE_ANON_KEY,
                                         "Authorization": session?.access_token ? `Bearer ${session.access_token}` : `Bearer ${SUPABASE_ANON_KEY}`
                                     },
                                     signal: controller.signal,

@@ -136,7 +136,9 @@ window.refreshGoAffPro = function() {
 };
 
 window.trackGoAffProOrder = function(order) {
-    const backendUrl = 'https://rlqmdylbzapyepuwncwt.supabase.co/functions/v1';
+    const backendUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+        ? 'https://rlqmdylbzapyepuwncwt.supabase.co/functions/v1' 
+        : 'https://rlqmdylbzapyepuwncwt.supabase.co/functions/v1';
     console.log('Calling API URL:', `${backendUrl}/track-order`);
     fetch(`${backendUrl}/track-order`, {
         method: 'POST',

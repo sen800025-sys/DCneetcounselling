@@ -102,7 +102,7 @@
   <!-- Bulletproof Navigation Stub -->
   <script>
     window.BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-        ? 'http://localhost:3000/api' 
+        ? 'https://rlqmdylbzapyepuwncwt.supabase.co/functions/v1' 
         : 'https://rlqmdylbzapyepuwncwt.supabase.co/functions/v1';
 
     window.navigate = function (route) {
@@ -7827,8 +7827,10 @@
       msgBox.innerText = "Validating...";
 
       const backendUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-        ? 'http://localhost:3000/api'
+        ? 'https://rlqmdylbzapyepuwncwt.supabase.co/functions/v1'
         : 'https://rlqmdylbzapyepuwncwt.supabase.co/functions/v1';
+
+      const anonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJscW1keWxiemFweWVwdXduY3d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTcwNzYsImV4cCI6MjA5MTgzMzA3Nn0.oNNK1pwLnykQlNfUkw7IdB-ZBkKDoWxszsKDSIjsLeo';
 
       let discount = 0;
       let ctx = null;
@@ -7836,7 +7838,10 @@
       try {
         const response = await fetch(`${backendUrl}/validate-coupon`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'apikey': anonKey
+          },
           body: JSON.stringify({ coupon: code })
         });
 

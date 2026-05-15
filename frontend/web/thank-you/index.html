@@ -156,7 +156,9 @@
             // Set lock immediately
             sessionStorage.setItem('payment_verified_' + savedOrderId, 'true');
 
-            const BACKEND_URL = 'https://rlqmdylbzapyepuwncwt.supabase.co/functions/v1';
+            const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+                ? 'https://rlqmdylbzapyepuwncwt.supabase.co/functions/v1' 
+                : 'https://rlqmdylbzapyepuwncwt.supabase.co/functions/v1';
             const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJscW1keWxiemFweWVwdXduY3d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTcwNzYsImV4cCI6MjA5MTgzMzA3Nn0.oNNK1pwLnykQlNfUkw7IdB-ZBkKDoWxszsKDSIjsLeo';
             
             // Determine the best payment_id to send
@@ -172,7 +174,11 @@
                     
                     const res = await fetch(BACKEND_URL + '/verify-payment', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+                        headers: { 
+                            'Content-Type': 'application/json', 
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY 
+                        },
                         signal: controller.signal,
                         body: JSON.stringify({
                             order_id: savedOrderId,
