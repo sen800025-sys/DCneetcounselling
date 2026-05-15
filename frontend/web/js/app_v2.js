@@ -687,34 +687,13 @@ function animateValue(el, start, end, duration) {
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 async function renderDashboard() {
     console.log("FETCHING DASHBOARD");
+    
+    // Wait for Supabase to resolve the initial session via our global promise
+    if (window.authReadyPromise) {
+        await window.authReadyPromise;
+    }
+    
     var user = window._authUser;
-    
-    if (!user && window.supabaseClient) {
-        console.log("SESSION NOT READY, FETCHING...");
-        var data = null;
-        try {
-            var res = await window.supabaseClient.auth.getSession();
-            data = res.data;
-        } catch (e) {
-            console.error("SESSION FETCH ERROR:", e);
-        }
-        if (data && data.session) user = data.session.user;
-    }
-    
-    if (!user || !user.id) {
-        console.log("SESSION STILL NULL, RETRYING...");
-        await new Promise(r => setTimeout(r, 1200));
-        if (window.supabaseClient) {
-            var data = null;
-        try {
-            var res = await window.supabaseClient.auth.getSession();
-            data = res.data;
-        } catch (e) {
-            console.error("SESSION FETCH ERROR:", e);
-        }
-            if (data && data.session) user = data.session.user;
-        }
-    }
     
     if (!user || !user.id) {
         return '<div style="padding:160px 20px; text-align:center;">' +
@@ -786,7 +765,7 @@ async function renderDashboard() {
                 '<div class="sidebar-user-info">' +
                     '<div class="sidebar-user-name">' + name + '</div>' +
                     '<div class="sidebar-user-email">' + email + '</div>' +
-                    '<div class="sidebar-user-mobile" id="dash_mobile_display">' + mobileDisplay + '</div>' +
+                    '<div class="sidebar-user-mobile" id="dash_mobile_display">' + mobile + '</div>' +
                 '</div>' +
             '</div>' +
             '<nav class="sidebar-menu">' +
@@ -837,31 +816,11 @@ async function renderDashboard() {
 // ─── Order History ──────────────────────────────────────────────────────────
 async function renderOrders() {
     console.log('FETCHING ORDERS');
-    var user = window._authUser;
-    if (!user && window.supabaseClient) {
-        var data = null;
-        try {
-            var res = await window.supabaseClient.auth.getSession();
-            data = res.data;
-        } catch (e) {
-            console.error("SESSION FETCH ERROR:", e);
-        }
-        if (data && data.session) user = data.session.user;
-    }
     
-    if (!user || !user.id) {
-        await new Promise(r => setTimeout(r, 1200));
-        if (window.supabaseClient) {
-            var data = null;
-        try {
-            var res = await window.supabaseClient.auth.getSession();
-            data = res.data;
-        } catch (e) {
-            console.error("SESSION FETCH ERROR:", e);
-        }
-            if (data && data.session) user = data.session.user;
-        }
+    if (window.authReadyPromise) {
+        await window.authReadyPromise;
     }
+    var user = window._authUser;
 
     if (!user || !user.id) {
         return '<div style="padding:160px 20px; text-align:center;">' +
@@ -1012,31 +971,11 @@ async function renderOrders() {
 // ─── Wallet History ─────────────────────────────────────────────────────────
 async function renderWallet() {
     console.log('FETCHING WALLET');
-    var user = window._authUser;
-    if (!user && window.supabaseClient) {
-        var data = null;
-        try {
-            var res = await window.supabaseClient.auth.getSession();
-            data = res.data;
-        } catch (e) {
-            console.error("SESSION FETCH ERROR:", e);
-        }
-        if (data && data.session) user = data.session.user;
-    }
     
-    if (!user || !user.id) {
-        await new Promise(r => setTimeout(r, 1200));
-        if (window.supabaseClient) {
-            var data = null;
-        try {
-            var res = await window.supabaseClient.auth.getSession();
-            data = res.data;
-        } catch (e) {
-            console.error("SESSION FETCH ERROR:", e);
-        }
-            if (data && data.session) user = data.session.user;
-        }
+    if (window.authReadyPromise) {
+        await window.authReadyPromise;
     }
+    var user = window._authUser;
 
     if (!user || !user.id) {
         return '<div style="padding:160px 20px; text-align:center;"><h3>Access Restricted</h3><button class="btn btn-primary" onclick="window.navigate(\'login\')">Sign In</button></div>';

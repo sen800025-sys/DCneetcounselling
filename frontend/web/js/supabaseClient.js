@@ -10,6 +10,16 @@
  */
 
 (function() {
+    window._authReadyResolved = false;
+    window.authReadyPromise = new Promise(function(resolve) {
+        window._resolveAuthReady = function(session) {
+            if (!window._authReadyResolved) {
+                window._authReadyResolved = true;
+                resolve(session);
+            }
+        };
+    });
+
     const SUPABASE_URL  = window.__SUPABASE_URL || 'https://rlqmdylbzapyepuwncwt.supabase.co';
     const SUPABASE_ANON = window.__SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJscW1keWxiemFweWVwdXduY3d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTcwNzYsImV4cCI6MjA5MTgzMzA3Nn0.oNNK1pwLnykQlNfUkw7IdB-ZBkKDoWxszsKDSIjsLeo';
 
@@ -66,8 +76,20 @@
                     window.supabaseClient.auth.startAutoRefresh();
                 }
 
+                // Explicitly resolve the global auth ready promise
+                window.supabaseClient.auth.getSession().then(({ data }) => {
+                    if (data && data.session && data.session.user) {
+                        window._authUser = data.session.user;
+                    }
+                    window._resolveAuthReady(data ? data.session : null);
+                }).catch(() => {
+                    window._resolveAuthReady(null);
+                });
+
                 // User is authenticated
                 window.supabaseClient.auth.onAuthStateChange(function(event, session) {
+                    window._resolveAuthReady(session);
+                    
                     if (event === 'PASSWORD_RECOVERY') {
                         console.log("Password recovery event detected, navigating to separate reset-password page");
                         window._isRecovering = true; // Set global flag

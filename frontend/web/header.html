@@ -48,6 +48,7 @@
                     </div>
                     <div class="pd-menu">
                         <div class="pd-link" role="menuitem" onclick="window.navigate('dashboard')">👤 My Profile</div>
+                        <div class="pd-link" role="menuitem" onclick="window.navigate('orders')">📦 Order History</div>
                         <div class="pd-link" role="menuitem" onclick="window.navigate('profile/refer-earn')">🎁 Refer & Earn</div>
                         <div class="pd-link" role="menuitem" onclick="window.navigate('wishlist')">❤️ Wishlist</div>
                     </div>
@@ -95,6 +96,7 @@
                 <!-- Logged In State Menu -->
                 <div id="mdLoggedInContent" style="display: none; width: 100%; flex-direction: column; gap: 12px;">
                     <a href="#" class="md-link" onclick="event.preventDefault(); window.navigate('dashboard'); document.getElementById('mobileDrawer').classList.remove('active'); document.getElementById('mobileDrawerOverlay').classList.remove('active');">👤 My Profile</a>
+                    <a href="#" class="md-link" onclick="event.preventDefault(); window.navigate('orders'); document.getElementById('mobileDrawer').classList.remove('active'); document.getElementById('mobileDrawerOverlay').classList.remove('active');">📦 Order History</a>
                     <a href="#" class="md-link" onclick="event.preventDefault(); window.navigate('profile/refer-earn'); document.getElementById('mobileDrawer').classList.remove('active'); document.getElementById('mobileDrawerOverlay').classList.remove('active');">🎁 Refer & Earn</a>
                     <a href="#" class="md-link" onclick="event.preventDefault(); window.navigate('wishlist'); document.getElementById('mobileDrawer').classList.remove('active'); document.getElementById('mobileDrawerOverlay').classList.remove('active');">❤️ Wishlist</a>
                     <button class="md-cta-btn logout" onclick="window.doLogout(); document.getElementById('mobileDrawer').classList.remove('active'); document.getElementById('mobileDrawerOverlay').classList.remove('active');">Sign Out</button>
