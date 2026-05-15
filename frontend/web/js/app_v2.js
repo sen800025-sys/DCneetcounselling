@@ -686,7 +686,45 @@ function animateValue(el, start, end, duration) {
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 async function renderDashboard() {
-    var user = window._authUser || {};
+    console.log("FETCHING DASHBOARD");
+    var user = window._authUser;
+    
+    if (!user && window.supabaseClient) {
+        console.log("SESSION NOT READY, FETCHING...");
+        var data = null;
+        try {
+            var res = await window.supabaseClient.auth.getSession();
+            data = res.data;
+        } catch (e) {
+            console.error("SESSION FETCH ERROR:", e);
+        }
+        if (data && data.session) user = data.session.user;
+    }
+    
+    if (!user || !user.id) {
+        console.log("SESSION STILL NULL, RETRYING...");
+        await new Promise(r => setTimeout(r, 1200));
+        if (window.supabaseClient) {
+            var data = null;
+        try {
+            var res = await window.supabaseClient.auth.getSession();
+            data = res.data;
+        } catch (e) {
+            console.error("SESSION FETCH ERROR:", e);
+        }
+            if (data && data.session) user = data.session.user;
+        }
+    }
+    
+    if (!user || !user.id) {
+        return '<div style="padding:160px 20px; text-align:center;">' +
+            '<h3>Access Restricted</h3>' +
+            '<p style="color:#666; margin:10px 0 20px;">Please log in to view your dashboard.</p>' +
+            '<button class="btn btn-primary" onclick="window.navigate(\'login\')">Sign In</button>' +
+        '</div>';
+    }
+    
+    window._authUser = user;
     var meta = user.user_metadata || {};
     var name = meta.full_name || meta.name || meta.display_name || (user.email ? user.email.split('@')[0] : 'Student');
     var email = user.email || 'No email';
@@ -798,11 +836,31 @@ async function renderDashboard() {
 
 // ─── Order History ──────────────────────────────────────────────────────────
 async function renderOrders() {
-    console.log('[App] Rendering Orders...');
+    console.log('FETCHING ORDERS');
     var user = window._authUser;
     if (!user && window.supabaseClient) {
-        var { data } = await window.supabaseClient.auth.getSession();
+        var data = null;
+        try {
+            var res = await window.supabaseClient.auth.getSession();
+            data = res.data;
+        } catch (e) {
+            console.error("SESSION FETCH ERROR:", e);
+        }
         if (data && data.session) user = data.session.user;
+    }
+    
+    if (!user || !user.id) {
+        await new Promise(r => setTimeout(r, 1200));
+        if (window.supabaseClient) {
+            var data = null;
+        try {
+            var res = await window.supabaseClient.auth.getSession();
+            data = res.data;
+        } catch (e) {
+            console.error("SESSION FETCH ERROR:", e);
+        }
+            if (data && data.session) user = data.session.user;
+        }
     }
 
     if (!user || !user.id) {
@@ -953,11 +1011,31 @@ async function renderOrders() {
 
 // ─── Wallet History ─────────────────────────────────────────────────────────
 async function renderWallet() {
-    console.log('[App] Rendering Wallet...');
+    console.log('FETCHING WALLET');
     var user = window._authUser;
     if (!user && window.supabaseClient) {
-        var { data } = await window.supabaseClient.auth.getSession();
+        var data = null;
+        try {
+            var res = await window.supabaseClient.auth.getSession();
+            data = res.data;
+        } catch (e) {
+            console.error("SESSION FETCH ERROR:", e);
+        }
         if (data && data.session) user = data.session.user;
+    }
+    
+    if (!user || !user.id) {
+        await new Promise(r => setTimeout(r, 1200));
+        if (window.supabaseClient) {
+            var data = null;
+        try {
+            var res = await window.supabaseClient.auth.getSession();
+            data = res.data;
+        } catch (e) {
+            console.error("SESSION FETCH ERROR:", e);
+        }
+            if (data && data.session) user = data.session.user;
+        }
     }
 
     if (!user || !user.id) {
