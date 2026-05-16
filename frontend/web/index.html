@@ -6094,7 +6094,7 @@
     </div>
 <!-- Medical Options Screen -->
     <div id="section-medical-options" class="page-section" style="
-          background: #f8fafc;
+          background: #0B0014;
           padding: 20px;
           font-family: 'Poppins', var(--font-main);
           min-height: 100vh;
@@ -6103,7 +6103,7 @@
       <style>
         .mo-grid {
           display: grid;
-          gap: 16px;
+          gap: 20px;
           grid-template-columns: 1fr;
         }
 
@@ -6114,48 +6114,54 @@
         }
 
         .mo-card {
-          background: rgba(255, 255, 255, 0.08);
-          border: 1px solid rgba(244, 180, 0, 0.5);
-          border-radius: 16px;
-          padding: 18px;
-          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+          background: transparent;
+          border: 1.5px solid #FFC400;
+          border-radius: 10px;
+          padding: 10px;
           display: flex;
           flex-direction: column;
-          align-items: center;
-          text-align: center;
+          align-items: flex-start;
+          text-align: left;
           cursor: pointer;
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+          position: relative;
+        }
+
+        .mo-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 0 25px rgba(255, 196, 0, 0.3);
         }
 
         .mo-icon {
           width: 60px;
           height: 60px;
           border-radius: 12px;
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(255, 196, 0, 0.1);
+          border: 1px solid rgba(255, 196, 0, 0.3);
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 30px;
+          font-size: 28px;
           margin-bottom: 16px;
         }
 
         #app-root .mo-title {
-          font-size: 18px;
-          font-weight: 700;
-          color: #0f172a !important;
+          font-size: 20px;
+          font-weight: 800;
+          color: #ffffff !important;
           margin: 0 0 6px 0;
         }
 
         #app-root .mo-subtitle {
           font-size: 14px;
-          color: #ffffff !important;
+          color: #D2C6E8 !important;
           margin: 0 0 16px 0;
         }
 
         .mo-highlight {
           font-size: 12px;
-          font-weight: 600;
-          padding: 6px 12px;
+          font-weight: 700;
+          padding: 6px 14px;
           border-radius: 20px;
           margin-bottom: 20px;
         }
@@ -6163,14 +6169,21 @@
         .mo-btn {
           margin-top: auto;
           width: 100%;
-          padding: 12px;
-          border-radius: 10px;
-          font-weight: 600;
-          font-size: 15px;
+          padding: 0;
+          height: 38px;
+          border-radius: 8px;
+          font-weight: 700;
+          font-size: 13px;
           border: none;
-          color: #ffffff;
+          color: #000000;
           cursor: pointer;
           transition: filter 0.2s;
+          background: #FFC400;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          margin-bottom: 8px;
         }
 
         .mo-btn:hover {
@@ -6199,7 +6212,7 @@
         <!-- Back Button -->
         <div style="text-align: left; margin-bottom: 20px;">
           <button onclick="window.navigate('ebooks')"
-            style="background: transparent; border: none; color: #ffffff; font-size: 16px; cursor: pointer; font-family: inherit; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+            style="background: transparent; border: none; color: #FFC400; font-size: 16px; cursor: pointer; font-family: inherit; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
             <i class="fas fa-arrow-left"></i> Back to eBooks
           </button>
         </div>
@@ -6207,79 +6220,125 @@
         <!-- Header -->
         <div style="margin-bottom: 40px;">
           <h2 style="font-size: 32px; font-weight: 800; color: #ffffff !important; margin: 0 0 8px 0;">Medical eBooks</h2>
-          <p style="font-size: 16px; color: rgba(255,255,255,0.7); margin: 0; font-weight: 500;">Select Quota Type</p>
+          <p style="font-size: 16px; color: #D2C6E8; margin: 0; font-weight: 500;">Select Quota Type</p>
         </div>
 
         <!-- Options Grid -->
         <div class="mo-grid">
 
           <!-- AIQ Card -->
-          <div class="mo-card scale-up" style="position: relative;"
+          <div class="mo-card scale-up"
             onclick="openEbookPurchaseModal('Medical', 'All India Quota', 199, 'Medical AIQ eBooks')">
-            <div class="ec-discount-badge" style="position: absolute; top: -10px; left: -10px; background: linear-gradient(135deg, #ef4444, #f97316); color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; z-index: 10; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">🔥 50% OFF</div>
-            <div class="mo-icon" style="color: #facc15;">
-              <i class="fas fa-globe"></i>
-            </div>
-            <h3 class="mo-title">All India Quota</h3>
-            <p class="mo-subtitle">15% AIQ Counselling</p>
-            
-            <div style="margin: 8px 0 12px 0;">
-              <div style="font-size: 13px; font-weight: 600; color: #1e293b !important; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                <span style="color: #94a3b8 !important; text-decoration: line-through;">&#8377;398</span>
-                <span style="font-size: 16px; font-weight: 800; color: #f59e0b !important;">&#8377;199</span>
+            <div style="position: absolute; top: -1px; left: -1px; background: #FFC400; color: #000; font-size: 11px; font-weight: 800; padding: 5px 9px; border-radius: 16px 0 10px 0; z-index: 10;">50%<br>OFF</div>
+            <button class="ep-heart" style="position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.4);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:#fff;z-index:10;" onclick="event.stopPropagation();"><i class="far fa-heart"></i></button>
+
+            <div class="ep-tablet-preview" style="width:55%;height:220px;border-radius:14px;background:#000;padding:6px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 15px rgba(0,0,0,0.5);margin:0 auto 12px auto;box-sizing:border-box;border:1px solid #333;align-self:center;">
+              <div class="ep-tablet-screen" style="width:100%;height:100%;border-radius:10px;background:#f8f9fa;overflow:hidden;position:relative;display:flex;flex-direction:column;">
+                <div class="ep-screen-top" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 8px 2px 8px;">
+                  <img src="assets/logo.webp" style="width:28px;height:auto;" alt="Logo">
+                  <div style="font-size:7px;font-weight:800;color:#000;line-height:1.1;">NEET<br>COUNSELLING</div>
+                </div>
+                <div style="padding:2px 10px 8px 10px;flex:1;display:flex;flex-direction:column;">
+                  <div style="font-size:16px;font-weight:800;color:#2E0066;margin:0 0 2px 0;line-height:1.1;">ALL INDIA</div>
+                  <div style="font-size:10px;font-weight:800;color:#fff;background:#4B1E88;display:inline-block;padding:2px 8px;border-radius:4px;margin-bottom:4px;width:fit-content;">AIQ - MBBS</div>
+                  <div style="font-size:7px;font-weight:800;color:#2E0066;margin-bottom:4px;">COUNSELLING GUIDE eBook</div>
+                  
+                  <div style="text-align:left;font-size:6.5px;font-weight:700;color:#111;margin-top:auto;">
+                    <div style="margin-bottom:1.5px;display:flex;align-items:center;gap:3px;"><i class="fas fa-check-circle" style="color:#2E0066;font-size:6px;"></i> 3 Years Cutoff Data Analysis</div>
+                    <div style="margin-bottom:1.5px;display:flex;align-items:center;gap:3px;"><i class="fas fa-check-circle" style="color:#2E0066;font-size:6px;"></i> Category Wise</div>
+                    <div style="margin-bottom:1.5px;display:flex;align-items:center;gap:3px;"><i class="fas fa-check-circle" style="color:#2E0066;font-size:6px;"></i> College Wise Cutoff</div>
+                    <div style="margin-bottom:1.5px;display:flex;align-items:center;gap:3px;"><i class="fas fa-check-circle" style="color:#2E0066;font-size:6px;"></i> Govt & Deemed / Private</div>
+                    <div style="margin-bottom:1.5px;display:flex;align-items:center;gap:3px;"><i class="fas fa-check-circle" style="color:#2E0066;font-size:6px;"></i> Seat Matrix</div>
+                    <div style="margin-bottom:1.5px;display:flex;align-items:center;gap:3px;"><i class="fas fa-check-circle" style="color:#2E0066;font-size:6px;"></i> College Fees Structure</div>
+                    <div style="margin-bottom:1.5px;display:flex;align-items:center;gap:3px;"><i class="fas fa-check-circle" style="color:#2E0066;font-size:6px;"></i> Bond Details</div>
+                    <div style="margin-bottom:1.5px;display:flex;align-items:center;gap:3px;"><i class="fas fa-check-circle" style="color:#2E0066;font-size:6px;"></i> College Preference List</div>
+                  </div>
+                  <i class="fas fa-globe" style="position:absolute;bottom:5px;right:5px;font-size:40px;opacity:0.12;color:#2E0066;z-index:1;"></i>
+                </div>
               </div>
-              <div style="font-size: 11px; font-weight: 700; color: #16a34a !important; margin-top: 2px;">
+            </div>
+
+            <div class="ep-category-title" style="display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,#4B1E88,#2E0066);color:#FFC400;font-size:9px;font-weight:700;padding:3px 8px;border-radius:10px;margin-bottom:6px;border:1px solid rgba(255,196,0,0.4);width:fit-content;"><i class="fas fa-book" style="font-size:8px;"></i> eBook</div>
+            
+            <div style="margin: 4px 0 10px 0;">
+              <div style="font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <span style="color: #8E84A9; text-decoration: line-through;">&#8377;398</span>
+                <span style="font-size: 24px; font-weight: 800; color: #FFC400;">&#8377;199</span>
+              </div>
+              <div style="display: inline-block; background: #064e3b; color: #22c55e; border-radius: 4px; padding: 3px 8px; font-size: 11px; font-weight: 600; margin-top: 6px;">
                 You save &#8377;199
               </div>
             </div>
-            <div class="mo-highlight" style="background: rgba(37,99,235,0.1); color: #facc15; margin-bottom: 12px;">
-              Top Colleges Included
-            </div>
             
-            <button class="mo-btn" style="background: #2563eb;"
+            <button class="mo-btn"
               onclick="event.stopPropagation(); openEbookPurchaseModal('Medical', 'All India Quota', 199, 'Medical AIQ eBooks')">
-              Buy Now at &#8377;199
+              <i class="fas fa-shopping-cart"></i> Buy Now at &#8377;199
             </button>
-            <div style="font-size: 11px; font-weight: 700; color: #ef4444; margin-top: 12px;">⏳ Limited Time Offer</div>
+            <button style="background:transparent;border:1px solid #7c3aed;color:#c4b5fd;height:36px;border-radius:8px;font-weight:600;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:10px;width:100%;" onclick="event.stopPropagation();">
+              <i class="fas fa-shopping-cart"></i> Add to Cart
+            </button>
+            <div style="font-size: 11px; font-weight: 500; color: #FFC400; display:flex;align-items:center;justify-content:center;gap:5px;"><i class="fas fa-hourglass-half"></i> Limited Time Offer</div>
           </div>
 
           <!-- State Quota Card -->
-          <div class="mo-card scale-up" style="position: relative;"
+          <div class="mo-card scale-up"
             onclick="openEbookPurchaseModal('Medical', 'State Quota', 99, 'Medical State Quota eBooks')">
-            <div class="ec-discount-badge" style="position: absolute; top: -10px; left: -10px; background: linear-gradient(135deg, #ef4444, #f97316); color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; z-index: 10; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">🔥 50% OFF</div>
-            <div class="mo-icon" style="color: #16a34a !important;">
-              <i class="fas fa-map"></i>
-            </div>
-            <h3 class="mo-title">State Quota</h3>
-            <p class="mo-subtitle">85% State Counselling</p>
-            
-            <div style="margin: 8px 0 12px 0;">
-              <div style="font-size: 13px; font-weight: 600; color: #1e293b !important; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                <span style="color: #94a3b8 !important; text-decoration: line-through;">&#8377;198</span>
-                <span style="font-size: 16px; font-weight: 800; color: #f59e0b !important;">&#8377;99</span>
+            <div style="position: absolute; top: -1px; left: -1px; background: #FFC400; color: #000; font-size: 11px; font-weight: 800; padding: 5px 9px; border-radius: 16px 0 10px 0; z-index: 10;">50%<br>OFF</div>
+            <button class="ep-heart" style="position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.4);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:#fff;z-index:10;" onclick="event.stopPropagation();"><i class="far fa-heart"></i></button>
+
+            <div class="ep-tablet-preview" style="width:55%;height:220px;border-radius:14px;background:#000;padding:6px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 15px rgba(0,0,0,0.5);margin:0 auto 12px auto;box-sizing:border-box;border:1px solid #333;align-self:center;">
+              <div class="ep-tablet-screen" style="width:100%;height:100%;border-radius:10px;background:#f8f9fa;overflow:hidden;position:relative;display:flex;flex-direction:column;">
+                <div class="ep-screen-top" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 8px 2px 8px;">
+                  <img src="assets/logo.webp" style="width:28px;height:auto;" alt="Logo">
+                  <div style="font-size:7px;font-weight:800;color:#000;line-height:1.1;">NEET<br>COUNSELLING</div>
+                </div>
+                <div style="padding:2px 10px 8px 10px;flex:1;display:flex;flex-direction:column;">
+                  <div style="font-size:16px;font-weight:800;color:#2E0066;margin:0 0 2px 0;line-height:1.1;">STATE</div>
+                  <div style="font-size:10px;font-weight:800;color:#fff;background:#4B1E88;display:inline-block;padding:2px 8px;border-radius:4px;margin-bottom:4px;width:fit-content;">SQ - MBBS</div>
+                  <div style="font-size:7px;font-weight:800;color:#2E0066;margin-bottom:4px;">COUNSELLING GUIDE eBook</div>
+                  
+                  <div style="text-align:left;font-size:6.5px;font-weight:700;color:#111;margin-top:auto;">
+                    <div style="margin-bottom:1.5px;display:flex;align-items:center;gap:3px;"><i class="fas fa-check-circle" style="color:#2E0066;font-size:6px;"></i> 3 Years Cutoff Data Analysis</div>
+                    <div style="margin-bottom:1.5px;display:flex;align-items:center;gap:3px;"><i class="fas fa-check-circle" style="color:#2E0066;font-size:6px;"></i> Category Wise</div>
+                    <div style="margin-bottom:1.5px;display:flex;align-items:center;gap:3px;"><i class="fas fa-check-circle" style="color:#2E0066;font-size:6px;"></i> College Wise Cutoff</div>
+                    <div style="margin-bottom:1.5px;display:flex;align-items:center;gap:3px;"><i class="fas fa-check-circle" style="color:#2E0066;font-size:6px;"></i> Govt & Deemed / Private</div>
+                    <div style="margin-bottom:1.5px;display:flex;align-items:center;gap:3px;"><i class="fas fa-check-circle" style="color:#2E0066;font-size:6px;"></i> Seat Matrix</div>
+                    <div style="margin-bottom:1.5px;display:flex;align-items:center;gap:3px;"><i class="fas fa-check-circle" style="color:#2E0066;font-size:6px;"></i> College Fees Structure</div>
+                    <div style="margin-bottom:1.5px;display:flex;align-items:center;gap:3px;"><i class="fas fa-check-circle" style="color:#2E0066;font-size:6px;"></i> Bond Details</div>
+                    <div style="margin-bottom:1.5px;display:flex;align-items:center;gap:3px;"><i class="fas fa-check-circle" style="color:#2E0066;font-size:6px;"></i> College Preference List</div>
+                  </div>
+                  <i class="fas fa-map" style="position:absolute;bottom:5px;right:5px;font-size:40px;opacity:0.12;color:#2E0066;z-index:1;"></i>
+                </div>
               </div>
-              <div style="font-size: 11px; font-weight: 700; color: #16a34a !important; margin-top: 2px;">
+            </div>
+
+            <div class="ep-category-title" style="display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,#4B1E88,#2E0066);color:#FFC400;font-size:9px;font-weight:700;padding:3px 8px;border-radius:10px;margin-bottom:6px;border:1px solid rgba(255,196,0,0.4);width:fit-content;"><i class="fas fa-book" style="font-size:8px;"></i> eBook</div>
+            
+            <div style="margin: 4px 0 10px 0;">
+              <div style="font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <span style="color: #8E84A9; text-decoration: line-through;">&#8377;198</span>
+                <span style="font-size: 24px; font-weight: 800; color: #FFC400;">&#8377;99</span>
+              </div>
+              <div style="display: inline-block; background: #064e3b; color: #22c55e; border-radius: 4px; padding: 3px 8px; font-size: 11px; font-weight: 600; margin-top: 6px;">
                 You save &#8377;99
               </div>
             </div>
-            <div class="mo-highlight" style="background: rgba(22,163,74,0.1); color: #16a34a !important; margin-bottom: 12px;">
-              State-wise Detailed Data
-            </div>
             
-            <button class="mo-btn" style="background: #16a34a;"
+            <button class="mo-btn"
               onclick="event.stopPropagation(); openEbookPurchaseModal('Medical', 'State Quota', 99, 'Medical State Quota eBooks')">
-              Buy Now at &#8377;99
+              <i class="fas fa-shopping-cart"></i> Buy Now at &#8377;99
             </button>
-            <div style="font-size: 11px; font-weight: 700; color: #ef4444; margin-top: 12px;">⏳ Limited Time Offer</div>
+            <button style="background:transparent;border:1px solid #7c3aed;color:#c4b5fd;height:36px;border-radius:8px;font-weight:600;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:10px;width:100%;" onclick="event.stopPropagation();">
+              <i class="fas fa-shopping-cart"></i> Add to Cart
+            </button>
+            <div style="font-size: 11px; font-weight: 500; color: #FFC400; display:flex;align-items:center;justify-content:center;gap:5px;"><i class="fas fa-hourglass-half"></i> Limited Time Offer</div>
           </div>
 
         </div>
       </div>
     </div>
 
-
-
-    <!-- Cart Section -->
+<!-- Cart Section -->
     <div id="section-cart" class="page-section" style="
           background: transparent;
           padding: 20px;
