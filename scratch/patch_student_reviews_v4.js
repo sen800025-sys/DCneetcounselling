@@ -371,8 +371,6 @@ const css = `
       .sr-user-info { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
       .sr-avatar { width: 40px; height: 40px; border-radius: 50%; background: ${c.reviewCards.rating.badgeBackground}; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: ${c.reviewCards.rating.badgeText}; border: 2px solid #FFC400; }
       .sr-name { font-size: 16px; font-weight: ${c.reviewCards.textStyle.nameWeight}; color: ${c.reviewCards.textStyle.nameColor}; }
-      .sr-course { font-size: 12px; color: ${c.reviewCards.textStyle.courseColor}; font-weight: ${c.reviewCards.textStyle.courseWeight}; }
-      .sr-college { font-size: 11px; color: ${c.reviewCards.textStyle.collegeColor}; margin-top: 2px; }
       .sr-rating { color: ${c.reviewCards.rating.starColor}; font-size: 14px; margin-bottom: 6px;}
       .sr-review-text { font-size: 13px; color: ${c.reviewCards.textStyle.reviewColor}; line-height: 1.5; font-style: italic; }
 
@@ -425,8 +423,6 @@ const reviewsHtml = c.reviewCards.items.map(review => `
             <div class="sr-avatar">${review.name.charAt(0)}</div>
             <div>
               <div class="sr-name">${review.name}</div>
-              <div class="sr-course">${review.course}</div>
-              <div class="sr-college">${review.college}</div>
             </div>
           </div>
           <div class="sr-rating">
