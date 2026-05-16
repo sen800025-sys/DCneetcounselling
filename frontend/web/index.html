@@ -1370,6 +1370,7 @@
               border-radius: 24px;
               padding: 20px;
               gap: 14px;
+              align-items: stretch;
             }
 
             .wcu2-stat {
@@ -8581,7 +8582,7 @@
           course: ctx.course,
           quota: ctx.quota,
           amount_paid: ctx.finalPrice !== undefined ? ctx.finalPrice : ctx.price,
-          wallet_used: ctx.walletUsed || 0,
+          
           ebook_id: ctx.is_cart ? ctx.ebook_id : (ctx.course.toLowerCase() + '_' + ctx.quota.toLowerCase().replace(/ /g, '_')),
           payment_status: 'initiated',
           created_at: new Date().toISOString()
