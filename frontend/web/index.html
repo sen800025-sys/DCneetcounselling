@@ -5438,354 +5438,507 @@
 
     <!-- eBooks Section -->
     <div id="section-ebooks" class="page-section" style="
-          background: #f8fafc;
-          padding: 16px;
+          background: #0B0014;
+          padding: 40px 20px;
           font-family: 'Poppins', var(--font-main);
           min-height: 100vh;
+          display: none;
         ">
       <style>
-        .ebook-grid {
+        .ebook-grid-premium {
           display: grid;
-          gap: 16px;
-          grid-template-columns: repeat(2, 1fr);
+          gap: 18px;
+          grid-template-columns: repeat(1, 1fr);
+          max-width: 1200px;
+          margin: 0 auto;
         }
 
         @media (min-width: 768px) {
-          .ebook-grid {
-            grid-template-columns: repeat(3, 1fr);
+          .ebook-grid-premium {
+            grid-template-columns: repeat(2, 1fr);
           }
         }
 
         @media (min-width: 1024px) {
-          .ebook-grid {
+          .ebook-grid-premium {
             grid-template-columns: repeat(4, 1fr);
           }
         }
 
-        .ebook-card-v2 {
-          background: #ffffff;
-          border-radius: 16px;
-          padding: 14px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-          /* Add transparent border by default to prevent layout shift on hover */
-          border: 1px solid transparent;
-          transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        .ebook-card-premium {
+          background: transparent;
+          border-radius: 10px;
+          padding: 10px;
+          border: 1.5px solid #FFC400;
+          transition: 0.3s ease;
           display: flex;
           flex-direction: column;
-          align-items: center;
-          text-align: center;
-          cursor: pointer;
           position: relative;
         }
 
-        .ec-badge {
-          position: absolute;
-          top: -8px;
-          right: 12px;
-          background: #ef4444;
-          color: #ffffff;
-          font-size: 10px;
-          font-weight: 700;
-          padding: 4px 10px;
-          border-radius: 6px;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+        .ebook-card-premium:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 0 25px rgba(255, 196, 0, 0.3);
         }
 
-        .ec-icon {
-          width: 50px;
-          height: 50px;
-          border-radius: 10px;
-          background: #f1f5f9;
+        .ep-badge {
+          position: absolute;
+          top: -1px;
+          left: -1px;
+          background: #FFC400;
+          color: #000000;
+          font-size: 11px;
+          font-weight: 800;
+          padding: 5px 9px;
+          border-radius: 10px 0 10px 0;
+          z-index: 10;
+          line-height: 1.2;
+          text-align: center;
+        }
+
+        .ep-heart {
+          position: absolute;
+          top: 12px;
+          right: 12px;
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          background: rgba(0,0,0,0.5);
+          border: 1px solid rgba(255,255,255,0.4);
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 26px;
-          margin-bottom: 12px;
+          cursor: pointer;
+          font-size: 14px;
+          color: #FFFFFF !important;
+          transition: all 0.2s;
+          z-index: 10;
         }
 
-        #app-root .ec-title {
-          font-size: 15px;
-          font-weight: 600;
-          color: #ffffff !important;
-          margin: 0 0 4px 0;
+        .ep-heart:hover {
+          background: rgba(255,255,255,0.2);
+          color: #ef4444 !important;
+        }
+        
+        .ep-heart.active {
+          color: #ef4444 !important;
+          background: rgba(255,255,255,0.2);
         }
 
-        #app-root .ec-courses {
-          font-size: 12px;
-          color: #ffffff !important;
-          margin: 0 0 8px 0;
+        .ep-tablet-preview {
+          width: 65%;
+          height: 240px;
+          border-radius: 14px;
+          background: #000000;
+          padding: 6px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+          margin: 0 auto 12px auto;
+          position: relative;
+          box-sizing: border-box;
+          border: 1px solid #333;
         }
 
-        .ec-price {
-          font-size: 11px;
-          font-weight: 500;
-          color: #16a34a !important;
-          margin: 0 0 14px 0;
+        .ep-tablet-screen {
+          width: 100%;
+          height: 100%;
+          border-radius: 10px;
+          background: #f8f9fa;
+          overflow: hidden;
+          position: relative;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .ep-screen-top {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          padding: 8px 8px 2px 8px;
+        }
+
+        .ep-screen-logo {
+          width: 28px;
+          height: auto;
+        }
+
+        .ep-screen-top-text {
+          font-size: 7px;
+          font-weight: 800;
+          color: #000;
+          line-height: 1.1;
+        }
+
+        .ep-screen-content {
+          padding: 2px 10px 8px 10px;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .ep-screen-title {
+          font-size: 20px;
+          font-weight: 800;
+          color: #2E0066;
+          margin: 0 0 2px 0;
+          line-height: 1.1;
+        }
+
+        .ep-screen-subtitle {
+          font-size: 10px;
+          font-weight: 800;
+          color: #ffffff;
+          background: #4B1E88;
+          display: inline-block;
+          padding: 2px 8px;
+          border-radius: 4px;
+          margin-bottom: 6px;
+          width: fit-content;
+        }
+        
+        .ep-screen-desc {
+          font-size: 8px;
+          font-weight: 800;
+          color: #2E0066;
+          margin-bottom: 6px;
+        }
+
+        .ep-features {
+          text-align: left;
+          font-size: 7px;
+          font-weight: 700;
+          color: #111;
+          margin-top: auto;
+          position: relative;
+          z-index: 2;
+        }
+        
+        .ep-features div {
+          margin-bottom: 3px;
           display: flex;
           align-items: center;
           gap: 4px;
         }
+        .ep-features i {
+          color: #2E0066;
+          font-size: 8px;
+        }
 
-        .ec-btn {
-          margin-top: auto;
-          width: 100%;
-          padding: 8px;
-          border-radius: 8px;
+        .ep-edition {
+          display: none;
+        }
+
+        .ep-bottom-icon {
+          position: absolute;
+          bottom: 5px;
+          right: 5px;
+          font-size: 50px;
+          opacity: 0.15;
+          z-index: 1;
+        }
+
+        .ep-category-title {
+          font-size: 11px;
           font-weight: 600;
+          color: #ffffff;
+          margin-bottom: 4px;
+          text-align: left;
+        }
+
+        .ep-price-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 10px;
+        }
+
+        .ep-prices {
+          display: flex;
+          align-items: baseline;
+          gap: 8px;
+        }
+
+        .ep-old-price {
+          font-size: 14px;
+          font-weight: 500;
+          color: #6b7280;
+          text-decoration: line-through;
+        }
+
+        .ep-new-price {
+          font-size: 24px;
+          font-weight: 800;
+          color: #FFC400;
+          line-height: 1;
+        }
+
+        .ep-save-box {
+          background: #064e3b;
+          color: #22c55e;
+          border-radius: 4px;
+          padding: 3px 6px;
+          font-size: 10px;
+          font-weight: 600;
+        }
+
+        .ep-btn-primary {
+          background: #FFC400;
+          color: #000000;
+          height: 38px;
+          border-radius: 8px;
+          font-weight: 700;
           font-size: 13px;
           border: none;
-          color: #ffffff;
           cursor: pointer;
-          transition: filter 0.2s;
-        }
-
-        .ec-btn:hover {
-          filter: brightness(1.1);
-        }
-
-        .ec-cart-btn {
-          margin-top: 6px;
-          width: 100%;
-          padding: 7px;
-          border-radius: 8px;
-          font-weight: 600;
-          font-size: 12px;
-          border: 1.5px solid #facc15;
-          color: #facc15;
-          background: transparent;
-          cursor: pointer;
-          transition: all 0.2s;
-          font-family: inherit;
-        }
-
-        .ec-cart-btn:hover {
-          background: #eff6ff;
-        }
-
-        .ec-cart-btn.in-cart {
-          background: #e0f2fe;
-          border-color: #0ea5e9;
-          color: #0369a1;
-        }
-
-        /* Toast */
-        #cartToast {
-          position: fixed;
-          bottom: 24px;
-          left: 50%;
-          transform: translateX(-50%) translateY(20px);
-          background: #1e293b;
-          color: #fff;
-          padding: 12px 20px;
-          border-radius: 12px;
-          font-size: 14px;
-          font-weight: 600;
-          z-index: 99999;
-          opacity: 0;
-          pointer-events: none;
-          transition: all 0.3s ease;
-          white-space: nowrap;
-        }
-
-        #cartToast.show {
-          opacity: 1;
-          transform: translateX(-50%) translateY(0);
-        }
-
-        .ec-heart {
-          position: absolute;
-          top: 10px;
-          right: 10px;
-          width: 32px;
-          height: 32px;
-          border-radius: 50%;
-          background: #f8fafc;
-          border: none;
+          transition: background 0.2s;
           display: flex;
           align-items: center;
           justify-content: center;
+          gap: 6px;
+          margin-bottom: 8px;
+          width: 100%;
+        }
+
+        .ep-btn-primary:hover {
+          background: #eab308;
+        }
+
+        .ep-btn-secondary {
+          background: transparent;
+          border: 1px solid #7c3aed;
+          color: #c4b5fd;
+          height: 36px;
+          border-radius: 8px;
+          font-weight: 600;
+          font-size: 12px;
           cursor: pointer;
-          font-size: 16px;
-          color: #94a3b8 !important;
-          transition: transform 0.2s, color 0.2s;
-          z-index: 2;
+          transition: background 0.2s;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          margin-bottom: 10px;
+          width: 100%;
         }
 
-        .ec-heart:hover {
-          color: #ef4444;
+        .ep-btn-secondary:hover {
+          background: rgba(124, 58, 237, 0.1);
         }
 
-        .ec-heart.active {
-          color: #ef4444;
+        .ep-footer-text {
+          color: #FFC400;
+          font-size: 11px;
+          font-weight: 500;
+          text-align: center;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 5px;
         }
-
-        .ec-heart.pop {
-          animation: heartPop 0.35s ease;
-        }
-
-        @keyframes heartPop {
-          0% {
-            transform: scale(1);
-          }
-
-          50% {
-            transform: scale(1.35);
-          }
-
-          100% {
-            transform: scale(1);
+        @media (max-width: 767px) {
+          .ep-tablet-preview {
+            width: 45%;
+            height: 300px;
           }
         }
       </style>
 
-      <div style="
-            max-width: 1200px;
-            margin: 0 auto;
-            padding-top: 60px;
-            padding-bottom: 60px;
-            text-align: center;
-          ">
-        <!-- Header -->
-        <div style="margin-bottom: 30px;">
-          <h2 style="font-size: 28px; font-weight: 800; color: #ffffff !important; margin: 0 0 6px 0;">Explore eBooks</h2>
-          <p style="font-size: 14px; color: rgba(255,255,255,0.7) !important; margin: 0; font-weight: 500;">Cutoff Data & Counselling Guides</p>
+      <div class="ebook-grid-premium">
+
+        <!-- Medical -->
+        <div class="ebook-card-premium" onclick="window.navigate('medical-options')">
+          <div class="ep-badge">50%<br>OFF</div>
+          <button class="ep-heart" data-ebook="medical" onclick="event.stopPropagation(); toggleWishlist(this, 'medical')"><i class="far fa-heart"></i></button>
+          
+          <div class="ep-tablet-preview">
+            <div class="ep-tablet-screen">
+              <div class="ep-edition">2025<br>EDITION</div>
+              <div class="ep-screen-top">
+                <img src="assets/logo.webp" class="ep-screen-logo" alt="Logo">
+                <div class="ep-screen-top-text">NEET<br>COUNSELLING</div>
+              </div>
+              <div class="ep-screen-content">
+                <div class="ep-screen-title" style="color: #2E0066;">MEDICAL</div>
+                <div class="ep-screen-subtitle" style="background: #4B1E88;">MBBS</div>
+                <div class="ep-screen-desc">COUNSELLING GUIDE eBook</div>
+                
+                <div class="ep-features">
+                  <div><i class="fas fa-check-circle"></i> Counselling Rules & Guide</div>
+                  <div><i class="fas fa-check-circle"></i> Previous Year Cutoffs</div>
+                  <div><i class="fas fa-check-circle"></i> Participating Institute List</div>
+                  <div><i class="fas fa-check-circle"></i> FAQs & Important Info</div>
+                </div>
+                <i class="fas fa-user-md ep-bottom-icon" style="color: #2E0066;"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="ep-category-title">MBBS</div>
+          
+          <div class="ep-price-row">
+            <div class="ep-prices">
+              <span class="ep-old-price">&#8377;198</span>
+              <span class="ep-new-price">&#8377;99</span>
+            </div>
+            <div class="ep-save-box">You Save &#8377;99</div>
+          </div>
+
+          <button class="ep-btn-primary" onclick="event.stopPropagation(); window.navigate('medical-options')">
+            <i class="fas fa-shopping-cart"></i> Buy Now at &#8377;99
+          </button>
+          <button class="ep-btn-secondary" data-ebook="medical" onclick="event.stopPropagation(); addToCart(this, 'medical')">
+            <i class="fas fa-shopping-cart"></i> Add to Cart
+          </button>
+          <div class="ep-footer-text"><i class="fas fa-hourglass-half"></i> Limited Time Offer</div>
         </div>
 
-        <!-- Grid Category Layout -->
-        <div class="ebook-grid">
-
-          <!-- Medical -->
-          <div class="ebook-card-v2 scale-up" onclick="window.navigate('medical-options')">
-            <div class="ec-discount-badge" style="position: absolute; top: -10px; left: -10px; background: linear-gradient(135deg, #ef4444, #f97316); color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; z-index: 10; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">🔥 50% OFF</div>
-            <button class="ec-heart" data-ebook="medical"
-              onclick="event.stopPropagation(); toggleWishlist(this, 'medical')"><i class="far fa-heart"></i></button>
-            <div class="ec-badge">Popular</div>
-            <div class="ec-icon" style="color: #facc15;">
-              <i class="fas fa-stethoscope"></i>
-            </div>
-            <h3 class="ec-title">Medical</h3>
-            <p class="ec-courses">MBBS</p>
-            
-            <div style="margin: 8px 0 12px 0;">
-              <div style="font-size: 13px; font-weight: 600; color: #1e293b !important; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                <span style="color: #94a3b8 !important; text-decoration: line-through;">&#8377;198</span>
-                <span style="font-size: 16px; font-weight: 800; color: #f59e0b !important;">&#8377;99</span>
+        <!-- Dental -->
+        <div class="ebook-card-premium" onclick="console.log('open_category: dental')">
+          <div class="ep-badge">50%<br>OFF</div>
+          <button class="ep-heart" data-ebook="dental" onclick="event.stopPropagation(); toggleWishlist(this, 'dental')"><i class="far fa-heart"></i></button>
+          
+          <div class="ep-tablet-preview">
+            <div class="ep-tablet-screen">
+              <div class="ep-edition">2025<br>EDITION</div>
+              <div class="ep-screen-top">
+                <img src="assets/logo.webp" class="ep-screen-logo" alt="Logo">
+                <div class="ep-screen-top-text">NEET<br>COUNSELLING</div>
               </div>
-              <div style="font-size: 11px; font-weight: 700; color: #16a34a !important; margin-top: 2px;">
-                You save &#8377;99
+              <div class="ep-screen-content">
+                <div class="ep-screen-title" style="color: #2E0066;">DENTAL</div>
+                <div class="ep-screen-subtitle" style="background: #4B1E88;">BDS</div>
+                <div class="ep-screen-desc">COUNSELLING GUIDE eBook</div>
+                
+                <div class="ep-features">
+                  <div><i class="fas fa-check-circle"></i> Counselling Rules & Guide</div>
+                  <div><i class="fas fa-check-circle"></i> Previous Year Cutoffs</div>
+                  <div><i class="fas fa-check-circle"></i> Participating Institute List</div>
+                  <div><i class="fas fa-check-circle"></i> FAQs & Important Info</div>
+                </div>
+                <i class="fas fa-tooth ep-bottom-icon" style="color: #2E0066;"></i>
               </div>
             </div>
-            
-            <button class="ec-btn" style="background: #facc15; color: #000;"
-              onclick="event.stopPropagation(); window.navigate('medical-options')">
-              Buy Now at &#8377;99
-            </button>
-            <button class="ec-cart-btn" data-ebook="medical"
-              onclick="event.stopPropagation(); addToCart(this, 'medical')"><i class="fas fa-cart-plus"></i> Add to
-              Cart</button>
-            <div style="font-size: 11px; font-weight: 700; color: #ef4444; margin-top: 12px;">⏳ Limited Time Offer</div>
           </div>
 
-          <!-- Dental -->
-          <div class="ebook-card-v2 scale-up" onclick="console.log('open_category: dental')">
-            <div class="ec-discount-badge" style="position: absolute; top: -10px; left: -10px; background: linear-gradient(135deg, #ef4444, #f97316); color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; z-index: 10; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">🔥 50% OFF</div>
-            <button class="ec-heart" data-ebook="dental"
-              onclick="event.stopPropagation(); toggleWishlist(this, 'dental')"><i class="far fa-heart"></i></button>
-            <div class="ec-icon" style="color: #06b6d4;">
-              <i class="fas fa-tooth"></i>
+          <div class="ep-category-title">BDS</div>
+          
+          <div class="ep-price-row">
+            <div class="ep-prices">
+              <span class="ep-old-price">&#8377;298</span>
+              <span class="ep-new-price">&#8377;149</span>
             </div>
-            <h3 class="ec-title">Dental</h3>
-            <p class="ec-courses">BDS</p>
-            
-            <div style="margin: 8px 0 12px 0;">
-              <div style="font-size: 13px; font-weight: 600; color: #1e293b !important; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                <span style="color: #94a3b8 !important; text-decoration: line-through;">&#8377;298</span>
-                <span style="font-size: 16px; font-weight: 800; color: #f59e0b !important;">&#8377;149</span>
-              </div>
-              <div style="font-size: 11px; font-weight: 700; color: #16a34a !important; margin-top: 2px;">
-                You save &#8377;149
-              </div>
-            </div>
-            
-            <button class="ec-btn" style="background: #facc15; color: #000;"
-              onclick="event.stopPropagation(); openEbookPurchaseModal('Dental', 'All Courses', 149, 'Dental Cutoff eBooks')">
-              Buy Now at &#8377;149
-            </button>
-            <button class="ec-cart-btn" data-ebook="dental"
-              onclick="event.stopPropagation(); addToCart(this, 'dental')"><i class="fas fa-cart-plus"></i> Add to
-              Cart</button>
-            <div style="font-size: 11px; font-weight: 700; color: #ef4444; margin-top: 12px;">⏳ Limited Time Offer</div>
+            <div class="ep-save-box">You Save &#8377;149</div>
           </div>
 
-          <!-- AYUSH -->
-          <div class="ebook-card-v2 scale-up" onclick="console.log('open_category: ayush')">
-            <div class="ec-discount-badge" style="position: absolute; top: -10px; left: -10px; background: linear-gradient(135deg, #ef4444, #f97316); color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; z-index: 10; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">🔥 50% OFF</div>
-            <button class="ec-heart" data-ebook="ayush"
-              onclick="event.stopPropagation(); toggleWishlist(this, 'ayush')"><i class="far fa-heart"></i></button>
-            <div class="ec-icon" style="color: #16a34a !important;">
-              <i class="fas fa-leaf"></i>
-            </div>
-            <h3 class="ec-title">AYUSH</h3>
-            <p class="ec-courses">BAMS, BHMS, BSMS, BUMS</p>
-            
-            <div style="margin: 8px 0 12px 0;">
-              <div style="font-size: 13px; font-weight: 600; color: #1e293b !important; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                <span style="color: #94a3b8 !important; text-decoration: line-through;">&#8377;398</span>
-                <span style="font-size: 16px; font-weight: 800; color: #f59e0b !important;">&#8377;199</span>
-              </div>
-              <div style="font-size: 11px; font-weight: 700; color: #16a34a !important; margin-top: 2px;">
-                You save &#8377;199
-              </div>
-            </div>
-            
-            <button class="ec-btn" style="background: #facc15; color: #000;"
-              onclick="event.stopPropagation(); openEbookPurchaseModal('AYUSH', 'All Courses', 199, 'AYUSH Cutoff eBooks')">
-              Buy Now at &#8377;199
-            </button>
-            <button class="ec-cart-btn" data-ebook="ayush"
-              onclick="event.stopPropagation(); addToCart(this, 'ayush')"><i class="fas fa-cart-plus"></i> Add to
-              Cart</button>
-            <div style="font-size: 11px; font-weight: 700; color: #ef4444; margin-top: 12px;">⏳ Limited Time Offer</div>
-          </div>
-
-          <!-- Veterinary -->
-          <div class="ebook-card-v2 scale-up" onclick="console.log('open_category: veterinary')">
-            <div class="ec-discount-badge" style="position: absolute; top: -10px; left: -10px; background: linear-gradient(135deg, #ef4444, #f97316); color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; z-index: 10; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">🔥 50% OFF</div>
-            <button class="ec-heart" data-ebook="veterinary"
-              onclick="event.stopPropagation(); toggleWishlist(this, 'veterinary')"><i
-                class="far fa-heart"></i></button>
-            <div class="ec-icon" style="color: #f59e0b !important;">
-              <i class="fas fa-paw"></i>
-            </div>
-            <h3 class="ec-title">Veterinary</h3>
-            <p class="ec-courses">BVSc</p>
-            
-            <div style="margin: 8px 0 12px 0;">
-              <div style="font-size: 13px; font-weight: 600; color: #1e293b !important; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                <span style="color: #94a3b8 !important; text-decoration: line-through;">&#8377;298</span>
-                <span style="font-size: 16px; font-weight: 800; color: #f59e0b !important;">&#8377;149</span>
-              </div>
-              <div style="font-size: 11px; font-weight: 700; color: #16a34a !important; margin-top: 2px;">
-                You save &#8377;149
-              </div>
-            </div>
-            
-            <button class="ec-btn" style="background: #facc15; color: #000;"
-              onclick="event.stopPropagation(); openEbookPurchaseModal('Veterinary', 'All Courses', 149, 'Veterinary Cutoff eBooks')">
-              Buy Now at &#8377;149
-            </button>
-            <button class="ec-cart-btn" data-ebook="veterinary"
-              onclick="event.stopPropagation(); addToCart(this, 'veterinary')"><i class="fas fa-cart-plus"></i> Add to
-              Cart</button>
-            <div style="font-size: 11px; font-weight: 700; color: #ef4444; margin-top: 12px;">⏳ Limited Time Offer</div>
-          </div>
-
+          <button class="ep-btn-primary" onclick="event.stopPropagation(); openEbookPurchaseModal('Dental', 'All Courses', 149, 'Dental Cutoff eBooks')">
+            <i class="fas fa-shopping-cart"></i> Buy Now at &#8377;149
+          </button>
+          <button class="ep-btn-secondary" data-ebook="dental" onclick="event.stopPropagation(); addToCart(this, 'dental')">
+            <i class="fas fa-shopping-cart"></i> Add to Cart
+          </button>
+          <div class="ep-footer-text"><i class="fas fa-hourglass-half"></i> Limited Time Offer</div>
         </div>
+
+        <!-- AYUSH -->
+        <div class="ebook-card-premium" onclick="console.log('open_category: ayush')">
+          <div class="ep-badge">50%<br>OFF</div>
+          <button class="ep-heart" data-ebook="ayush" onclick="event.stopPropagation(); toggleWishlist(this, 'ayush')"><i class="far fa-heart"></i></button>
+          
+          <div class="ep-tablet-preview">
+            <div class="ep-tablet-screen">
+              <div class="ep-edition">2025<br>EDITION</div>
+              <div class="ep-screen-top">
+                <img src="assets/logo.webp" class="ep-screen-logo" alt="Logo">
+                <div class="ep-screen-top-text">NEET<br>COUNSELLING</div>
+              </div>
+              <div class="ep-screen-content">
+                <div class="ep-screen-title" style="color: #2E0066;">AYUSH</div>
+                <div class="ep-screen-subtitle" style="background: #4B1E88;">BAMS, BHMS, BSMS, BUMS</div>
+                <div class="ep-screen-desc">COUNSELLING GUIDE eBook</div>
+                
+                <div class="ep-features">
+                  <div><i class="fas fa-check-circle"></i> Counselling Rules & Guide</div>
+                  <div><i class="fas fa-check-circle"></i> Previous Year Cutoffs</div>
+                  <div><i class="fas fa-check-circle"></i> Participating Institute List</div>
+                  <div><i class="fas fa-check-circle"></i> FAQs & Important Info</div>
+                </div>
+                <i class="fas fa-leaf ep-bottom-icon" style="color: #16a34a; opacity: 0.2;"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="ep-category-title">BAMS, BHMS, BSMS, BUMS</div>
+          
+          <div class="ep-price-row">
+            <div class="ep-prices">
+              <span class="ep-old-price">&#8377;398</span>
+              <span class="ep-new-price">&#8377;199</span>
+            </div>
+            <div class="ep-save-box">You Save &#8377;199</div>
+          </div>
+
+          <button class="ep-btn-primary" onclick="event.stopPropagation(); openEbookPurchaseModal('AYUSH', 'All Courses', 199, 'AYUSH Cutoff eBooks')">
+            <i class="fas fa-shopping-cart"></i> Buy Now at &#8377;199
+          </button>
+          <button class="ep-btn-secondary" data-ebook="ayush" onclick="event.stopPropagation(); addToCart(this, 'ayush')">
+            <i class="fas fa-shopping-cart"></i> Add to Cart
+          </button>
+          <div class="ep-footer-text"><i class="fas fa-hourglass-half"></i> Limited Time Offer</div>
+        </div>
+
+        <!-- Veterinary -->
+        <div class="ebook-card-premium" onclick="console.log('open_category: veterinary')">
+          <div class="ep-badge">50%<br>OFF</div>
+          <button class="ep-heart" data-ebook="veterinary" onclick="event.stopPropagation(); toggleWishlist(this, 'veterinary')"><i class="far fa-heart"></i></button>
+          
+          <div class="ep-tablet-preview">
+            <div class="ep-tablet-screen">
+              <div class="ep-edition">2025<br>EDITION</div>
+              <div class="ep-screen-top">
+                <img src="assets/logo.webp" class="ep-screen-logo" alt="Logo">
+                <div class="ep-screen-top-text">NEET<br>COUNSELLING</div>
+              </div>
+              <div class="ep-screen-content">
+                <div class="ep-screen-title" style="color: #2E0066;">VETERINARY</div>
+                <div class="ep-screen-subtitle" style="background: #4B1E88;">BVSc</div>
+                <div class="ep-screen-desc">COUNSELLING GUIDE eBook</div>
+                
+                <div class="ep-features">
+                  <div><i class="fas fa-check-circle"></i> Counselling Rules & Guide</div>
+                  <div><i class="fas fa-check-circle"></i> Previous Year Cutoffs</div>
+                  <div><i class="fas fa-check-circle"></i> Participating Institute List</div>
+                  <div><i class="fas fa-check-circle"></i> FAQs & Important Info</div>
+                </div>
+                <i class="fas fa-paw ep-bottom-icon" style="color: #d97706; opacity: 0.2;"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="ep-category-title">BVSc</div>
+          
+          <div class="ep-price-row">
+            <div class="ep-prices">
+              <span class="ep-old-price">&#8377;298</span>
+              <span class="ep-new-price">&#8377;149</span>
+            </div>
+            <div class="ep-save-box">You Save &#8377;149</div>
+          </div>
+
+          <button class="ep-btn-primary" onclick="event.stopPropagation(); openEbookPurchaseModal('Veterinary', 'All Courses', 149, 'Veterinary Cutoff eBooks')">
+            <i class="fas fa-shopping-cart"></i> Buy Now at &#8377;149
+          </button>
+          <button class="ep-btn-secondary" data-ebook="veterinary" onclick="event.stopPropagation(); addToCart(this, 'veterinary')">
+            <i class="fas fa-shopping-cart"></i> Add to Cart
+          </button>
+          <div class="ep-footer-text"><i class="fas fa-hourglass-half"></i> Limited Time Offer</div>
+        </div>
+
       </div>
     </div>
-    <!-- Medical Options Screen -->
+<!-- Medical Options Screen -->
     <div id="section-medical-options" class="page-section" style="
           background: #f8fafc;
           padding: 20px;
@@ -11693,10 +11846,8 @@
 /* Popup Card */
 #wa-blog-popup {
   position: relative;
-  background: #ffffff;
   border-radius: 16px;
   box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-  overflow: hidden;
   width: 90vw;
   max-width: 420px;
   transform: scale(0.9) translateY(20px);
@@ -11718,30 +11869,35 @@
 
 #wa-blog-popup-close {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  background: rgba(0,0,0,0.5);
+  top: -12px;
+  right: -12px;
+  background: #1f2937;
   color: #fff;
-  border: none;
+  border: 2px solid #fff;
   border-radius: 50%;
-  width: 28px;
-  height: 28px;
-  font-size: 16px;
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+  font-weight: bold;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10;
-  transition: background 0.2s;
+  z-index: 1000;
+  transition: transform 0.2s, background 0.2s;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  padding-bottom: 2px; /* Center the cross vertically */
 }
 #wa-blog-popup-close:hover {
-  background: rgba(0,0,0,0.8);
+  background: #000;
+  transform: scale(1.1);
 }
 #wa-blog-popup img {
   width: 100%;
   height: auto;
   display: block;
   cursor: pointer;
+  border-radius: 16px;
 }
 </style>
 
