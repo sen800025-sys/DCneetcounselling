@@ -11669,6 +11669,166 @@
             }
         }
     </style>
+<!-- Blog WhatsApp Banner Popup -->
+<style>
+/* WhatsApp Popup Overlay */
+#wa-popup-overlay {
+  position: fixed;
+  top: 0; right: 0; bottom: 0; left: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 99999;
+  display: none; /* hidden by default */
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+#wa-popup-overlay.show {
+  opacity: 1;
+}
+
+/* Popup Card */
+#wa-blog-popup {
+  position: relative;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+  overflow: hidden;
+  width: 90vw;
+  max-width: 420px;
+  transform: scale(0.9) translateY(20px);
+}
+#wa-popup-overlay.show #wa-blog-popup {
+  animation: popupScale 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes popupScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+#wa-blog-popup-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: background 0.2s;
+}
+#wa-blog-popup-close:hover {
+  background: rgba(0,0,0,0.8);
+}
+#wa-blog-popup img {
+  width: 100%;
+  height: auto;
+  display: block;
+  cursor: pointer;
+}
+</style>
+
+<div id="wa-popup-overlay">
+  <div id="wa-blog-popup">
+    <button id="wa-blog-popup-close">&times;</button>
+    <a href="https://chat.whatsapp.com/BTyidnuD0Qg2G2k5FsgedA" target="_blank" id="wa-blog-popup-link">
+      <img src="assets/banner%20pop%20up.webp" alt="Join WhatsApp Group" loading="lazy" />
+    </a>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const overlay = document.getElementById('wa-popup-overlay');
+  const closeBtn = document.getElementById('wa-blog-popup-close');
+  const popupLink = document.getElementById('wa-blog-popup-link');
+  
+  function closePopup(e) {
+    if(e && e.currentTarget === closeBtn) {
+      e.preventDefault();
+    }
+    overlay.classList.remove('show');
+    document.body.style.overflow = "auto";
+    setTimeout(() => { overlay.style.display = 'none'; }, 300);
+  }
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', closePopup);
+  }
+  
+  if (popupLink) {
+    popupLink.addEventListener('click', function() {
+      // Small delay to allow the click to register before closing
+      setTimeout(closePopup, 100);
+    });
+  }
+
+  // Prevent closing when clicking outside (do nothing on overlay click)
+  overlay.addEventListener('click', function(e) {
+    // Intentionally left blank: "Overlay click should do nothing"
+  });
+
+  function checkScroll() {
+    // Ensure popup works ONLY inside blog post pages.
+    const blogDetailSection = document.getElementById('section-blog-detail');
+    const isBlogActive = (blogDetailSection && blogDetailSection.style.display !== 'none');
+                         
+    if (!isBlogActive) {
+      if (overlay.style.display !== 'none' && overlay.style.display !== '') {
+        overlay.classList.remove('show');
+        document.body.style.overflow = "auto";
+        setTimeout(() => { overlay.style.display = 'none'; }, 300);
+      }
+      return;
+    }
+
+    // Change key to bypass previous session cache testing
+    if (sessionStorage.getItem("wa_popup_shown_v2") === "true") {
+      return;
+    }
+
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight;
+    const clientHeight = document.documentElement.clientHeight;
+    
+    // If the page is too short to scroll, just show it
+    let scrollPercent = 100;
+    if (scrollHeight > clientHeight) {
+      scrollPercent = (scrollTop / (scrollHeight - clientHeight)) * 100;
+    }
+
+    if (scrollPercent >= 30) {
+      overlay.style.display = 'flex';
+      // Trigger reflow
+      void overlay.offsetWidth;
+      overlay.classList.add('show');
+      document.body.style.overflow = "hidden";
+      sessionStorage.setItem("wa_popup_shown_v2", "true");
+    }
+  }
+
+  window.addEventListener('scroll', checkScroll);
+  // Also check immediately in case the page is very short
+  checkScroll();
+});
+</script>
 </body>
 
 </html>
