@@ -5628,7 +5628,19 @@
         }
 
         .ep-edition {
-          display: none;
+          position: absolute;
+          top: 5px;
+          right: 5px;
+          background: rgba(255, 196, 0, 0.9);
+          color: #000;
+          font-size: 6px;
+          font-weight: 800;
+          padding: 2px 5px;
+          border-radius: 3px;
+          letter-spacing: 0.5px;
+          line-height: 1.2;
+          text-align: center;
+          z-index: 5;
         }
 
         .ep-bottom-icon {
@@ -5744,7 +5756,122 @@
             height: 300px;
           }
         }
+        .ep-section-heading {
+          max-width: 1400px;
+          margin: 0 auto 40px auto;
+          padding: 18px 30px;
+          text-align: center;
+          position: relative;
+          overflow: hidden;
+          animation: epFadeSlideUp 0.7s ease both;
+        }
+
+        @keyframes epFadeSlideUp {
+          from { opacity: 0; transform: translateY(30px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        .ep-glow-left {
+          position: absolute;
+          top: -60px;
+          left: -80px;
+          width: 280px;
+          height: 280px;
+          background: #7B2CFF;
+          border-radius: 50%;
+          filter: blur(140px);
+          opacity: 0.35;
+          pointer-events: none;
+        }
+
+        .ep-glow-right {
+          position: absolute;
+          top: -40px;
+          right: -80px;
+          width: 280px;
+          height: 280px;
+          background: #FFC400;
+          border-radius: 50%;
+          filter: blur(140px);
+          opacity: 0.18;
+          pointer-events: none;
+        }
+
+        .ep-top-badge {
+          display: inline-block;
+          background: rgba(123, 44, 255, 0.15);
+          border: 1px solid rgba(180, 110, 255, 0.45);
+          color: #D9B8FF;
+          font-size: 12px;
+          font-weight: 600;
+          letter-spacing: 1.2px;
+          padding: 6px 16px;
+          border-radius: 999px;
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          box-shadow: 0 0 20px rgba(123,44,255,0.25);
+        }
+
+        .ep-main-title {
+          font-size: 52px;
+          font-weight: 900;
+          line-height: 1.1;
+          margin-top: 18px;
+          color: #FFFFFF;
+          text-shadow: 0 4px 25px rgba(0,0,0,0.45);
+          margin-bottom: 0;
+        }
+
+        .ep-main-title .ep-gold {
+          background: linear-gradient(90deg, #FFD84D 0%, #FFC400 40%, #FFB800 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+
+        .ep-sub-title {
+          font-size: 18px;
+          font-weight: 500;
+          color: #D2C6E8;
+          margin-top: 14px;
+          max-width: 980px;
+          margin-left: auto;
+          margin-right: auto;
+          line-height: 1.6;
+          margin-bottom: 0;
+        }
+
+        .ep-divider {
+          width: 180px;
+          height: 4px;
+          background: linear-gradient(90deg, transparent, #FFC400, #7B2CFF, transparent);
+          border-radius: 999px;
+          margin: 26px auto 0 auto;
+        }
+
+        @media (max-width: 1024px) {
+          .ep-main-title { font-size: 40px; }
+          .ep-sub-title { font-size: 16px; }
+        }
+
+        @media (max-width: 767px) {
+          .ep-section-heading { padding: 12px 16px; margin-bottom: 28px; }
+          .ep-main-title { font-size: 28px; margin-top: 14px; }
+          .ep-sub-title { font-size: 14px; margin-top: 10px; }
+          .ep-top-badge { font-size: 10px; padding: 5px 12px; }
+          .ep-divider { width: 120px; height: 3px; margin-top: 18px; }
+        }
       </style>
+
+      <!-- Section Heading -->
+      <div class="ep-section-heading">
+        <div class="ep-glow-left"></div>
+        <div class="ep-glow-right"></div>
+        <div class="ep-top-badge">✦ CUTOFF DATA & COUNSELLING GUIDES</div>
+        <h2 class="ep-main-title">Premium <span class="ep-gold">eBooks</span> for NEET 2025</h2>
+        <p class="ep-sub-title">Your Complete Guide to Top Medical, Dental, AYUSH & Veterinary Colleges</p>
+        <div class="ep-divider"></div>
+      </div>
 
       <div class="ebook-grid-premium">
 
@@ -5755,7 +5882,7 @@
           
           <div class="ep-tablet-preview">
             <div class="ep-tablet-screen">
-              <div class="ep-edition">2025<br>EDITION</div>
+              <div class="ep-edition">2026<br>EDITION</div>
               <div class="ep-screen-top">
                 <img src="assets/logo.webp" class="ep-screen-logo" alt="Logo">
                 <div class="ep-screen-top-text">NEET<br>COUNSELLING</div>
@@ -5802,7 +5929,7 @@
           
           <div class="ep-tablet-preview">
             <div class="ep-tablet-screen">
-              <div class="ep-edition">2025<br>EDITION</div>
+              <div class="ep-edition">2026<br>EDITION</div>
               <div class="ep-screen-top">
                 <img src="assets/logo.webp" class="ep-screen-logo" alt="Logo">
                 <div class="ep-screen-top-text">NEET<br>COUNSELLING</div>
@@ -5849,7 +5976,7 @@
           
           <div class="ep-tablet-preview">
             <div class="ep-tablet-screen">
-              <div class="ep-edition">2025<br>EDITION</div>
+              <div class="ep-edition">2026<br>EDITION</div>
               <div class="ep-screen-top">
                 <img src="assets/logo.webp" class="ep-screen-logo" alt="Logo">
                 <div class="ep-screen-top-text">NEET<br>COUNSELLING</div>
@@ -5896,7 +6023,7 @@
           
           <div class="ep-tablet-preview">
             <div class="ep-tablet-screen">
-              <div class="ep-edition">2025<br>EDITION</div>
+              <div class="ep-edition">2026<br>EDITION</div>
               <div class="ep-screen-top">
                 <img src="assets/logo.webp" class="ep-screen-logo" alt="Logo">
                 <div class="ep-screen-top-text">NEET<br>COUNSELLING</div>
