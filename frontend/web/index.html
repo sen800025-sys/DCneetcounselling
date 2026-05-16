@@ -6137,6 +6137,236 @@
         </div>
 
       </div>
+
+
+      <!-- Student Review Section -->
+      
+    <style>
+      .sr-section {
+        max-width: 1200px;
+        margin: 40px auto 30px auto;
+        padding: 0px;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        text-align: center;
+        box-sizing: border-box;
+        position: relative;
+        z-index: 10;
+        font-family: 'Poppins', var(--font-main);
+      }
+
+      .sr-badge {
+        display: inline-block;
+        background: rgba(255,196,0,0.08);
+        border: 1px solid #FFC400;
+        color: #FFFFFF;
+        padding: 8px 18px;
+        border-radius: 999px;
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 12px;
+        backdrop-filter: blur(10px);
+      }
+
+      .sr-title {
+        font-size: 36px;
+        font-weight: 900;
+        color: #FFFFFF;
+        margin: 12px 0 0 0;
+        line-height: 1.2;
+      }
+
+      .sr-title span {
+        color: #FFC400 !important;
+      }
+
+      .sr-subtitle {
+        font-size: 16px;
+        font-weight: 500;
+        color: #E5D8FF;
+        margin-top: 8px;
+      }
+
+      .sr-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-top: 24px;
+      }
+
+      .sr-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 196, 0, 0.3);
+        border-radius: 16px;
+        padding: 18px;
+        box-shadow: 0 0 22px rgba(255,196,0,0.05);
+        text-align: left;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .sr-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 0 35px rgba(255,196,0,0.15);
+      }
+
+      .sr-user-info { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+      .sr-avatar { width: 40px; height: 40px; border-radius: 50%; background: #5C22B5; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: #FFFFFF; border: 2px solid #FFC400; }
+      .sr-name { font-size: 16px; font-weight: 800; color: #FFFFFF; }
+      .sr-course { font-size: 12px; color: #FFC400; font-weight: 600; }
+      .sr-college { font-size: 11px; color: #E5D8FF; margin-top: 2px; }
+      .sr-rating { color: #FFC400; font-size: 14px; margin-bottom: 6px;}
+      .sr-review-text { font-size: 13px; color: #FFFFFF; line-height: 1.5; font-style: italic; }
+
+      .sr-trust-bar {
+        margin-top: 24px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 196, 0, 0.3);
+        border-radius: 16px;
+        padding: 18px;
+        box-shadow: 0 0 22px rgba(255,196,0,0.05);
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+      }
+
+      .sr-trust-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        text-align: left;
+      }
+
+      .sr-trust-icon { font-size: 28px; }
+      .sr-trust-title { font-size: 15px; font-weight: 700; color: #FFFFFF; }
+      .sr-trust-subtitle { font-size: 12px; color: #E5D8FF; margin-top: 2px; }
+
+      @media (max-width: 1200px) {
+        .sr-grid { grid-template-columns: repeat(2, 1fr); }
+        .sr-trust-bar { grid-template-columns: repeat(2, 1fr); }
+      }
+
+      @media (max-width: 767px) {
+        .sr-section { padding: 12px; margin-top: 30px; }
+        .sr-title { font-size: 24px !important; }
+        .sr-subtitle { font-size: 13px !important; }
+        .sr-grid { grid-template-columns: repeat(1, 1fr); gap: 12px; }
+        .sr-card { padding: 12px; }
+        .sr-trust-bar { grid-template-columns: repeat(1, 1fr); gap: 10px; padding: 12px; }
+        .sr-trust-item { justify-content: flex-start; }
+      }
+    </style>
+
+      <div class="sr-section">
+        <div class="sr-badge">👥 STUDENT REVIEWS</div>
+        <h2 class="sr-title">Trusted by <span style="color: #FFC400;">Thousands</span> of NEET Aspirants</h2>
+        <p class="sr-subtitle">Real Reviews from Real Students</p>
+
+        <div class="sr-grid">
+          
+        <div class="sr-card">
+          <div class="sr-user-info">
+            <div class="sr-avatar">R</div>
+            <div>
+              <div class="sr-name">Rohan Sharma</div>
+              <div class="sr-course">MBBS Student</div>
+              <div class="sr-college">AIIMS Delhi</div>
+            </div>
+          </div>
+          <div class="sr-rating">
+            ★★★★★
+          </div>
+          <div class="sr-review-text">"The cutoff data and college wise analysis helped me choose the best college. Highly recommended!"</div>
+        </div>
+
+        <div class="sr-card">
+          <div class="sr-user-info">
+            <div class="sr-avatar">A</div>
+            <div>
+              <div class="sr-name">Ananya Patel</div>
+              <div class="sr-course">BDS Student</div>
+              <div class="sr-college">Manipal College of Dental Sciences</div>
+            </div>
+          </div>
+          <div class="sr-rating">
+            ★★★★★
+          </div>
+          <div class="sr-review-text">"Very detailed and updated eBook. The fee structure and seat matrix details were extremely helpful!"</div>
+        </div>
+
+        <div class="sr-card">
+          <div class="sr-user-info">
+            <div class="sr-avatar">R</div>
+            <div>
+              <div class="sr-name">Rahul Verma</div>
+              <div class="sr-course">BAMS Student</div>
+              <div class="sr-college">IMS BHU</div>
+            </div>
+          </div>
+          <div class="sr-rating">
+            ★★★★★
+          </div>
+          <div class="sr-review-text">"Category wise cutoff and preference list made counselling very easy for me."</div>
+        </div>
+
+        <div class="sr-card">
+          <div class="sr-user-info">
+            <div class="sr-avatar">S</div>
+            <div>
+              <div class="sr-name">Sneha Nair</div>
+              <div class="sr-course">BVSc Student</div>
+              <div class="sr-college">GADVASU, Ludhiana</div>
+            </div>
+          </div>
+          <div class="sr-rating">
+            ★★★★★
+          </div>
+          <div class="sr-review-text">"Clear, precise and extremely useful. Bond details and fees structure information is excellent."</div>
+        </div>
+
+        </div>
+
+        <div class="sr-trust-bar">
+          
+        <div class="sr-trust-item">
+          <div class="sr-trust-icon">🛡️</div>
+          <div>
+            <div class="sr-trust-title">100% Authentic</div>
+            <div class="sr-trust-subtitle">Verified Reviews</div>
+          </div>
+        </div>
+
+        <div class="sr-trust-item">
+          <div class="sr-trust-icon">👥</div>
+          <div>
+            <div class="sr-trust-title">Trusted by Thousands</div>
+            
+          </div>
+        </div>
+
+        <div class="sr-trust-item">
+          <div class="sr-trust-icon">🏆</div>
+          <div>
+            <div class="sr-trust-title">Proven Results</div>
+            <div class="sr-trust-subtitle">Better College Selection</div>
+          </div>
+        </div>
+
+        <div class="sr-trust-item">
+          <div class="sr-trust-icon">⬇️</div>
+          <div>
+            <div class="sr-trust-title">Instant Help</div>
+            <div class="sr-trust-subtitle">For Your NEET Journey</div>
+          </div>
+        </div>
+
+        </div>
+      </div>
+
     </div>
 <!-- Medical Options Screen -->
     <div id="section-medical-options" class="page-section" style="
