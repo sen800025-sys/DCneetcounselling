@@ -160,27 +160,29 @@ serve(async (req) => {
 
     if (orderErr) throw new Error("Failed to save order: " + orderErr.message)
 
-    // Mirror to counselling_bookings
-    try {
-      await supabase.from('counselling_bookings').insert({
-        user_id: effectiveUserId || null,
-        full_name: full_name || 'Guest',
-        email: email,
-        mobile: mobile || 'N/A',
-        category: category || null,
-        domicile_state: domicile_state || null,
-        neet_score: neet_score ? parseInt(neet_score) : null,
-        rank: rank ? parseInt(rank) : null,
-        plan_name: product_name || 'Counselling Plan',
-        plan_price: parsedAmount,
-        discounted_price: finalAmount,
-        wallet_used: walletUsed,
-        payment_mode: paymentMode,
-        coupon_code: validReferralCoupon ? validReferralCoupon.code : (validCoupon ? validCoupon.coupon_code : null),
-        payment_status: finalAmount === 0 ? 'paid' : 'pending',
-        order_id: newOrder.id.toString()
-      })
-    } catch (e) { console.error(e) }
+    // Mirror to counselling_bookings if it's not an ebook purchase
+    if (counselling_type !== 'ebook') {
+      try {
+        await supabase.from('counselling_bookings').insert({
+          user_id: effectiveUserId || null,
+          full_name: full_name || 'Guest',
+          email: email,
+          mobile: mobile || 'N/A',
+          category: category || null,
+          domicile_state: domicile_state || null,
+          neet_score: neet_score ? parseInt(neet_score) : null,
+          rank: rank ? parseInt(rank) : null,
+          plan_name: product_name || 'Counselling Plan',
+          plan_price: parsedAmount,
+          discounted_price: finalAmount,
+          wallet_used: walletUsed,
+          payment_mode: paymentMode,
+          coupon_code: validReferralCoupon ? validReferralCoupon.code : (validCoupon ? validCoupon.coupon_code : null),
+          payment_status: finalAmount === 0 ? 'paid' : 'pending',
+          order_id: newOrder.id.toString()
+        })
+      } catch (e) { console.error(e) }
+    }
 
     // If WALLET_ONLY, we need to handle the verification logic immediately
     if (finalAmount === 0) {
