@@ -1,0 +1,339 @@
+    <!-- Rank Predictor Section -->
+    <div id="section-predictor" class="page-section" style="display: none;">
+      <style>
+        #section-predictor {
+          background-color: #140028;
+          color: #FFFFFF;
+          font-family: 'Poppins', sans-serif;
+          min-height: 100vh;
+          position: relative;
+          overflow: hidden;
+          padding: 40px 24px;
+        }
+
+        #section-predictor::before {
+          content: "";
+          position: absolute;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background: radial-gradient(circle at center, #2A0050 0%, #140028 50%, #0B0018 100%);
+          z-index: 0;
+        }
+
+        .predictor-particles {
+          position: absolute;
+          top: 0; left: 0; right: 0; bottom: 0;
+          z-index: 1;
+          pointer-events: none;
+        }
+        
+        .predictor-glow-circle {
+          position: absolute;
+          width: 600px;
+          height: 600px;
+          background: radial-gradient(circle, #B026FF 0%, transparent 70%);
+          opacity: 0.18;
+          border-radius: 50%;
+          top: -200px;
+          right: -200px;
+          z-index: 1;
+        }
+
+        .predictor-content {
+          position: relative;
+          z-index: 2;
+          max-width: 1200px;
+          margin: 0 auto;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .predictor-hero {
+          text-align: center;
+          margin-bottom: 40px;
+        }
+
+        .predictor-title {
+          font-weight: 800;
+          font-size: 72px;
+          letter-spacing: -2px;
+          line-height: 1.1;
+          margin: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .predictor-title .line1 {
+          color: #FFD233;
+        }
+
+        .predictor-title .line2 {
+          background: linear-gradient(to right, #FFFFFF, #FFD233);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+
+        .predictor-subtitle {
+          font-size: 20px;
+          color: rgba(255,255,255,0.78);
+          max-width: 720px;
+          margin: 20px auto 0;
+        }
+
+        .predictor-card {
+          background: rgba(29,5,56,0.92);
+          border-radius: 32px;
+          border: 1px solid rgba(176,38,255,0.45);
+          padding: 42px;
+          width: 100%;
+          max-width: 950px;
+          box-shadow: 0 0 60px rgba(176,38,255,0.18);
+          text-align: center;
+          box-sizing: border-box;
+        }
+
+        .predictor-card-title {
+          color: #FFFFFF;
+          font-size: 34px;
+          font-weight: 700;
+          margin: 0 0 20px;
+        }
+
+        .predictor-score-display {
+          font-size: 110px;
+          font-weight: 800;
+          color: #FFFFFF;
+          line-height: 1;
+          margin-bottom: 30px;
+          display: flex;
+          justify-content: center;
+          align-items: baseline;
+        }
+
+        .predictor-score-max {
+          font-size: 40px;
+          color: rgba(255,255,255,0.45);
+          margin-left: 5px;
+        }
+
+        .predictor-slider-container {
+          margin: 40px 0;
+          position: relative;
+        }
+
+        .predictor-slider {
+          -webkit-appearance: none;
+          width: 100%;
+          height: 10px;
+          background: rgba(255,255,255,0.12);
+          border-radius: 5px;
+          outline: none;
+        }
+
+        .predictor-slider::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 34px;
+          height: 34px;
+          border-radius: 50%;
+          background: #FFFFFF;
+          border: 4px solid #FFD233;
+          box-shadow: 0 0 24px rgba(255,210,51,0.55);
+          cursor: pointer;
+          transition: transform 0.2s;
+        }
+
+        .predictor-slider::-webkit-slider-thumb:hover {
+          transform: scale(1.1);
+        }
+
+        .predictor-slider::-moz-range-thumb {
+          width: 34px;
+          height: 34px;
+          border-radius: 50%;
+          background: #FFFFFF;
+          border: 4px solid #FFD233;
+          box-shadow: 0 0 24px rgba(255,210,51,0.55);
+          cursor: pointer;
+        }
+
+        .predictor-btn {
+          height: 78px;
+          border-radius: 24px;
+          background: linear-gradient(to right, #FFD233, #B026FF);
+          color: #1A0030;
+          font-size: 30px;
+          font-weight: 800;
+          border: none;
+          padding: 0 40px;
+          cursor: pointer;
+          box-shadow: 0 0 35px rgba(255,210,51,0.4);
+          transition: transform 0.3s, box-shadow 0.3s;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 15px;
+          margin-top: 20px;
+        }
+
+        .predictor-btn:hover {
+          transform: scale(1.03);
+          box-shadow: 0 0 50px rgba(255,210,51,0.6);
+        }
+
+        /* Result Section */
+        .predictor-result-section {
+          margin-top: 42px;
+          display: none; /* hidden by default */
+        }
+
+        .predictor-result-card {
+          background: rgba(29,5,56,0.95);
+          border-radius: 34px;
+          padding: 48px;
+          border: 1px solid rgba(176,38,255,0.5);
+          box-shadow: 0 0 70px rgba(176,38,255,0.22);
+          text-align: center;
+        }
+
+        .predictor-result-badge {
+          background: #2A0048;
+          border: 1px solid rgba(255,210,51,0.4);
+          color: #FFD233;
+          font-weight: 700;
+          font-size: 22px;
+          padding: 14px 34px;
+          border-radius: 20px;
+          display: inline-block;
+          margin-bottom: 20px;
+        }
+
+        .predictor-rank-display {
+          color: #FFD233;
+          font-size: 180px;
+          font-weight: 900;
+          letter-spacing: -6px;
+          line-height: 1;
+          margin: 20px 0;
+        }
+
+        .predictor-result-label {
+          color: rgba(255,255,255,0.65);
+          font-size: 26px;
+          font-weight: 500;
+          letter-spacing: 2px;
+        }
+
+        /* Responsive */
+        @media(max-width: 768px) {
+          #section-predictor { padding: 40px 18px; }
+          .predictor-title { font-size: 44px; }
+          .predictor-subtitle { font-size: 15px; }
+          .predictor-card { padding: 24px; }
+          .predictor-score-display { font-size: 70px; }
+          .predictor-score-max { font-size: 24px; }
+          .predictor-btn { height: 64px; font-size: 20px; }
+          .predictor-rank-display { font-size: 100px; }
+          .predictor-result-label { font-size: 18px; }
+          .predictor-result-badge { font-size: 16px; padding: 10px 20px; }
+        }
+      </style>
+
+      <div class="predictor-glow-circle"></div>
+
+      <div class="predictor-content">
+        <div class="predictor-hero">
+          <h1 class="predictor-title">
+            <span class="line1">DC</span>
+            <span class="line2">RANK PREDICTOR</span>
+          </h1>
+          <p class="predictor-subtitle">Enter your expected NEET score and get your estimated All India Rank instantly.</p>
+        </div>
+
+        <div class="predictor-card">
+          <h2 class="predictor-card-title">Enter Your Expected Score</h2>
+          
+          <div class="predictor-score-display">
+            <span id="predictorScoreValue">620</span><span class="predictor-score-max">/720</span>
+          </div>
+
+          <div class="predictor-slider-container">
+            <input type="range" id="predictorScoreSlider" class="predictor-slider" min="0" max="720" value="620">
+          </div>
+
+          <button id="predictRankBtn" class="predictor-btn">
+            PREDICT MY RANK <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+
+        <div id="predictorResultSection" class="predictor-result-section">
+          <div class="predictor-result-card">
+            <div class="predictor-result-badge">YOUR PREDICTED RANK</div>
+            <div id="predictorRankResult" class="predictor-rank-display">--</div>
+            <div class="predictor-result-label">ESTIMATED ALL INDIA RANK</div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        (function() {
+          const slider = document.getElementById('predictorScoreSlider');
+          const scoreValue = document.getElementById('predictorScoreValue');
+          const predictBtn = document.getElementById('predictRankBtn');
+          const resultSection = document.getElementById('predictorResultSection');
+          const rankResult = document.getElementById('predictorRankResult');
+
+          function updateSliderBackground() {
+            const val = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
+            slider.style.background = `linear-gradient(to right, #FFD233 ${val}%, #D45BFF ${val}%, rgba(255,255,255,0.12) ${val}%)`;
+          }
+
+          slider.addEventListener('input', function() {
+            scoreValue.textContent = this.value;
+            updateSliderBackground();
+            resultSection.style.display = 'none';
+          });
+          
+          updateSliderBackground();
+
+          predictBtn.addEventListener('click', function() {
+            const score = parseInt(slider.value, 10);
+            let rank = 1;
+            
+            if (score >= 715) rank = Math.floor(Math.random() * 50) + 1;
+            else if (score >= 700) rank = Math.floor(Math.random() * 500) + 50;
+            else if (score >= 650) rank = Math.floor(Math.random() * 5000) + 1000;
+            else if (score >= 600) rank = Math.floor(Math.random() * 15000) + 6000;
+            else if (score >= 500) rank = Math.floor(Math.random() * 50000) + 20000;
+            else if (score >= 400) rank = Math.floor(Math.random() * 100000) + 70000;
+            else if (score >= 300) rank = Math.floor(Math.random() * 300000) + 150000;
+            else rank = Math.floor(Math.random() * 1000000) + 500000;
+            
+            resultSection.style.display = 'block';
+            
+            let current = 0;
+            const target = rank;
+            const duration = 1800; 
+            const stepTime = 20; 
+            const steps = duration / stepTime;
+            const increment = target / steps;
+            
+            const timer = setInterval(() => {
+              current += increment;
+              if (current >= target) {
+                current = target;
+                clearInterval(timer);
+                rankResult.textContent = current.toLocaleString();
+              } else {
+                rankResult.textContent = Math.floor(current).toLocaleString();
+              }
+            }, stepTime);
+            
+            setTimeout(() => {
+              resultSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+          });
+        })();
+      </script>
+    </div>
