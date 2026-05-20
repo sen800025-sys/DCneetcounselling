@@ -8261,11 +8261,13 @@
           // Expose the actual prediction trigger for the popup
           window.triggerPrediction = function() {
             const score = parseInt(slider.value, 10);
+            const categoryElement = document.getElementById('plpCategory');
+            const category = categoryElement ? categoryElement.value.trim() : 'General';
             const { predictedRank, minRank, maxRank } = predictRank(score);
 
             // Use the premium cinematic loading & reveal system
             if (window.showAIRLoadingAndReveal) {
-              window.showAIRLoadingAndReveal(minRank, maxRank, score);
+              window.showAIRLoadingAndReveal(minRank, maxRank, score, category);
             }
           };
         })();;
@@ -14578,7 +14580,7 @@ document.addEventListener('DOMContentLoaded', () => {
     "Finalizing AIR range..."
   ];
 
-  window.showAIRLoadingAndReveal = function(minRank, maxRank, score) {
+  window.showAIRLoadingAndReveal = function(minRank, maxRank, score, category) {
     var overlay = document.getElementById('airLoadingOverlay');
     var loadingState = document.getElementById('airLoadingState');
     var resultContainer = document.getElementById('airResultContainer');
@@ -14649,14 +14651,14 @@ document.addEventListener('DOMContentLoaded', () => {
             loadingState.style.display = 'none';
             loadingState.style.opacity = '1';
             loadingState.style.transition = '';
-            showResultReveal(minRank, maxRank, score);
+            showResultReveal(minRank, maxRank, score, category);
           }, 400);
         }, 500);
       }
     }, 50);
   };
 
-  function showResultReveal(minRank, maxRank, score) {
+  function showResultReveal(minRank, maxRank, score, category) {
     var resultContainer = document.getElementById('airResultContainer');
     var rankEl = document.getElementById('airResultRank');
 
@@ -14712,6 +14714,123 @@ document.addEventListener('DOMContentLoaded', () => {
     var steps = duration / stepTime;
     var currentStep = 0;
 
+    // Calculate stats
+    var totalStudents = 2400000;
+    var percentile = ((totalStudents - maxRank) / totalStudents * 100).toFixed(1);
+
+    var cat = category ? category.toUpperCase().trim() : 'GENERAL';
+    if (!['GENERAL', 'OBC', 'EWS', 'SC', 'ST'].includes(cat)) {
+      cat = 'GENERAL';
+    }
+
+    var confidenceLevel = '';
+    var confIcon = '';
+    var glowColor = '';
+    var textColor = '';
+    var borderColor = '';
+    var collegeNote = '';
+    var statusKey = '';
+
+    if (cat === 'GENERAL') {
+      if (score >= 650) statusKey = 'VERY_HIGH';
+      else if (score >= 620) statusKey = 'HIGH';
+      else if (score >= 580) statusKey = 'MODERATE';
+      else if (score >= 520) statusKey = 'COMPETITIVE';
+      else if (score >= 450) statusKey = 'LOW';
+      else statusKey = 'VERY_DIFFICULT';
+    } else if (cat === 'OBC') {
+      if (score >= 620) statusKey = 'VERY_HIGH';
+      else if (score >= 580) statusKey = 'HIGH';
+      else if (score >= 530) statusKey = 'MODERATE';
+      else if (score >= 470) statusKey = 'COMPETITIVE';
+      else if (score >= 400) statusKey = 'LOW';
+      else statusKey = 'VERY_DIFFICULT';
+    } else if (cat === 'EWS') {
+      if (score >= 630) statusKey = 'VERY_HIGH';
+      else if (score >= 590) statusKey = 'HIGH';
+      else if (score >= 540) statusKey = 'MODERATE';
+      else if (score >= 480) statusKey = 'COMPETITIVE';
+      else if (score >= 420) statusKey = 'LOW';
+      else statusKey = 'VERY_DIFFICULT';
+    } else if (cat === 'SC') {
+      if (score >= 580) statusKey = 'VERY_HIGH';
+      else if (score >= 520) statusKey = 'HIGH';
+      else if (score >= 450) statusKey = 'MODERATE';
+      else if (score >= 380) statusKey = 'COMPETITIVE';
+      else if (score >= 320) statusKey = 'LOW';
+      else statusKey = 'VERY_DIFFICULT';
+    } else if (cat === 'ST') {
+      if (score >= 540) statusKey = 'VERY_HIGH';
+      else if (score >= 470) statusKey = 'HIGH';
+      else if (score >= 400) statusKey = 'MODERATE';
+      else if (score >= 320) statusKey = 'COMPETITIVE';
+      else if (score >= 250) statusKey = 'LOW';
+      else statusKey = 'VERY_DIFFICULT';
+    }
+
+    if (statusKey === 'VERY_HIGH') {
+      confidenceLevel = 'VERY HIGH CHANCE';
+      confIcon = '✨';
+      glowColor = 'rgba(46, 213, 115, 0.6)'; // green glow
+      borderColor = '#FFD700'; // gold border
+      textColor = '#2ed573';
+    } else if (statusKey === 'HIGH') {
+      confidenceLevel = 'HIGH CHANCE';
+      confIcon = '🔥';
+      glowColor = 'rgba(176, 38, 255, 0.6)'; // purple glow
+      borderColor = '#FFD700'; // gold
+      textColor = '#FFD700'; 
+    } else if (statusKey === 'MODERATE') {
+      confidenceLevel = 'MODERATE CHANCE';
+      confIcon = '⚡';
+      glowColor = 'rgba(176, 38, 255, 0.6)'; // purple glow
+      borderColor = '#FFD233'; // yellow
+      textColor = '#FFD233';
+    } else if (statusKey === 'COMPETITIVE') {
+      confidenceLevel = 'COMPETITIVE ZONE';
+      confIcon = '🎯';
+      glowColor = 'rgba(176, 38, 255, 0.6)'; // purple glow
+      borderColor = '#ffab00'; // orange
+      textColor = '#ffab00';
+    } else if (statusKey === 'LOW') {
+      confidenceLevel = 'LOW CHANCE';
+      confIcon = '⚠';
+      glowColor = 'rgba(255, 107, 0, 0.6)'; // red-orange glow
+      borderColor = '#ff6b00';
+      textColor = '#ff6b00';
+    } else { 
+      confidenceLevel = 'VERY DIFFICULT';
+      confIcon = '❌';
+      glowColor = 'rgba(255, 71, 87, 0.6)'; // dark red glow
+      borderColor = '#ff4757';
+      textColor = '#ff4757';
+    }
+
+    if (statusKey === 'LOW' || statusKey === 'VERY_DIFFICULT') {
+      collegeNote = 'Private and semi-government colleges may be safer options.';
+      if (cat === 'GENERAL' && statusKey === 'VERY_DIFFICULT') {
+          collegeNote = 'Government MBBS competition remains extremely high in this score range.';
+      }
+    } else {
+      if (cat === 'GENERAL') collegeNote = 'Government MBBS competition remains extremely high in this score range.';
+      else if (cat === 'OBC' || cat === 'EWS') collegeNote = 'You may have decent chances in state quota counselling.';
+      else if (cat === 'SC') collegeNote = 'Strong possibility under reserved category counselling.';
+      else if (cat === 'ST') collegeNote = 'This score may provide good opportunities in multiple states.';
+    }
+
+    // Populate stats - ONE COMPACT CHIP
+    statsEl.innerHTML =
+      '<div class="air-stat-pill"><span class="air-stat-icon">🏆</span> Top ' + percentile + ' Percentile</div>';
+
+    confBadge.textContent = confIcon + ' ' + confidenceLevel;
+    confBadge.style.borderColor = borderColor;
+    confBadge.style.color = textColor;
+    
+    // Initial hidden state for animation
+    confBadge.style.opacity = '0';
+    confBadge.style.transform = 'scale(0.9)';
+    confBadge.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+
     var timer = setInterval(function() {
       currentStep++;
       var progress = currentStep / steps;
@@ -14729,66 +14848,21 @@ document.addEventListener('DOMContentLoaded', () => {
         var finalVal = minRank.toLocaleString() + ' \u2013 ' + maxRank.toLocaleString();
         rankEl.textContent = finalVal;
         adjustRankFontSize(finalVal);
+        
+        // Badge reveal animation 300ms after AIR reveals
+        setTimeout(function() {
+            confBadge.style.opacity = '1';
+            confBadge.style.transform = 'scale(1)';
+            
+            // Subtle glow pulse
+            confBadge.style.boxShadow = '0 0 45px ' + glowColor;
+            setTimeout(function() {
+                confBadge.style.boxShadow = '0 0 20px ' + glowColor;
+                confBadge.style.transition = 'all 0.3s ease'; // reset transition for hover if any
+            }, 500);
+        }, 300);
       }
     }, stepTime);
-
-    // Calculate stats
-    var totalStudents = 2400000;
-    var percentile = ((totalStudents - maxRank) / totalStudents * 100).toFixed(1);
-
-    var confidenceLevel = '';
-    var confIcon = '';
-    var glowColor = '';
-    var textColor = '';
-    var borderColor = '';
-    
-    if (score >= 650) { 
-        confidenceLevel = 'VERY HIGH CHANCE'; 
-        confIcon = '✨'; 
-        glowColor = 'rgba(46, 213, 115, 0.4)'; 
-        borderColor = 'rgba(46, 213, 115, 0.6)';
-        textColor = '#2ed573';
-    } else if (score >= 600) { 
-        confidenceLevel = 'HIGH CHANCE'; 
-        confIcon = '🔥'; 
-        glowColor = 'rgba(255, 171, 0, 0.4)'; 
-        borderColor = 'rgba(255, 171, 0, 0.6)';
-        textColor = '#ffab00';
-    } else if (score >= 550) { 
-        confidenceLevel = 'MODERATE CHANCE'; 
-        confIcon = '⚡'; 
-        glowColor = 'rgba(255, 210, 51, 0.4)'; 
-        borderColor = 'rgba(255, 210, 51, 0.6)';
-        textColor = '#FFD233';
-    } else if (score >= 450) { 
-        confidenceLevel = 'COMPETITIVE ZONE'; 
-        confIcon = '🎯'; 
-        glowColor = 'rgba(255, 107, 0, 0.4)'; 
-        borderColor = 'rgba(255, 107, 0, 0.6)';
-        textColor = '#ff6b00';
-    } else { 
-        confidenceLevel = 'TOUGH COMPETITION'; 
-        confIcon = '⚠'; 
-        glowColor = 'rgba(255, 71, 87, 0.4)'; 
-        borderColor = 'rgba(255, 71, 87, 0.6)';
-        textColor = '#ff4757';
-    }
-
-    var collegeNote = '';
-    if (score >= 650) collegeNote = 'Excellent possibility for top Government Medical Colleges.';
-    else if (score >= 600) collegeNote = 'Strong possibility for Government Medical Colleges.';
-    else if (score >= 550) collegeNote = 'Good possibility under state quota counselling.';
-    else if (score >= 450) collegeNote = 'Your score falls in a competitive AIR bracket.';
-    else collegeNote = 'Competition remains high in this score range.';
-
-    // Populate stats - ONE COMPACT CHIP
-    statsEl.innerHTML =
-      '<div class="air-stat-pill"><span class="air-stat-icon">🏆</span> Top ' + percentile + ' Percentile</div>';
-
-    confBadge.textContent = confIcon + ' ' + confidenceLevel;
-    confBadge.style.boxShadow = '0 0 20px ' + glowColor;
-    confBadge.style.borderColor = borderColor;
-    confBadge.style.color = textColor;
     
     noteEl.textContent = collegeNote;
 
