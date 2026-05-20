@@ -14262,10 +14262,10 @@ document.addEventListener('DOMContentLoaded', () => {
   position: relative;
   z-index: 2;
   width: 420px;
-  background: linear-gradient(180deg, rgba(42,0,82,0.94) 0%, rgba(24,0,45,0.96) 100%);
+  background: linear-gradient(180deg, rgba(42,0,82,0.96) 0%, rgba(24,0,45,0.96) 100%);
   border: 1px solid rgba(255,210,51,0.18);
-  border-radius: 32px;
-  box-shadow: 0 0 90px rgba(176,38,255,0.25);
+  border-radius: 34px;
+  box-shadow: 0 0 80px rgba(176,38,255,0.22);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   padding: 44px 32px 36px;
@@ -14430,69 +14430,69 @@ document.addEventListener('DOMContentLoaded', () => {
 }
 
 .air-result-rank {
-  font-size: 120px;
+  font-size: 54px;
   font-weight: 900;
-  letter-spacing: -4px;
+  letter-spacing: -1px;
   line-height: 1.1;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-word;
   display: block;
   width: 100%;
-  margin: 8px 0 16px;
+  margin: 16px 0 32px;
   background: linear-gradient(180deg, #FFF3A0 0%, #FFD233 30%, #FFCC1A 60%, #F0A000 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 40px rgba(255,210,51,0.4));
+  filter: drop-shadow(0 0 40px rgba(255,210,51,0.28));
   animation: airRankGlow 3s ease-in-out infinite;
 }
 @keyframes airRankGlow {
-  0%, 100% { filter: drop-shadow(0 0 40px rgba(255,210,51,0.35)); }
-  50% { filter: drop-shadow(0 0 55px rgba(255,210,51,0.55)); }
+  0%, 100% { filter: drop-shadow(0 0 40px rgba(255,210,51,0.28)); }
+  50% { filter: drop-shadow(0 0 55px rgba(255,210,51,0.45)); }
 }
 
 .air-result-stats {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
   justify-content: center;
   margin-top: 16px;
+  margin-bottom: 32px;
 }
 .air-stat-pill {
   background: rgba(255,255,255,0.05);
   border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 14px;
-  padding: 10px 18px;
-  font-size: 13px;
-  color: rgba(255,255,255,0.78);
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 14px;
+  color: rgba(255,255,255,0.88);
   display: flex;
   align-items: center;
   gap: 6px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 .air-stat-pill .air-stat-icon {
   font-size: 16px;
 }
-.air-stat-pill strong {
-  color: #FFD233;
-  font-weight: 700;
-}
 
-.air-confidence-badge {
+.air-college-status-badge {
   display: inline-block;
-  margin-top: 18px;
-  padding: 8px 20px;
-  background: linear-gradient(90deg, rgba(255,210,51,0.15), rgba(176,38,255,0.15));
-  border: 1px solid rgba(255,210,51,0.3);
-  border-radius: 12px;
+  margin-bottom: 24px;
+  padding: 16px 28px;
+  background: rgba(42,0,82,0.72);
+  border: 1px solid rgba(255,210,51,0.22);
+  border-radius: 999px;
   color: #FFD233;
   font-weight: 700;
-  font-size: 13px;
-  letter-spacing: 1px;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
 }
 
 .air-result-note {
-  margin-top: 14px;
-  font-size: 14px;
-  color: rgba(255,255,255,0.6);
+  margin: 0 auto;
+  font-size: 18px;
+  color: rgba(255,255,255,0.62);
   font-style: italic;
+  line-height: 1.6;
+  max-width: 80%;
 }
 
 /* ═══ MOBILE ═══ */
@@ -14506,11 +14506,11 @@ document.addEventListener('DOMContentLoaded', () => {
   .air-analysis-text { font-size: 13px; }
   .air-scanner-ring { width: 72px; height: 72px; margin-bottom: 18px; }
   .air-scanner-icon { font-size: 26px; }
-  .air-result-rank { font-size: 64px; letter-spacing: -2px; }
+  .air-result-rank { font-size: 48px; letter-spacing: -1px; margin: 12px 0 24px; }
   .air-result-badge-top { font-size: 12px; padding: 6px 16px; }
-  .air-stat-pill { font-size: 12px; padding: 8px 12px; }
-  .air-confidence-badge { font-size: 11px; padding: 6px 14px; }
-  .air-result-note { font-size: 12px; }
+  .air-stat-pill { font-size: 12px; padding: 6px 14px; }
+  .air-college-status-badge { font-size: 13px; padding: 12px 20px; }
+  .air-result-note { font-size: 14px; max-width: 95%; }
   .air-glow-blob-1 { width: 250px; height: 250px; }
   .air-glow-blob-2 { width: 200px; height: 200px; }
 }
@@ -14547,7 +14547,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="air-result-badge-top">YOUR PREDICTED AIR</div>
       <div class="air-result-rank" id="airResultRank">--</div>
       <div id="airResultStats" class="air-result-stats"></div>
-      <div class="air-confidence-badge" id="airConfBadge">⚡ HIGH CONFIDENCE</div>
+      <div class="air-college-status-badge" id="airConfBadge"></div>
       <div class="air-result-note" id="airResultNote"></div>
     </div>
   </div>
@@ -14666,31 +14666,31 @@ document.addEventListener('DOMContentLoaded', () => {
       
       if (isMobile) {
         if (len > 18) {
-          rankEl.style.fontSize = '34px';
-          rankEl.style.letterSpacing = '-0.5px';
+          rankEl.style.fontSize = '24px';
+          rankEl.style.letterSpacing = '0px';
         } else if (len > 14) {
+          rankEl.style.fontSize = '28px';
+          rankEl.style.letterSpacing = '0px';
+        } else if (len > 10) {
+          rankEl.style.fontSize = '32px';
+          rankEl.style.letterSpacing = '-0.5px';
+        } else {
           rankEl.style.fontSize = '40px';
           rankEl.style.letterSpacing = '-1px';
-        } else if (len > 10) {
-          rankEl.style.fontSize = '48px';
-          rankEl.style.letterSpacing = '-1.5px';
-        } else {
-          rankEl.style.fontSize = '56px';
-          rankEl.style.letterSpacing = '-2px';
         }
       } else {
         if (len > 18) {
-          rankEl.style.fontSize = '68px';
-          rankEl.style.letterSpacing = '-2px';
+          rankEl.style.fontSize = '32px';
+          rankEl.style.letterSpacing = '0px';
         } else if (len > 14) {
-          rankEl.style.fontSize = '84px';
-          rankEl.style.letterSpacing = '-3px';
+          rankEl.style.fontSize = '38px';
+          rankEl.style.letterSpacing = '-0.5px';
         } else if (len > 10) {
-          rankEl.style.fontSize = '100px';
-          rankEl.style.letterSpacing = '-4px';
+          rankEl.style.fontSize = '44px';
+          rankEl.style.letterSpacing = '-1px';
         } else {
-          rankEl.style.fontSize = '120px';
-          rankEl.style.letterSpacing = '-4px';
+          rankEl.style.fontSize = '54px';
+          rankEl.style.letterSpacing = '-1px';
         }
       }
     }
@@ -14734,28 +14734,61 @@ document.addEventListener('DOMContentLoaded', () => {
     // Calculate stats
     var totalStudents = 2400000;
     var percentile = ((totalStudents - maxRank) / totalStudents * 100).toFixed(1);
-    var aheadOf = totalStudents - maxRank;
-    var aheadOfLakh = (aheadOf / 100000).toFixed(1);
 
-    var confidenceLevel = 'HIGH';
-    var confIcon = '⚡';
-    if (score >= 650) { confidenceLevel = 'VERY HIGH'; confIcon = '🔥'; }
-    else if (score >= 500) { confidenceLevel = 'HIGH'; confIcon = '⚡'; }
-    else if (score >= 350) { confidenceLevel = 'MODERATE'; confIcon = '📊'; }
-    else { confidenceLevel = 'ESTIMATED'; confIcon = '📈'; }
+    var confidenceLevel = '';
+    var confIcon = '';
+    var glowColor = '';
+    var textColor = '';
+    var borderColor = '';
+    
+    if (score >= 650) { 
+        confidenceLevel = 'VERY HIGH CHANCE'; 
+        confIcon = '✨'; 
+        glowColor = 'rgba(46, 213, 115, 0.4)'; 
+        borderColor = 'rgba(46, 213, 115, 0.6)';
+        textColor = '#2ed573';
+    } else if (score >= 600) { 
+        confidenceLevel = 'HIGH CHANCE'; 
+        confIcon = '🔥'; 
+        glowColor = 'rgba(255, 171, 0, 0.4)'; 
+        borderColor = 'rgba(255, 171, 0, 0.6)';
+        textColor = '#ffab00';
+    } else if (score >= 550) { 
+        confidenceLevel = 'MODERATE CHANCE'; 
+        confIcon = '⚡'; 
+        glowColor = 'rgba(255, 210, 51, 0.4)'; 
+        borderColor = 'rgba(255, 210, 51, 0.6)';
+        textColor = '#FFD233';
+    } else if (score >= 450) { 
+        confidenceLevel = 'COMPETITIVE ZONE'; 
+        confIcon = '🎯'; 
+        glowColor = 'rgba(255, 107, 0, 0.4)'; 
+        borderColor = 'rgba(255, 107, 0, 0.6)';
+        textColor = '#ff6b00';
+    } else { 
+        confidenceLevel = 'TOUGH COMPETITION'; 
+        confIcon = '⚠'; 
+        glowColor = 'rgba(255, 71, 87, 0.4)'; 
+        borderColor = 'rgba(255, 71, 87, 0.6)';
+        textColor = '#ff4757';
+    }
 
     var collegeNote = '';
-    if (score >= 600) collegeNote = 'Strong possibility for Government Medical Colleges.';
-    else if (score >= 500) collegeNote = 'Good chances for Government/Private Medical Colleges.';
-    else if (score >= 400) collegeNote = 'Possibilities in Private Medical Colleges.';
-    else collegeNote = 'Consider preparation strategies for better rank.';
+    if (score >= 650) collegeNote = 'Excellent possibility for top Government Medical Colleges.';
+    else if (score >= 600) collegeNote = 'Strong possibility for Government Medical Colleges.';
+    else if (score >= 550) collegeNote = 'Good possibility under state quota counselling.';
+    else if (score >= 450) collegeNote = 'Your score falls in a competitive AIR bracket.';
+    else collegeNote = 'Competition remains high in this score range.';
 
-    // Populate stats
+    // Populate stats - ONE COMPACT CHIP
     statsEl.innerHTML =
-      '<div class="air-stat-pill"><span class="air-stat-icon">🏆</span> Top <strong>' + percentile + '%</strong> of aspirants</div>' +
-      '<div class="air-stat-pill"><span class="air-stat-icon">👥</span> Ahead of <strong>~' + aheadOfLakh + ' lakh</strong> students</div>';
+      '<div class="air-stat-pill"><span class="air-stat-icon">🏆</span> Top ' + percentile + ' Percentile</div>';
 
-    confBadge.textContent = confIcon + ' ' + confidenceLevel + ' CONFIDENCE';
+    confBadge.textContent = confIcon + ' ' + confidenceLevel;
+    confBadge.style.boxShadow = '0 0 20px ' + glowColor;
+    confBadge.style.borderColor = borderColor;
+    confBadge.style.color = textColor;
+    
     noteEl.textContent = collegeNote;
 
     // Also update the original result section on the page
