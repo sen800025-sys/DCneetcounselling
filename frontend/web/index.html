@@ -7186,6 +7186,15 @@
         .rc-btn-copy:hover { background: rgba(255, 255, 255, 0.2); }
         .rc-btn-use { flex: 1; background: linear-gradient(90deg, #ec4899, #8b5cf6); border: none; color: white; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; text-decoration: none; display: flex; justify-content: center; align-items: center; gap: 8px; }
         .rc-btn-use:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(236, 72, 153, 0.3); }
+        .pcb-desktop-only { display: block; }
+        .pcb-mobile-only { display: none; }
+        .pcb-btn-text-sub {
+          font-size: 16px; font-weight: 600; opacity: 0.9;
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           MOBILE RESPONSIVENESS
+        ═══════════════════════════════════════════════════════════ */
         @media (min-width: 768px) { .rc-body { flex-direction: row; justify-content: space-between; align-items: center; } .rc-code-container { flex-direction: column; align-items: flex-start; gap: 8px; } .rc-actions { width: 300px; margin-top: 0; } }
       </style>
       
@@ -14198,17 +14207,118 @@ document.addEventListener('DOMContentLoaded', () => {
   -webkit-backdrop-filter: blur(16px);
   z-index: 999999;
   display: none;
-  align-items: center;
-  justify-content: center;
+  overflow-y: auto;
+  padding: 40px 16px;
   opacity: 0;
   transition: opacity 0.4s ease;
 }
 .air-loading-overlay.active {
   display: flex;
+  flex-direction: column;
   opacity: 1;
+}
+.air-overlay-inner {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 .air-loading-overlay.fade-out {
   opacity: 0;
+}
+
+.air-close-btn {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 44px;
+  height: 44px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFF;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 100;
+  transition: all 0.3s ease;
+  opacity: 0;
+  pointer-events: none;
+}
+.air-loading-overlay.active .air-close-btn {
+  opacity: 1;
+  pointer-events: auto;
+  transition-delay: 0.5s;
+}
+.air-close-btn:hover {
+  background: rgba(255,255,255,0.15);
+  transform: scale(1.1);
+}
+@media (max-width: 768px) {
+  .air-close-btn {
+    top: 16px;
+    right: 16px;
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+}
+
+/* EXIT POPUP MODAL */
+.exit-popup-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.exit-popup-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.exit-popup-content {
+  position: relative;
+  width: 90%;
+  max-width: 380px;
+  transform: scale(0.9);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.exit-popup-overlay.active .exit-popup-content {
+  transform: scale(1);
+}
+.exit-popup-img {
+  width: 100%;
+  height: auto;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  display: block;
+}
+.exit-close-btn {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  width: 32px; height: 32px;
+  background: #2a2a2a;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.2);
 }
 
 /* Ambient glow blobs */
@@ -14264,14 +14374,16 @@ document.addEventListener('DOMContentLoaded', () => {
 .air-loading-card {
   position: relative;
   z-index: 2;
-  width: 420px;
+  width: 100%;
+  max-width: 780px;
+  margin: 0 auto;
   background: linear-gradient(180deg, rgba(42,0,82,0.96) 0%, rgba(24,0,45,0.96) 100%);
   border: 1px solid rgba(255,210,51,0.18);
-  border-radius: 34px;
-  box-shadow: 0 0 80px rgba(176,38,255,0.22);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  padding: 44px 32px 36px;
+  border-radius: 28px;
+  box-shadow: 0 0 48px rgba(176,38,255,0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 28px;
   text-align: center;
   font-family: 'Poppins', sans-serif;
 }
@@ -14426,31 +14538,32 @@ document.addEventListener('DOMContentLoaded', () => {
   color: #FFD233;
   font-weight: 700;
   font-size: 14px;
-  padding: 8px 22px;
-  border-radius: 16px;
+  padding: 10px 18px;
+  border-radius: 999px;
   margin-bottom: 12px;
   letter-spacing: 1px;
+  width: fit-content;
 }
 
 .air-result-rank {
-  font-size: 54px;
+  font-size: 72px;
   font-weight: 900;
-  letter-spacing: -1px;
-  line-height: 1.1;
+  letter-spacing: -2px;
+  line-height: 1;
   white-space: normal;
   word-break: break-word;
   display: block;
   width: 100%;
-  margin: 16px 0 32px;
+  margin: 16px 0 24px;
   background: linear-gradient(180deg, #FFF3A0 0%, #FFD233 30%, #FFCC1A 60%, #F0A000 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 40px rgba(255,210,51,0.28));
+  filter: drop-shadow(0 0 24px rgba(255,210,51,0.15));
   animation: airRankGlow 3s ease-in-out infinite;
 }
 @keyframes airRankGlow {
-  0%, 100% { filter: drop-shadow(0 0 40px rgba(255,210,51,0.28)); }
-  50% { filter: drop-shadow(0 0 55px rgba(255,210,51,0.45)); }
+  0%, 100% { filter: drop-shadow(0 0 24px rgba(255,210,51,0.15)); }
+  50% { filter: drop-shadow(0 0 35px rgba(255,210,51,0.25)); }
 }
 
 .air-result-stats {
@@ -14462,11 +14575,12 @@ document.addEventListener('DOMContentLoaded', () => {
 .air-stat-pill {
   background: rgba(255,255,255,0.05);
   border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 999px;
-  padding: 8px 18px;
+  border-radius: 14px;
+  height: 40px;
+  padding: 0 16px;
   font-size: 14px;
   color: rgba(255,255,255,0.88);
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 6px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -14476,9 +14590,12 @@ document.addEventListener('DOMContentLoaded', () => {
 }
 
 .air-college-status-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin-bottom: 24px;
-  padding: 16px 28px;
+  height: 44px;
+  padding: 0 20px;
   background: rgba(42,0,82,0.72);
   border: 1px solid rgba(255,210,51,0.22);
   border-radius: 999px;
@@ -14486,41 +14603,445 @@ document.addEventListener('DOMContentLoaded', () => {
   font-weight: 700;
   font-size: 15px;
   letter-spacing: 0.5px;
+  box-shadow: 0 0 15px rgba(255,210,51,0.1);
   transition: all 0.3s ease;
 }
 
 .air-result-note {
   margin: 0 auto;
-  font-size: 18px;
+  font-size: 15px;
   color: rgba(255,255,255,0.62);
   font-style: italic;
-  line-height: 1.6;
+  line-height: 1.5;
   max-width: 80%;
 }
 
-/* ═══ MOBILE ═══ */
+/* ═══════════════════════════════════════════════════════════
+   PREMIUM COUNSELLOR REDIRECT BANNER
+═══════════════════════════════════════════════════════════ */
+.premium-counsellor-banner {
+  display: none;
+  width: 100%;
+  max-width: 780px;
+  margin: 18px auto;
+  background: linear-gradient(180deg, rgba(52,0,98,0.96), rgba(24,0,45,0.98));
+  border: 1px solid rgba(255,210,51,0.18);
+  border-radius: 28px;
+  box-shadow: 0 0 55px rgba(176,38,255,0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 26px;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.premium-counsellor-banner.reveal {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+.pcb-ambient-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  animation: pcbBlobFloat 8s ease-in-out infinite alternate;
+}
+.pcb-blob-1 {
+  width: 300px; height: 300px;
+  background: rgba(176,38,255,0.15);
+  top: -100px; left: -100px;
+}
+.pcb-blob-2 {
+  width: 250px; height: 250px;
+  background: rgba(255,210,51,0.1);
+  bottom: -50px; right: -50px;
+  animation-delay: -4s;
+}
+@keyframes pcbBlobFloat {
+  0% { transform: translate(0,0) scale(1); }
+  100% { transform: translate(40px,-30px) scale(1.1); }
+}
+.pcb-online-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(0,255,120,0.12);
+  border: 1px solid rgba(0,255,120,0.3);
+  color: #B7FFCB;
+  font-weight: 700;
+  font-size: 10px;
+  height: 30px;
+  padding: 0 14px;
+  border-radius: 999px;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 0 12px rgba(0,255,120,0.1);
+  animation: pcbBadgeFloat 3s ease-in-out infinite;
+}
+.pcb-online-dot {
+  width: 8px; height: 8px;
+  background: #00FF78;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #00FF78;
+  animation: pcbDotPulse 1.5s infinite;
+}
+@keyframes pcbBadgeFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+@keyframes pcbDotPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.2); }
+}
+.pcb-heading {
+  font-size: 48px;
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -1px;
+  max-width: 90%;
+  margin: 0 auto 16px;
+  position: relative;
+  z-index: 2;
+}
+.pcb-heading-line1 {
+  color: #FFFFFF;
+  display: block;
+}
+.pcb-heading-line2 {
+  background: linear-gradient(90deg, #FFF3A0 0%, #FFD233 40%, #F0A000 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: block;
+  filter: drop-shadow(0 0 30px rgba(255,210,51,0.25));
+}
+.pcb-subtitle {
+  font-size: 16px;
+  color: rgba(255,255,255,0.72);
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  line-height: 1.5;
+  margin-bottom: 30px;
+}
+.pcb-subtitle::before, .pcb-subtitle::after {
+  content: "";
+  height: 1px;
+  width: 60px;
+  background: linear-gradient(90deg, transparent, rgba(255,210,51,0.5), transparent);
+}
+.pcb-features-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  position: relative;
+  z-index: 2;
+  margin-bottom: 30px;
+}
+.pcb-feature-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.pcb-feature-icon {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: rgba(176,38,255,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #E47CFF;
+  box-shadow: 0 0 12px rgba(176,38,255,0.15);
+  margin-bottom: 12px;
+  border: 1px solid rgba(176,38,255,0.2);
+}
+.pcb-feature-title {
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+.pcb-feature-sub {
+  color: rgba(255,255,255,0.5);
+  font-size: 11px;
+}
+.pcb-details-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #FFD233;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  position: relative;
+  z-index: 2;
+}
+.pcb-details-title::before, .pcb-details-title::after {
+  content: "";
+  height: 1px;
+  width: 40px;
+  background: rgba(255,210,51,0.3);
+}
+.pcb-details-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  position: relative;
+  z-index: 2;
+  margin-bottom: 30px;
+}
+.pcb-detail-box {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  height: 62px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+  color: rgba(255,255,255,0.85);
+  font-weight: 500;
+  font-size: 12px;
+}
+.pcb-detail-box:hover {
+  transform: translateY(-3px);
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(176,38,255,0.4);
+  box-shadow: 0 5px 20px rgba(176,38,255,0.15);
+  color: #FFF;
+}
+.pcb-detail-box i {
+  color: #FFD233;
+  font-size: 16px;
+}
+.pcb-desktop-only { display: block !important; }
+.pcb-mobile-only { display: none !important; }
+.pcb-main-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 76px;
+  background: linear-gradient(180deg, #27FF63, #0CB341);
+  border-radius: 22px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 0 25px rgba(39,255,99,0.3);
+  position: relative;
+  z-index: 2;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  text-decoration: none;
+  padding: 0 18px;
+}
+.pcb-main-btn::after {
+  content: "";
+  position: absolute;
+  top: 0; left: -100%;
+  width: 50%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.7s ease;
+}
+.pcb-main-btn:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 60px rgba(39,255,99,0.6);
+}
+.pcb-main-btn:hover::after {
+  left: 200%;
+}
+.pcb-main-btn:active {
+  transform: scale(0.98);
+}
+.pcb-btn-icon-left {
+  font-size: 40px;
+  color: #FFF;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+.pcb-btn-text-wrap {
+  flex: 1;
+  text-align: center;
+  color: #FFF;
+}
+.pcb-btn-text-main {
+  display: block;
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+.pcb-btn-icon-right {
+  font-size: 18px;
+  color: #FFF;
+  background: rgba(255,255,255,0.2);
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pcb-response-text {
+  font-size: 14px;
+  color: rgba(255,255,255,0.72);
+  margin: 16px 0 32px;
+  position: relative;
+  z-index: 2;
+  font-weight: 500;
+}
+.pcb-trust-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 22px;
+  padding: 14px;
+  position: relative;
+  z-index: 2;
+  margin-bottom: 20px;
+}
+.pcb-trust-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.85);
+  font-weight: 500;
+  text-align: left;
+  line-height: 1.3;
+}
+.pcb-trust-item:not(:last-child) {
+  border-right: 1px solid rgba(255,255,255,0.1);
+}
+.pcb-trust-item i {
+  font-size: 18px;
+  color: #FFD233;
+}
+.pcb-mini-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 62px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(0,255,120,0.3);
+  border-radius: 18px;
+  padding: 0 18px;
+  text-decoration: none;
+  position: relative;
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+.pcb-mini-cta:hover {
+  background: rgba(0,255,120,0.08);
+  box-shadow: 0 0 25px rgba(0,255,120,0.2);
+  transform: translateY(-2px);
+}
+.pcb-mini-cta-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.pcb-mini-cta-icon {
+  font-size: 32px;
+  color: #27FF63;
+}
+.pcb-mini-cta-text {
+  text-align: left;
+}
+.pcb-mini-cta-title {
+  color: #FFF;
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+.pcb-mini-cta-sub {
+  color: rgba(255,255,255,0.6);
+  font-size: 11px;
+}
+.pcb-mini-cta-btn {
+  background: #27FF63;
+  color: #000;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+/* ═══ RESPONSIVE SCALING SYSTEM ═══ */
+/* Laptop */
+@media (max-width: 1024px) {
+  .pcb-heading { font-size: 42px; }
+}
+
+/* Tablet */
 @media (max-width: 768px) {
-  .air-loading-card {
-    width: 92%;
-    padding: 32px 20px 28px;
-    border-radius: 24px;
-  }
-  .air-loading-heading { font-size: 20px; }
-  .air-analysis-text { font-size: 13px; }
-  .air-scanner-ring { width: 72px; height: 72px; margin-bottom: 18px; }
-  .air-scanner-icon { font-size: 26px; }
-  .air-result-rank { font-size: 48px; letter-spacing: -1px; margin: 12px 0 24px; }
-  .air-result-badge-top { font-size: 12px; padding: 6px 16px; }
-  .air-stat-pill { font-size: 12px; padding: 6px 14px; }
-  .air-college-status-badge { font-size: 13px; padding: 12px 20px; }
-  .air-result-note { font-size: 14px; max-width: 95%; }
-  .air-glow-blob-1 { width: 250px; height: 250px; }
-  .air-glow-blob-2 { width: 200px; height: 200px; }
+  .air-loading-card { width: 95%; max-width: 720px; }
+  .premium-counsellor-banner { width: 95%; max-width: 720px; }
+  .air-result-rank { font-size: 64px; }
+  .pcb-heading { font-size: 36px; }
+  .pcb-features-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .pcb-details-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .pcb-desktop-only { display: none !important; }
+  .pcb-mobile-only { display: block !important; }
+  .air-loading-card { width: 100%; padding: 18px; border-radius: 24px; }
+  .premium-counsellor-banner { width: 100%; padding: 18px; border-radius: 24px; margin: 18px auto; }
+  .air-result-badge-top { font-size: 11px; }
+  .air-result-rank { font-size: 52px; margin: 16px 0 24px; }
+  .air-result-stats { margin-bottom: 24px !important; }
+  .pcb-online-badge { height: 28px; font-size: 10px; padding: 6px 12px; }
+  .pcb-heading { font-size: 28px; }
+  .pcb-subtitle { font-size: 13px; }
+  
+  .pcb-features-grid { gap: 14px; }
+  .pcb-feature-item { background: transparent; border: none; padding: 0; }
+  .pcb-feature-icon { width: 44px; height: 44px; font-size: 18px; }
+  .pcb-feature-title { font-size: 12px; }
+  
+  .pcb-details-grid { gap: 12px; }
+  .pcb-detail-box { height: 62px; padding: 8px; font-size: 11px; }
+  
+  .pcb-main-btn { flex-direction: row; height: 68px; padding: 18px; border-radius: 22px; gap: 12px; }
+  .pcb-btn-text-main { font-size: 18px; line-height: 1.05; }
+  .pcb-btn-text-sub { font-size: 18px; line-height: 1.05; }
+  .pcb-btn-text-wrap { text-align: left; }
+  .pcb-btn-icon-left { font-size: 40px; }
+  .pcb-btn-icon-right { display: flex; }
+  
+  .pcb-trust-bar { display: flex; flex-direction: column; gap: 12px; }
+  .pcb-trust-item { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06); padding: 14px; justify-content: flex-start; }
 }
 </style>
 
 <!-- Loading Overlay HTML -->
 <div class="air-loading-overlay" id="airLoadingOverlay">
+  <!-- Close Button -->
+  <div class="air-close-btn" id="airCloseBtn"><i class="fas fa-times"></i></div>
+
   <!-- Ambient blobs -->
   <div class="air-glow-blob air-glow-blob-1"></div>
   <div class="air-glow-blob air-glow-blob-2"></div>
@@ -14528,8 +15049,9 @@ document.addEventListener('DOMContentLoaded', () => {
   <!-- Particles -->
   <div class="air-particles" id="airParticles"></div>
 
-  <!-- Center Card -->
-  <div class="air-loading-card" id="airLoadingCard">
+  <div class="air-overlay-inner" id="airOverlayInner">
+    <!-- Center Card -->
+    <div class="air-loading-card" id="airLoadingCard">
     <div class="air-flash" id="airFlash"></div>
 
     <!-- Loading State -->
@@ -14552,7 +15074,91 @@ document.addEventListener('DOMContentLoaded', () => {
       <div id="airResultStats" class="air-result-stats"></div>
       <div class="air-college-status-badge" id="airConfBadge"></div>
       <div class="air-result-note" id="airResultNote"></div>
+    </div> <!-- /air-loading-card -->
+
+    <!-- PREMIUM COUNSELLOR REDIRECT BANNER -->
+    <div class="premium-counsellor-banner" id="counsellorRedirectBanner">
+      <!-- Ambient -->
+      <div class="pcb-ambient-blob pcb-blob-1"></div>
+      <div class="pcb-ambient-blob pcb-blob-2"></div>
+
+      <!-- Online Badge -->
+      <div class="pcb-online-badge">
+        <div class="pcb-online-dot"></div> COUNSELLOR ONLINE
+      </div>
+
+      <!-- Heading -->
+      <h2 class="pcb-heading">
+        <span class="pcb-heading-line1">CONTACT COUNSELLOR</span>
+        <span class="pcb-heading-line2">FOR PERFECT PREDICTION</span>
+      </h2>
+      
+      <div class="pcb-subtitle">Send your details and get perfect prediction</div>
+
+      <!-- Features -->
+      <div class="pcb-features-grid">
+        <div class="pcb-feature-item">
+          <div class="pcb-feature-icon"><i class="fas fa-bullseye"></i></div>
+          <div class="pcb-feature-title">Accurate Prediction</div>
+        </div>
+        <div class="pcb-feature-item">
+          <div class="pcb-feature-icon"><i class="fas fa-shield-alt"></i></div>
+          <div class="pcb-feature-title">Trusted by</div>
+          <div class="pcb-feature-sub">10,000+ Students</div>
+        </div>
+        <div class="pcb-feature-item">
+          <div class="pcb-feature-icon"><i class="fas fa-user-md"></i></div>
+          <div class="pcb-feature-title">Expert Counsellors</div>
+        </div>
+        <div class="pcb-feature-item">
+          <div class="pcb-feature-icon"><i class="fas fa-bolt"></i></div>
+          <div class="pcb-feature-title">Instant</div>
+          <div class="pcb-feature-sub">Reply</div>
+        </div>
+      </div>
+
+      <!-- Details Input -->
+      <div class="pcb-details-title">SEND THESE DETAILS</div>
+      <div class="pcb-details-grid">
+        <div class="pcb-detail-box"><i class="fas fa-star"></i> NEET Score</div>
+        <div class="pcb-detail-box"><i class="fas fa-users"></i> Category</div>
+        <div class="pcb-detail-box"><i class="fas fa-map-marker-alt"></i> State</div>
+        <div class="pcb-detail-box"><i class="fas fa-home"></i> Domicile</div>
+        <div class="pcb-detail-box"><i class="fas fa-wallet"></i> Budget</div>
+        <div class="pcb-detail-box"><i class="fas fa-graduation-cap"></i> Course Preference</div>
+      </div>
+
+      <!-- Main CTA -->
+      <a href="https://wa.me/919694673555?text=Hello%20Counsellor!%20I%20want%20to%20know%20my%20perfect%20college%20prediction." target="_blank" class="pcb-main-btn">
+        <i class="fab fa-whatsapp pcb-btn-icon-left"></i>
+        <div class="pcb-btn-text-wrap">
+          <span class="pcb-btn-text-main pcb-desktop-only">GET MY PERFECT PREDICTION</span>
+          <span class="pcb-btn-text-main pcb-mobile-only">PERFECT PREDICTION</span>
+          <span class="pcb-btn-text-sub">ON WHATSAPP</span>
+        </div>
+        <div class="pcb-btn-icon-right"><i class="fas fa-arrow-right"></i></div>
+      </a>
+      <div class="pcb-response-text">⚡ Reply within minutes by counsellor</div>
+
+      <!-- Trust Bar -->
+      <div class="pcb-trust-bar">
+        <div class="pcb-trust-item">
+          <i class="fas fa-shield-check"></i>
+          <div>Trusted by<br>10,000+ NEET Aspirants</div>
+        </div>
+        <div class="pcb-trust-item">
+          <i class="fas fa-chalkboard-teacher"></i>
+          <div>Expert Counsellors<br>with 10+ Years Exp.</div>
+        </div>
+        <div class="pcb-trust-item">
+          <i class="fas fa-lock"></i>
+          <div>100% Safe & Secure<br>Your Information</div>
+        </div>
+      </div>
+
+
     </div>
+
   </div>
 </div>
 
@@ -14582,6 +15188,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.showAIRLoadingAndReveal = function(minRank, maxRank, score, category) {
     var overlay = document.getElementById('airLoadingOverlay');
+    window.history.pushState({ modal: 'airPredictor' }, '', window.location.href);
+    window.airHasShownExit = false;
     var loadingState = document.getElementById('airLoadingState');
     var resultContainer = document.getElementById('airResultContainer');
     var progressFill = document.getElementById('airProgressFill');
@@ -14593,6 +15201,11 @@ document.addEventListener('DOMContentLoaded', () => {
     loadingState.style.display = 'block';
     resultContainer.style.display = 'none';
     resultContainer.classList.remove('reveal');
+    var banner = document.getElementById('counsellorRedirectBanner');
+    if (banner) {
+       banner.style.display = 'none';
+       banner.classList.remove('reveal');
+    }
     progressFill.style.width = '0%';
     progressPct.textContent = '0%';
 
@@ -14860,6 +15473,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 confBadge.style.boxShadow = '0 0 20px ' + glowColor;
                 confBadge.style.transition = 'all 0.3s ease'; // reset transition for hover if any
             }, 500);
+            
+            // Reveal Banner
+            var banner = document.getElementById('counsellorRedirectBanner');
+            if (banner) {
+               banner.style.display = 'block';
+               requestAnimationFrame(function(){
+                 requestAnimationFrame(function(){
+                   banner.classList.add('reveal');
+                 });
+               });
+            }
         }, 300);
       }
     }, stepTime);
@@ -14872,23 +15496,76 @@ document.addEventListener('DOMContentLoaded', () => {
     if (oldResult) oldResult.style.display = 'none';
   }
 
-  // Close loading overlay (click outside or after delay)
-  document.addEventListener('click', function(e) {
-    var overlay = document.getElementById('airLoadingOverlay');
-    var resultContainer = document.getElementById('airResultContainer');
-    if (overlay && overlay.classList.contains('active') && resultContainer && resultContainer.classList.contains('reveal')) {
-      if (e.target === overlay) {
-        overlay.classList.add('fade-out');
+  // Close button & Exit Popup Functionality
+  function closeEverything() {
+      var exitOverlay = document.getElementById('exitPopupOverlay');
+      if (exitOverlay) exitOverlay.classList.remove('active');
+      var mainOverlay = document.getElementById('airLoadingOverlay');
+      if (mainOverlay) {
+        mainOverlay.classList.add('fade-out');
         setTimeout(function() {
-          overlay.style.display = 'none';
-          overlay.classList.remove('active', 'fade-out');
+          mainOverlay.style.display = 'none';
+          mainOverlay.classList.remove('active', 'fade-out');
           document.body.style.overflow = '';
         }, 400);
       }
+  }
+
+  function triggerExitIntent() {
+      var exitOverlay = document.getElementById('exitPopupOverlay');
+      if (!window.airHasShownExit && exitOverlay) {
+          exitOverlay.classList.add('active');
+          window.airHasShownExit = true;
+          // push state again so if they hit back on the exit popup, we can close it
+          window.history.pushState({ modal: 'exitPopup' }, '', window.location.href);
+      } else {
+          closeEverything();
+      }
+  }
+
+  var closeBtn = document.getElementById('airCloseBtn');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      triggerExitIntent();
+    });
+  }
+
+  document.addEventListener('click', function(e) {
+    if (e.target.closest('#exitCloseBtn')) {
+      e.preventDefault();
+      e.stopPropagation();
+      var exitOverlay = document.getElementById('exitPopupOverlay');
+      if (exitOverlay) exitOverlay.classList.remove('active');
     }
+  });
+
+  window.addEventListener('popstate', function(e) {
+      var mainOverlay = document.getElementById('airLoadingOverlay');
+      var exitOverlay = document.getElementById('exitPopupOverlay');
+      
+      // If exit popup is open, close everything
+      if (exitOverlay && exitOverlay.classList.contains('active')) {
+          closeEverything();
+      } 
+      // If main modal is open and active, trigger exit intent
+      else if (mainOverlay && mainOverlay.classList.contains('active') && mainOverlay.style.display !== 'none') {
+          triggerExitIntent();
+      }
   });
 })();
 </script>
+<!-- EXIT POPUP MODAL -->
+<div class="exit-popup-overlay" id="exitPopupOverlay">
+  <div class="exit-popup-content">
+    <div class="exit-close-btn" id="exitCloseBtn"><i class="fas fa-times"></i></div>
+    <a href="https://wa.me/919694673555?text=Hello%20Counsellor!" target="_blank">
+      <img src="assets/banner pop up.webp" alt="Special Offer" class="exit-popup-img">
+    </a>
+  </div>
+</div>
+
 <!-- END AIR LOADING OVERLAY -->
 </body>
 
