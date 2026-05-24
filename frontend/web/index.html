@@ -14143,35 +14143,95 @@ document.addEventListener('DOMContentLoaded', () => {
     "Generating prediction..."
   ];
 
+  // Sanitization helper
+  function sanitizeInput(str) {
+    if (typeof str !== 'string') return '';
+    return str.trim()
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#x27;')
+      .replace(/\//g, '&#x2F;');
+  }
+
   // Form submit
-  form.addEventListener('submit', function(e) {
+  form.addEventListener('submit', async function(e) {
     e.preventDefault();
     if (!validateForm()) return;
 
-    // Collect data
+    // Show loading immediately to prevent double submissions
+    submitBtn.disabled = true;
+    const originalBtnText = submitBtn.innerHTML;
+
+    // Collect and sanitize data
+    const rawName = document.getElementById('plpName').value;
+    const rawState = document.getElementById('plpState').value || '';
+    const rawCategory = document.getElementById('plpCategory').value || '';
+    const rawMobile = document.getElementById('plpMobile').value;
+
+    const sanitizedName = sanitizeInput(rawName);
+    const sanitizedState = sanitizeInput(rawState);
+    const sanitizedCategory = sanitizeInput(rawCategory);
+    const sanitizedMobile = sanitizeInput(rawMobile);
+
     const leadData = {
-      name: document.getElementById('plpName').value.trim(),
-      state: document.getElementById('plpState').value,
-      category: document.getElementById('plpCategory').value,
-      mobile: document.getElementById('plpMobile').value,
-      score: document.getElementById('predictorScoreSlider').value,
+      name: sanitizedName,
+      state: sanitizedState,
+      category: sanitizedCategory,
+      mobile: sanitizedMobile,
+      score: document.getElementById('predictorScoreSlider') ? document.getElementById('predictorScoreSlider').value : '',
       timestamp: new Date().toISOString()
     };
 
     console.log('Lead captured:', leadData);
 
-    // Save to localStorage as backup
+    // Save locally as backup
     try {
       const leads = JSON.parse(localStorage.getItem('predictor_leads') || '[]');
       leads.push(leadData);
       localStorage.setItem('predictor_leads', JSON.stringify(leads));
     } catch(err) {}
 
-    // Show loading on button
-    submitBtn.disabled = true;
-    let loadIdx = 0;
-    const originalBtnText = submitBtn.innerHTML;
+    // Duplicate spam prevention: check localStorage first
+    let alreadySubmitted = false;
+    try {
+      const submittedMobiles = JSON.parse(localStorage.getItem('predictor_submitted_mobiles') || '[]');
+      if (submittedMobiles.includes(sanitizedMobile)) {
+        alreadySubmitted = true;
+        console.log('Mobile number already registered on this device. Skipping DB insert.');
+      }
+    } catch (e) {}
 
+    // Send to Supabase if not already submitted
+    if (!alreadySubmitted && window.supabaseClient) {
+      try {
+        const { error } = await window.supabaseClient
+          .from('dc_rank_predictor_leads')
+          .insert([{
+            full_name: sanitizedName,
+            state: sanitizedState || null,
+            category_input: sanitizedCategory || null,
+            mobile_number: sanitizedMobile
+          }]);
+
+        if (error) {
+          console.error('Error inserting lead to Supabase:', error);
+        } else {
+          // Add to local cache of submitted mobiles
+          try {
+            const submittedMobiles = JSON.parse(localStorage.getItem('predictor_submitted_mobiles') || '[]');
+            submittedMobiles.push(sanitizedMobile);
+            localStorage.setItem('predictor_submitted_mobiles', JSON.stringify(submittedMobiles));
+          } catch (e) {}
+        }
+      } catch (err) {
+        console.error('Database connection exception:', err);
+      }
+    }
+
+    // Play cinematic loading text sequence
+    let loadIdx = 0;
     function showNextLoading() {
       if (loadIdx < loadingTexts.length) {
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + loadingTexts[loadIdx];
