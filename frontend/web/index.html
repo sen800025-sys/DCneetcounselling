@@ -14203,31 +14203,31 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } catch (e) {}
 
-    // Send to Supabase if not already submitted
+    // Send to Supabase if not already submitted (Fire and forget)
     if (!alreadySubmitted && window.supabaseClient) {
-      try {
-        const { error } = await window.supabaseClient
-          .from('dc_rank_predictor_leads')
-          .insert([{
-            full_name: sanitizedName,
-            state: sanitizedState || null,
-            category_input: sanitizedCategory || null,
-            mobile_number: sanitizedMobile
-          }]);
-
-        if (error) {
-          console.error('Error inserting lead to Supabase:', error);
-        } else {
-          // Add to local cache of submitted mobiles
-          try {
-            const submittedMobiles = JSON.parse(localStorage.getItem('predictor_submitted_mobiles') || '[]');
-            submittedMobiles.push(sanitizedMobile);
-            localStorage.setItem('predictor_submitted_mobiles', JSON.stringify(submittedMobiles));
-          } catch (e) {}
-        }
-      } catch (err) {
-        console.error('Database connection exception:', err);
-      }
+      window.supabaseClient
+        .from('dc_rank_predictor_leads')
+        .insert([{
+          full_name: sanitizedName,
+          state: sanitizedState || null,
+          category_input: sanitizedCategory || null,
+          mobile_number: sanitizedMobile
+        }])
+        .then(({ error }) => {
+          if (error) {
+            console.error('Error inserting lead to Supabase:', error);
+          } else {
+            // Add to local cache of submitted mobiles
+            try {
+              const submittedMobiles = JSON.parse(localStorage.getItem('predictor_submitted_mobiles') || '[]');
+              submittedMobiles.push(sanitizedMobile);
+              localStorage.setItem('predictor_submitted_mobiles', JSON.stringify(submittedMobiles));
+            } catch (e) {}
+          }
+        })
+        .catch(err => {
+          console.error('Database connection exception:', err);
+        });
     }
 
     // Play cinematic loading text sequence
@@ -15502,10 +15502,10 @@ document.addEventListener('DOMContentLoaded', () => {
         'State quota opportunities may still be possible.'
       ],
       'LOW': [
-        'You may still have strong opportunities in <span style="color: #FFD233; font-weight: 600;">BAMS</span>, <span style="color: #FFD233; font-weight: 600;">BHMS</span>, <span style="color: #FFD233; font-weight: 600;">BDS</span>, <span style="color: #FFD233; font-weight: 600;">Nursing</span> and private medical colleges.'
+        'You may still have strong opportunities in <span style="color: #FFD233; font-weight: 600;">BAMS</span>, <span style="color: #FFD233; font-weight: 600;">BDS</span>, <span style="color: #FFD233; font-weight: 600;">BVSc</span>, <span style="color: #FFD233; font-weight: 600;">Nursing</span> and private medical colleges.'
       ],
       'VERY_DIFFICULT': [
-        'You can still build an excellent medical career through <span style="color: #FFD233; font-weight: 600;">BAMS</span>, <span style="color: #FFD233; font-weight: 600;">BHMS</span>, <span style="color: #FFD233; font-weight: 600;">BDS</span> and <span style="color: #FFD233; font-weight: 600;">allied health science</span> courses.'
+        'You can still build an excellent medical career through <span style="color: #FFD233; font-weight: 600;">BAMS</span>, <span style="color: #FFD233; font-weight: 600;">BDS</span>, <span style="color: #FFD233; font-weight: 600;">BVSc</span> and <span style="color: #FFD233; font-weight: 600;">allied health science</span> courses.'
       ]
     };
     var possibleMsgs = msgs[statusKey] || msgs['COMPETITIVE'];
