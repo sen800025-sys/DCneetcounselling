@@ -1,0 +1,1402 @@
+[
+  {
+    "name": "AIIMS, New Delhi",
+    "state": "Delhi",
+    "fees": 1628
+  },
+  {
+    "name": "Vardhman Mahavir Medical College and Safdarjung Hospital New Delhi",
+    "state": "Delhi",
+    "fees": 33000
+  },
+  {
+    "name": "Maulana Azad Medical College, New Delhi",
+    "state": "Delhi",
+    "fees": 2745
+  },
+  {
+    "name": "Atal Bihari Vajpayee Institute of Medical Sciences & Dr RML Hospital, New Delhi",
+    "state": "Delhi",
+    "fees": 4500
+  },
+  {
+    "name": "IPMER Puducherry",
+    "state": "Puducherry",
+    "fees": 14920
+  },
+  {
+    "name": "AIIMS, Jodhpur",
+    "state": "Rajasthan",
+    "fees": 4231
+  },
+  {
+    "name": "University College of Medical Sciences, New Delhi",
+    "state": "Delhi",
+    "fees": 31340
+  },
+  {
+    "name": "Lady Hardinge Medical College, New Delhi",
+    "state": "Delhi",
+    "fees": 1655
+  },
+  {
+    "name": "SMS Medical College",
+    "state": "Rajasthan",
+    "fees": 5856
+  },
+  {
+    "name": "AIIMS, Bhubaneswar",
+    "state": "Odisha",
+    "fees": 5856
+  },
+  {
+    "name": "AIIMS, Rishikesh",
+    "state": "Uttarakhand",
+    "fees": 11450
+  },
+  {
+    "name": "AIIMS, Nagpur",
+    "state": "Maharashtra",
+    "fees": 5856
+  },
+  {
+    "name": "AIIMS, Raipur",
+    "state": "Chhattisgarh",
+    "fees": 5856
+  },
+  {
+    "name": "AIIMS, Patna",
+    "state": "Bihar",
+    "fees": 5856
+  },
+  {
+    "name": "Government Medical College and Hospital, Chandigarh",
+    "state": "Chandigarh",
+    "fees": 2479
+  },
+  {
+    "name": "Dr B.S.A Medical College, Delhi",
+    "state": "Delhi",
+    "fees": 114500
+  },
+  {
+    "name": "ESIC Medical College and Hospital, Basaidarapur",
+    "state": "Delhi",
+    "fees": 100000
+  },
+  {
+    "name": "B.J Government Medical College, Pune",
+    "state": "Maharashtra",
+    "fees": 62000
+  },
+  {
+    "name": "AIIMS Rajkot",
+    "state": "Gujarat",
+    "fees": 75
+  },
+  {
+    "name": "AIIMS Rai Bareli",
+    "state": "Uttar Pradesh",
+    "fees": 5856
+  },
+  {
+    "name": "AIIMS Deoghar",
+    "state": "Jharkhand",
+    "fees": 5856
+  },
+  {
+    "name": "AIIMS Guwahati",
+    "state": "Assam",
+    "fees": 5856
+  },
+  {
+    "name": "AIIMS Jammu",
+    "state": "Jammu & Kashmir",
+    "fees": 1628
+  },
+  {
+    "name": "Indira Gandhi Medical College, Shimla",
+    "state": "Himachal Pradesh",
+    "fees": 60000
+  },
+  {
+    "name": "Gandhi Medical College, Musheerabad Secunderabad",
+    "state": "Telangana",
+    "fees": 2900
+  },
+  {
+    "name": "Medical College, Kolkata",
+    "state": "West Bengal",
+    "fees": 6500
+  },
+  {
+    "name": "RUHS College of Medical Sciences, Jaipur",
+    "state": "Rajasthan",
+    "fees": 125200
+  },
+  {
+    "name": "Government Medical College, Thiruvananthapuram",
+    "state": "Kerala",
+    "fees": 31715
+  },
+  {
+    "name": "Lokmanya Tilak Municipal Medical College, Mumbai",
+    "state": "Maharashtra",
+    "fees": 155900
+  },
+  {
+    "name": "Government Medical College, Surat",
+    "state": "Gujarat",
+    "fees": 25000
+  },
+  {
+    "name": "JIPMER Karaikal",
+    "state": "Puducherry",
+    "fees": 14920
+  },
+  {
+    "name": "ESIC Medical College, Faridabad",
+    "state": "Haryana",
+    "fees": 100000
+  },
+  {
+    "name": "Sardar Patel Medical College, Bikaner",
+    "state": "Rajasthan",
+    "fees": 125300
+  },
+  {
+    "name": "Dr S.N Medical College, Jodhpur",
+    "state": "Rajasthan",
+    "fees": 125300
+  },
+  {
+    "name": "Jawaharlal Nehru Medical College, AMU Aligarh",
+    "state": "Uttar Pradesh",
+    "fees": 60300
+  },
+  {
+    "name": "Dr Ram Manohar Lohia Institute of Medical Sciences, Lucknow",
+    "state": "Uttar Pradesh",
+    "fees": 18000
+  },
+  {
+    "name": "Grant Medical College & Sir J.J Hospital, Mumbai",
+    "state": "Maharashtra",
+    "fees": 162100
+  },
+  {
+    "name": "KASTURBA Medical College & Research Kolkata",
+    "state": "West Bengal",
+    "fees": 6500
+  },
+  {
+    "name": "Osmania Medical College, Hyderabad",
+    "state": "Telangana",
+    "fees": 12000
+  },
+  {
+    "name": "ESIC Medical College & Hospital, Jaipur",
+    "state": "Rajasthan",
+    "fees": 100000
+  },
+  {
+    "name": "ESIC Medical College, Hyderabad",
+    "state": "Telangana",
+    "fees": 100000
+  },
+  {
+    "name": "Patna Medical College, Patna",
+    "state": "Bihar",
+    "fees": 27600
+  },
+  {
+    "name": "Shri Kalyan Government Medical College, Sikar",
+    "state": "Rajasthan",
+    "fees": 124670
+  },
+  {
+    "name": "S.N Medical College, Agra",
+    "state": "Uttar Pradesh",
+    "fees": 36000
+  },
+  {
+    "name": "Government Kilpauk Medical College, Chennai",
+    "state": "Tamil Nadu",
+    "fees": 18073
+  },
+  {
+    "name": "P.D.U Medical College, Rajkot",
+    "state": "Gujarat",
+    "fees": 25000
+  },
+  {
+    "name": "M.P Shah Medical College, Jamnagar",
+    "state": "Gujarat",
+    "fees": 25000
+  },
+  {
+    "name": "ESI-MC & PGIMSR, Bangalore",
+    "state": "Karnataka",
+    "fees": 100000
+  },
+  {
+    "name": "Employees State Insurance Corporation Medical College, Alwar",
+    "state": "Rajasthan",
+    "fees": 100000
+  },
+  {
+    "name": "G.S.V.M Medical College, Kanpur",
+    "state": "Uttar Pradesh",
+    "fees": 39600
+  },
+  {
+    "name": "Kalpana Chawla Government Medical College, Karnal",
+    "state": "Haryana",
+    "fees": 80000
+  },
+  {
+    "name": "Mysore Medical & Research Institute, Mysore",
+    "state": "Karnataka",
+    "fees": 72050
+  },
+  {
+    "name": "Gandhi Medical College, Bhopal",
+    "state": "Madhya Pradesh",
+    "fees": 116000
+  },
+  {
+    "name": "T.D Medical College, Alappuzha",
+    "state": "Kerala",
+    "fees": 31570
+  },
+  {
+    "name": "Government Medical College, Bhiwani",
+    "state": "Rajasthan",
+    "fees": 154800
+  },
+  {
+    "name": "Gajara Raja Medical College, Gwalior",
+    "state": "Madhya Pradesh",
+    "fees": 121000
+  },
+  {
+    "name": "Government Dental Medical College, Dehradun",
+    "state": "Uttarakhand",
+    "fees": 17150
+  },
+  {
+    "name": "Namo Medical Education & Research Institute, Government Medical College Silvassa",
+    "state": "Dadra & Nagar Haveli",
+    "fees": 60100
+  },
+  {
+    "name": "Government Medical College, Amritsar",
+    "state": "Punjab",
+    "fees": 192000
+  },
+  {
+    "name": "Medical College, Bhavnagar",
+    "state": "Gujarat",
+    "fees": 25000
+  },
+  {
+    "name": "Haldiaar Medical College, Haldwar",
+    "state": "Rajasthan",
+    "fees": 131300
+  },
+  {
+    "name": "SLBS Government Medical College, Mandi",
+    "state": "Himachal Pradesh",
+    "fees": 6000
+  },
+  {
+    "name": "Government Medical College, Kozhikode",
+    "state": "Kerala",
+    "fees": 34715
+  },
+  {
+    "name": "Motilal Nehru Medical College, Allahabad",
+    "state": "Uttar Pradesh",
+    "fees": 42000
+  },
+  {
+    "name": "Government Medical College, Mumbai Maharashtra",
+    "state": "Maharashtra",
+    "fees": 151970
+  },
+  {
+    "name": "Maharani Laxmi Bai Medical College, Jhansi",
+    "state": "Uttar Pradesh",
+    "fees": 42000
+  },
+  {
+    "name": "Nalanda Medical College, Patna",
+    "state": "Bihar",
+    "fees": 40800
+  },
+  {
+    "name": "Government Medical College, Pal",
+    "state": "Rajasthan",
+    "fees": 124970
+  },
+  {
+    "name": "Darbhanga Medical College, Laheriasarai",
+    "state": "Bihar",
+    "fees": 40800
+  },
+  {
+    "name": "Dr B.R Ambedkar State Institute of Medical Sciences",
+    "state": "Punjab",
+    "fees": 192000
+  },
+  {
+    "name": "Guwahati Medical College, Guwahati",
+    "state": "Assam",
+    "fees": 23900
+  },
+  {
+    "name": "Dr Radhakrishnan Government Medical College, Hamirpur",
+    "state": "Himachal Pradesh",
+    "fees": 6000
+  },
+  {
+    "name": "ESIC Medical College & Hospital, Andheri",
+    "state": "Maharashtra",
+    "fees": 100000
+  },
+  {
+    "name": "Government Medical College, Chittorgarh",
+    "state": "Rajasthan",
+    "fees": 66990
+  },
+  {
+    "name": "ESIC Medical College & Hospital, Ludhiana",
+    "state": "Punjab",
+    "fees": 125000
+  },
+  {
+    "name": "ESIC Medical College, Noida",
+    "state": "Uttar Pradesh",
+    "fees": 100000
+  },
+  {
+    "name": "B.J Medical College, Ahmedabad",
+    "state": "Gujarat",
+    "fees": 10000
+  },
+  {
+    "name": "Maharaja K.C Gajapati Medical College, Brahmapur",
+    "state": "Odisha",
+    "fees": 41450
+  },
+  {
+    "name": "Guntur Medical College, Guntur",
+    "state": "Andhra Pradesh",
+    "fees": 10000
+  },
+  {
+    "name": "Government Medical College, Tirunelveli",
+    "state": "Tamil Nadu",
+    "fees": 18453
+  },
+  {
+    "name": "Government Medical College, Omandurar",
+    "state": "Tamil Nadu",
+    "fees": 18073
+  },
+  {
+    "name": "Goa Medical College, Panaji",
+    "state": "Goa",
+    "fees": 63700
+  },
+  {
+    "name": "SKIMS Medical College, Bemina, Srinagar",
+    "state": "Jammu & Kashmir",
+    "fees": 26100
+  },
+  {
+    "name": "Indira Gandhi Government Medical College, Nagpur",
+    "state": "Maharashtra",
+    "fees": 152100
+  },
+  {
+    "name": "Dr Y.S Parmar Government Medical College, Nahan",
+    "state": "Himachal Pradesh",
+    "fees": 60000
+  },
+  {
+    "name": "Government Medical College, Kannauj",
+    "state": "Uttar Pradesh",
+    "fees": 36000
+  },
+  {
+    "name": "Government Medical College of Ulleger, Sriganganagar",
+    "state": "Rajasthan",
+    "fees": 66990
+  },
+  {
+    "name": "Government Medical College and ESIC Hospital, Coimbatore",
+    "state": "Tamil Nadu",
+    "fees": 18073
+  },
+  {
+    "name": "Kanyakumari Government Medical College, Asaripallam",
+    "state": "Tamil Nadu",
+    "fees": 18073
+  },
+  {
+    "name": "Government Mohan Kumaramangalam Medical College, Salem",
+    "state": "Tamil Nadu",
+    "fees": 18073
+  },
+  {
+    "name": "Government Medical College, Konni",
+    "state": "Kerala",
+    "fees": 31765
+  },
+  {
+    "name": "Kalyan Singh Government Medical College, Bulandshahr",
+    "state": "Uttar Pradesh",
+    "fees": 40800
+  },
+  {
+    "name": "ESIC Medical College and Hospital, Varanasi",
+    "state": "Uttar Pradesh",
+    "fees": 100000
+  },
+  {
+    "name": "Government Medical College, Aurangabad",
+    "state": "Maharashtra",
+    "fees": 165740
+  },
+  {
+    "name": "Calcutta National Medical College, Kolkata",
+    "state": "West Bengal",
+    "fees": 6500
+  },
+  {
+    "name": "Theni Government Medical College, Theni",
+    "state": "Tamil Nadu",
+    "fees": 18073
+  },
+  {
+    "name": "Government Medical College, Palakkad",
+    "state": "Kerala",
+    "fees": 28950
+  },
+  {
+    "name": "S.S Medical College, Rewa",
+    "state": "Madhya Pradesh",
+    "fees": 119120
+  },
+  {
+    "name": "Government Medical College, Kathua",
+    "state": "Jammu & Kashmir",
+    "fees": 26250
+  },
+  {
+    "name": "Government Medical College, Sirohi Rajasthan",
+    "state": "Rajasthan",
+    "fees": 122630
+  },
+  {
+    "name": "Government Medical College, Dungarpur",
+    "state": "Rajasthan",
+    "fees": 165000
+  },
+  {
+    "name": "Vardhman Institute of Medical Sciences, Nalanda",
+    "state": "Bihar",
+    "fees": 40800
+  },
+  {
+    "name": "Government Medical College, Tirupur",
+    "state": "Tamil Nadu",
+    "fees": 18073
+  },
+  {
+    "name": "Chengalpattu Medical College, Chengalpattu",
+    "state": "Tamil Nadu",
+    "fees": 18073
+  },
+  {
+    "name": "ESIC Medical College and PGIMSR, Chennai",
+    "state": "Tamil Nadu",
+    "fees": 100000
+  },
+  {
+    "name": "SHKM GMC, Nalhar Mewat, Haryana",
+    "state": "Haryana",
+    "fees": 80000
+  },
+  {
+    "name": "Jawaharlal Nehru Medical College, Bhagalpur",
+    "state": "Bihar",
+    "fees": 40800
+  },
+  {
+    "name": "Rama Durgavati Medical College, Banda",
+    "state": "Uttar Pradesh",
+    "fees": 40800
+  },
+  {
+    "name": "Pt Jawahar Lal Nehru Government Medical College, Chamba",
+    "state": "Himachal Pradesh",
+    "fees": 60000
+  },
+  {
+    "name": "Government Medical College, Jhunjhunu Rajasthan",
+    "state": "Rajasthan",
+    "fees": 122630
+  },
+  {
+    "name": "Government Medical College, Haridwar",
+    "state": "Uttarakhand",
+    "fees": 17150
+  },
+  {
+    "name": "Atal Bihari Vajpayee Government Medical College, Vidisha",
+    "state": "Madhya Pradesh",
+    "fees": 132600
+  },
+  {
+    "name": "Government Vellore Medical College, Vellore",
+    "state": "Tamil Nadu",
+    "fees": 15473
+  },
+  {
+    "name": "MRA Medical College, Ambedkar Nagar UP",
+    "state": "Uttar Pradesh",
+    "fees": 36000
+  },
+  {
+    "name": "Government Medical College, Nashik",
+    "state": "Maharashtra",
+    "fees": 152100
+  },
+  {
+    "name": "Pt J.N.M Medical College, Raipur",
+    "state": "Chhattisgarh",
+    "fees": 5000
+  },
+  {
+    "name": "Government Medical College, Bundi",
+    "state": "Rajasthan",
+    "fees": 119280
+  },
+  {
+    "name": "Government Medical College, Dholpur",
+    "state": "Rajasthan",
+    "fees": 125246
+  },
+  {
+    "name": "Pt Neki Ram Sharma Government Medical College, Bhiwani",
+    "state": "Haryana",
+    "fees": 80000
+  },
+  {
+    "name": "Government Medical College, Hanumangarh",
+    "state": "Rajasthan",
+    "fees": 66990
+  },
+  {
+    "name": "Government Rajaji Medical College, Madurai",
+    "state": "Tamil Nadu",
+    "fees": 24073
+  },
+  {
+    "name": "Government Dharampuri Medical College, Dharampuri",
+    "state": "Tamil Nadu",
+    "fees": 18073
+  },
+  {
+    "name": "M.G.M Medical College, Jamshedpur",
+    "state": "Jharkhand",
+    "fees": 9130
+  },
+  {
+    "name": "Belgaum Institute of Medical Sciences, Belgaum",
+    "state": "Karnataka",
+    "fees": 76180
+  },
+  {
+    "name": "Government College, Nagar Bikaner Road, Nagaur",
+    "state": "Rajasthan",
+    "fees": 70340
+  },
+  {
+    "name": "NEIGRIHMS, Shillong",
+    "state": "Meghalaya",
+    "fees": 47600
+  },
+  {
+    "name": "Government Medical College, Nigris",
+    "state": "Tamil Nadu",
+    "fees": 18073
+  },
+  {
+    "name": "Government Medical College, Mahaja Government Medical College, Kolhapur",
+    "state": "Maharashtra",
+    "fees": 166100
+  },
+  {
+    "name": "Sri Jagannath Medical College & Hospital, Puri",
+    "state": "Odisha",
+    "fees": 37950
+  },
+  {
+    "name": "Government Medical College, Koriwara",
+    "state": "Rajasthan",
+    "fees": 119280
+  },
+  {
+    "name": "Maharishi Chyawan Medical College, Koriwara",
+    "state": "Haryana",
+    "fees": 80000
+  },
+  {
+    "name": "MGM Institute of Medical Sciences, Sewagram Wardha",
+    "state": "Maharashtra",
+    "fees": 46140
+  },
+  {
+    "name": "Chhattisgarh Institute of Medical Sciences, Bilaspur",
+    "state": "Chhattisgarh",
+    "fees": 50000
+  },
+  {
+    "name": "Government Medical College, Kasaragod Kerala",
+    "state": "Kerala",
+    "fees": 31715
+  },
+  {
+    "name": "Government College Shivpuri",
+    "state": "Madhya Pradesh",
+    "fees": 130000
+  },
+  {
+    "name": "Maharshi Devraha Baba Autonomous State Medical College, Deoria",
+    "state": "Uttar Pradesh",
+    "fees": 36000
+  },
+  {
+    "name": "Government Medical College, Banswara",
+    "state": "Rajasthan",
+    "fees": 119280
+  },
+  {
+    "name": "Government Medical College, Tonk",
+    "state": "Rajasthan",
+    "fees": 125246
+  },
+  {
+    "name": "Sundarlal Patwa Government Medical College, Mandsaur",
+    "state": "Madhya Pradesh",
+    "fees": 114000
+  },
+  {
+    "name": "Government Medical College, Baran",
+    "state": "Rajasthan",
+    "fees": 168000
+  },
+  {
+    "name": "Government Medical College, Virudhunagar",
+    "state": "Tamil Nadu",
+    "fees": 18073
+  },
+  {
+    "name": "Virendra Kumar Saklecha Government Medical College, Neemuch",
+    "state": "Madhya Pradesh",
+    "fees": 114000
+  },
+  {
+    "name": "Government Medical College, Bettiah",
+    "state": "Bihar",
+    "fees": 40800
+  },
+  {
+    "name": "Indira Gandhi Medical College & RI, Puducherry",
+    "state": "Puducherry",
+    "fees": 143700
+  },
+  {
+    "name": "Government Medical College, Jaisalmer",
+    "state": "Rajasthan",
+    "fees": 125246
+  },
+  {
+    "name": "Government Medical College, Purnea",
+    "state": "Bihar",
+    "fees": 40800
+  },
+  {
+    "name": "GMC, Shahjahanpur",
+    "state": "Uttar Pradesh",
+    "fees": 40800
+  },
+  {
+    "name": "Government Medical College, Datia",
+    "state": "Madhya Pradesh",
+    "fees": 140000
+  },
+  {
+    "name": "Government Medical College, Khandwa",
+    "state": "Madhya Pradesh",
+    "fees": 100000
+  },
+  {
+    "name": "Siddhartha Medical College, Vijayawada",
+    "state": "Andhra Pradesh",
+    "fees": 25600
+  },
+  {
+    "name": "Dr V.R Shahyamapayam Memorial Medical College, Solapur",
+    "state": "Maharashtra",
+    "fees": 169150
+  },
+  {
+    "name": "Shahid Nirmal Mahto Medical College & Hospital, Dhanbad",
+    "state": "Jharkhand",
+    "fees": 85000
+  },
+  {
+    "name": "Government Medical College, Sheopur",
+    "state": "Madhya Pradesh",
+    "fees": 114000
+  },
+  {
+    "name": "Government Medical College, Dingal",
+    "state": "Tamil Nadu",
+    "fees": 18073
+  },
+  {
+    "name": "Hassan Institute of Medical Sciences, Hassan",
+    "state": "Karnataka",
+    "fees": 75000
+  },
+  {
+    "name": "Kurnool Medical College, Kurnool",
+    "state": "Andhra Pradesh",
+    "fees": 25600
+  },
+  {
+    "name": "Thiruvannamalai Medical College, Thiruvannamalai",
+    "state": "Tamil Nadu",
+    "fees": 18073
+  },
+  {
+    "name": "Government Medical College, Satna",
+    "state": "Madhya Pradesh",
+    "fees": 114000
+  },
+  {
+    "name": "ESIC Medical College & Hospital, Beltola, Guwahati",
+    "state": "Assam",
+    "fees": 100000
+  },
+  {
+    "name": "Government Medical College, Namakkal",
+    "state": "Tamil Nadu",
+    "fees": 18073
+  },
+  {
+    "name": "Autonomous State Medical College, Siddharthnagar",
+    "state": "Uttar Pradesh",
+    "fees": 36000
+  },
+  {
+    "name": "North Bengal Medical College, Darjeeling",
+    "state": "West Bengal",
+    "fees": 6500
+  },
+  {
+    "name": "Sri Venkateswara Medical College, Tirupati",
+    "state": "Andhra Pradesh",
+    "fees": 10600
+  },
+  {
+    "name": "Autonomous State Medical College, Pratapgarh",
+    "state": "Uttar Pradesh",
+    "fees": 36000
+  },
+  {
+    "name": "Government Medical College, Shahdol",
+    "state": "Madhya Pradesh",
+    "fees": 122000
+  },
+  {
+    "name": "Government Sivgangai Medical College, Sivagangai",
+    "state": "Tamil Nadu",
+    "fees": 18073
+  },
+  {
+    "name": "Government Medical College & Hospital, Jalgaon",
+    "state": "Maharashtra",
+    "fees": 152100
+  },
+  {
+    "name": "Government Medical College, Udhampur",
+    "state": "Jammu & Kashmir",
+    "fees": 27060
+  },
+  {
+    "name": "Autonomous State Medical College, Kanpur Dehat",
+    "state": "Uttar Pradesh",
+    "fees": 40800
+  },
+  {
+    "name": "University College of Medical Sciences, Jammu",
+    "state": "Uttar Pradesh",
+    "fees": 36000
+  },
+  {
+    "name": "Government Medical College, Akola",
+    "state": "Maharashtra",
+    "fees": 169900
+  },
+  {
+    "name": "Rajiv Gandhi Medical College, Amalapuram University",
+    "state": "Tamil Nadu",
+    "fees": 18100
+  },
+  {
+    "name": "Autonomous State Medical College, Pilibhit",
+    "state": "Uttar Pradesh",
+    "fees": 40800
+  },
+  {
+    "name": "Autonomous State Medical College, Sonbhadra",
+    "state": "Uttar Pradesh",
+    "fees": 40800
+  },
+  {
+    "name": "GTMC, Thiruvarur",
+    "state": "Tamil Nadu",
+    "fees": 18073
+  },
+  {
+    "name": "Government Medical College, Krishnagiri",
+    "state": "Tamil Nadu",
+    "fees": 18073
+  },
+  {
+    "name": "Government Medical College, Ariyalur",
+    "state": "Tamil Nadu",
+    "fees": 19823
+  },
+  {
+    "name": "Government Medical College and Hospital, Chandigarh",
+    "state": "Maharashtra",
+    "fees": 157100
+  },
+  {
+    "name": "Autonomous State Medical College, Mirzapur",
+    "state": "Uttar Pradesh",
+    "fees": 24000
+  },
+  {
+    "name": "Government Medical College, Soni Madhya Pradesh",
+    "state": "Madhya Pradesh",
+    "fees": 114000
+  },
+  {
+    "name": "Government Medical College, Rajnandgaon",
+    "state": "Chhattisgarh",
+    "fees": 50000
+  },
+  {
+    "name": "Bharat Government Medical College & Hospital, West Bengal",
+    "state": "West Bengal",
+    "fees": 6644
+  },
+  {
+    "name": "Autonomous State Medical College, Ghazipur",
+    "state": "Uttar Pradesh",
+    "fees": 36000
+  },
+  {
+    "name": "Shri Bhausaheb Hire Government Medical College, Dhule",
+    "state": "Maharashtra",
+    "fees": 165760
+  },
+  {
+    "name": "Autonomous State Medical College, Kaushambi",
+    "state": "Uttar Pradesh",
+    "fees": 36000
+  },
+  {
+    "name": "Government Medical College, Kallakurichi",
+    "state": "Tamil Nadu",
+    "fees": 18073
+  },
+  {
+    "name": "Autonomous State Medical College, Gonda",
+    "state": "Uttar Pradesh",
+    "fees": 40800
+  },
+  {
+    "name": "Sheikh Bhikhari Medical College & Hospital, Hazaribagh",
+    "state": "Jharkhand",
+    "fees": 3180
+  },
+  {
+    "name": "Government Medical College, Ramanathapuram",
+    "state": "Tamil Nadu",
+    "fees": 18073
+  },
+  {
+    "name": "Autonomous State Medical College, Kushinagar Uttar Pradesh",
+    "state": "Uttar Pradesh",
+    "fees": 40800
+  },
+  {
+    "name": "Government Medical College, Latur",
+    "state": "Maharashtra",
+    "fees": 163630
+  },
+  {
+    "name": "Government Medical College and General Hospital, Satara",
+    "state": "Maharashtra",
+    "fees": 171100
+  },
+  {
+    "name": "Bankura Sammilani Medical College, Bankura",
+    "state": "West Bengal",
+    "fees": 9166
+  },
+  {
+    "name": "Government Medical College, Singrauli",
+    "state": "Madhya Pradesh",
+    "fees": 114000
+  },
+  {
+    "name": "Baba Kinaram Autonomous State Medical College, Chandauli",
+    "state": "Uttar Pradesh",
+    "fees": 40800
+  },
+  {
+    "name": "Vijayanagar Institute of Medical Sciences, Bellary",
+    "state": "Karnataka",
+    "fees": 70160
+  },
+  {
+    "name": "Autonomous State Medical College, Sonbhadra",
+    "state": "Uttar Pradesh",
+    "fees": 40800
+  },
+  {
+    "name": "Government Medical College, Nagapattinam",
+    "state": "Tamil Nadu",
+    "fees": 18073
+  },
+  {
+    "name": "SH VSANTR RAO NAIK Government Medical College, Yavatmal",
+    "state": "Maharashtra",
+    "fees": 165600
+  },
+  {
+    "name": "Karwar Institute of Medical Sciences, Karwar",
+    "state": "Karnataka",
+    "fees": 55000
+  },
+  {
+    "name": "Pt Raghunath Murmu Medical College, Baripada",
+    "state": "Odisha",
+    "fees": 51950
+  },
+  {
+    "name": "Government Medical College, Mahbubnagar",
+    "state": "Telangana",
+    "fees": 41000
+  },
+  {
+    "name": "Assam Medical College, Dibrugarh",
+    "state": "Assam",
+    "fees": 24000
+  },
+  {
+    "name": "Government Medical College and District General Hospital, Ratnagiri",
+    "state": "Maharashtra",
+    "fees": 166100
+  },
+  {
+    "name": "Bhima Bhoi Medical College and Hospital, Balangir",
+    "state": "Odisha",
+    "fees": 41450
+  },
+  {
+    "name": "Government Medical College, Mahabubnagar",
+    "state": "Telangana",
+    "fees": 64000
+  },
+  {
+    "name": "Swami Ramanand Teerth Rural Medical College, Ambajogai",
+    "state": "Maharashtra",
+    "fees": 171350
+  },
+  {
+    "name": "C Institute of Medical Sciences, Chamrajnagar",
+    "state": "Karnataka",
+    "fees": 82000
+  },
+  {
+    "name": "Government Medical College, Amravati",
+    "state": "Maharashtra",
+    "fees": 169900
+  },
+  {
+    "name": "Lt L.A.M Government Medical College, Raigarh",
+    "state": "Chhattisgarh",
+    "fees": 50000
+  },
+  {
+    "name": "Government Medical College, Gondia",
+    "state": "Maharashtra",
+    "fees": 166
+  },
+  {
+    "name": "Chandulal Chandrakar Memorial Government Medical College, Durg",
+    "state": "Chhattisgarh",
+    "fees": 30000
+  },
+  {
+    "name": "Government Medical College, Nizamabad",
+    "state": "Telangana",
+    "fees": 41000
+  },
+  {
+    "name": "GMERS Medical College, Morbi",
+    "state": "Gujarat",
+    "fees": 375000
+  },
+  {
+    "name": "Government Medical College, Anantapuram",
+    "state": "Andhra Pradesh",
+    "fees": 25600
+  },
+  {
+    "name": "Chikkamagaluru Institute of Medical Sciences",
+    "state": "Karnataka",
+    "fees": 83000
+  },
+  {
+    "name": "GMERS Medical College, Porbandar",
+    "state": "Gujarat",
+    "fees": 375000
+  },
+  {
+    "name": "Lt B.R.K Government Medical College, Jagdalpur",
+    "state": "Chhattisgarh",
+    "fees": 50000
+  },
+  {
+    "name": "Government Medical College, Siddipet",
+    "state": "Telangana",
+    "fees": 41000
+  },
+  {
+    "name": "Government Medical College, Quthbullapur",
+    "state": "Telangana",
+    "fees": 64000
+  },
+  {
+    "name": "Government Medical College, Nagolda",
+    "state": "Telangana",
+    "fees": 12000
+  },
+  {
+    "name": "Gadag Institute of Medical Sciences",
+    "state": "Karnataka",
+    "fees": 97750
+  },
+  {
+    "name": "Deben Mahata Government Medical College & Hospital",
+    "state": "West Bengal",
+    "fees": 6520
+  },
+  {
+    "name": "Raichur Institute of Medical Sciences, Raichur",
+    "state": "Karnataka",
+    "fees": 80000
+  },
+  {
+    "name": "Government Medical College & Hospital, Jajpur",
+    "state": "West Bengal",
+    "fees": 11144
+  },
+  {
+    "name": "Murshidabad Medical Hospital, Murshidabad",
+    "state": "West Bengal",
+    "fees": 6520
+  },
+  {
+    "name": "Government Medical College, Parbhani",
+    "state": "Maharashtra",
+    "fees": 152100
+  },
+  {
+    "name": "MALDA Medical College, Malda",
+    "state": "West Bengal",
+    "fees": 6500
+  },
+  {
+    "name": "Government Medical College, Osmanabad",
+    "state": "Maharashtra",
+    "fees": 167650
+  },
+  {
+    "name": "Government Medical College, Sindhudurg",
+    "state": "Maharashtra",
+    "fees": 166100
+  },
+  {
+    "name": "RIMS, Ongole",
+    "state": "Andhra Pradesh",
+    "fees": 27600
+  },
+  {
+    "name": "Government Medical College, Buldhana",
+    "state": "Maharashtra",
+    "fees": 171316
+  },
+  {
+    "name": "Pratila Chandra Sen Government Medical College & Hospital, Arambagh",
+    "state": "West Bengal",
+    "fees": 6500
+  },
+  {
+    "name": "Sarat Chandra Chattopadhyay Government Medical College & Hospital, Uluberia",
+    "state": "West Bengal",
+    "fees": 6644
+  },
+  {
+    "name": "Government Medical College, Mahasamund Chhattisgarh",
+    "state": "Chhattisgarh",
+    "fees": 49500
+  },
+  {
+    "name": "Government Medical College and Hospital, Jagdalpur Odisha",
+    "state": "Odisha",
+    "fees": 41450
+  },
+  {
+    "name": "Government Medical College, Sundargarh",
+    "state": "Odisha",
+    "fees": 37950
+  },
+  {
+    "name": "Government Medical College, Jajpur",
+    "state": "Maharashtra",
+    "fees": 169837
+  },
+  {
+    "name": "Government Medical College, Nagarkurnool",
+    "state": "Telangana",
+    "fees": 29000
+  },
+  {
+    "name": "Jhargam Government Medical College and Hospital, West Bengal",
+    "state": "West Bengal",
+    "fees": 8144
+  },
+  {
+    "name": "Yadgiri Institute of Medical Sciences, Yadgiri",
+    "state": "Karnataka",
+    "fees": 79100
+  },
+  {
+    "name": "Government Medical College, Korba (C.G.)",
+    "state": "Chhattisgarh",
+    "fees": 50000
+  },
+  {
+    "name": "Government Medical College, Mahababad",
+    "state": "Telangana",
+    "fees": 41000
+  },
+  {
+    "name": "Shaeed Laxman Nayak Medical College and Hospital, Koraput",
+    "state": "Odisha",
+    "fees": 51950
+  },
+  {
+    "name": "Government Medical College, Handwara",
+    "state": "Jammu & Kashmir",
+    "fees": 34215
+  },
+  {
+    "name": "Government Medical College, Washim",
+    "state": "Maharashtra",
+    "fees": 169536
+  },
+  {
+    "name": "Chitradurga Medical College and Research Institute",
+    "state": "Karnataka",
+    "fees": 75570
+  },
+  {
+    "name": "Government Medical College, Hingoli",
+    "state": "Maharashtra",
+    "fees": 157100
+  },
+  {
+    "name": "GMC, Rajamahendravaram",
+    "state": "Andhra Pradesh",
+    "fees": 15000
+  },
+  {
+    "name": "GMERS Medical College, Panchmahal Godhra",
+    "state": "Gujarat",
+    "fees": 375000
+  },
+  {
+    "name": "Government Medical College, Eluru",
+    "state": "Andhra Pradesh",
+    "fees": 26500
+  },
+  {
+    "name": "Fakhruddin Ali Ahmed Medical College, Barpeta",
+    "state": "Assam",
+    "fees": 23900
+  },
+  {
+    "name": "Government Medical College, Nandyal",
+    "state": "Andhra Pradesh",
+    "fees": 15000
+  },
+  {
+    "name": "Tezpur Medical College, Tezpur",
+    "state": "Assam",
+    "fees": 24900
+  },
+  {
+    "name": "Government Medical College, Yadadri",
+    "state": "Telangana",
+    "fees": 41000
+  },
+  {
+    "name": "Government Medical College, Jagital",
+    "state": "Telangana",
+    "fees": 64000
+  },
+  {
+    "name": "Government Medical College, Karimnagar Telangana",
+    "state": "Telangana",
+    "fees": 41000
+  },
+  {
+    "name": "Government Medical College, Wanaparthy",
+    "state": "Telangana",
+    "fees": 64000
+  },
+  {
+    "name": "GMC Mancherial",
+    "state": "Telangana",
+    "fees": 41000
+  },
+  {
+    "name": "Fakir Mohan Pradhan Medical College & Hospital, Jajpur Odisha",
+    "state": "Odisha",
+    "fees": 36900
+  },
+  {
+    "name": "Shillong Medical College, Meghalaya",
+    "state": "Meghalaya",
+    "fees": 30000
+  },
+  {
+    "name": "Government Medical College, Rajanna Sircilla",
+    "state": "Telangana",
+    "fees": 41000
+  },
+  {
+    "name": "Andaman and Nicobar Islands Institute of Medical Sciences",
+    "state": "Andaman & Nicobar Islands",
+    "fees": 79100
+  },
+  {
+    "name": "GMERS Medical College, Rajpipla",
+    "state": "Gujarat",
+    "fees": 375000
+  },
+  {
+    "name": "GMC Lingasugur",
+    "state": "Telangana",
+    "fees": 41000
+  },
+  {
+    "name": "Government Medical College & Hospital, Khulna",
+    "state": "Odisha",
+    "fees": 36900
+  },
+  {
+    "name": "Government Medical College, Kodangal",
+    "state": "Telangana",
+    "fees": 47200
+  },
+  {
+    "name": "Government Medical College, Mulugu Telangana",
+    "state": "Telangana",
+    "fees": 41000
+  },
+  {
+    "name": "Government Medical College, Kumuram Bheem Asifabad",
+    "state": "Telangana",
+    "fees": 41000
+  },
+  {
+    "name": "Diphu Medical College & Hospital, Assam",
+    "state": "Assam",
+    "fees": 30000
+  },
+  {
+    "name": "Government Medical College, Jayashankar Bhupalpally",
+    "state": "Telangana",
+    "fees": 41000
+  },
+  {
+    "name": "Government Medical College, Churachandpur",
+    "state": "Manipur",
+    "fees": 4500
+  },
+  {
+    "name": "Kokrajhar Medical College",
+    "state": "Assam",
+    "fees": 24900
+  },
+  {
+    "name": "Tomo Riba Institute Health and Medical Sciences, Naharlagun",
+    "state": "Arunachal Pradesh",
+    "fees": 77100
+  },
+  {
+    "name": "Naharlagun Medical College & Hospital, Naharlagun",
+    "state": "Assam",
+    "fees": 2500
+  },
+  {
+    "name": "JNIMS, Imphal",
+    "state": "Manipur",
+    "fees": 45700
+  },
+  {
+    "name": "Nagaon Medical College",
+    "state": "Assam",
+    "fees": 23900
+  },
+  {
+    "name": "Tinsukia Medical College & Hospital, Tinsukia",
+    "state": "Assam",
+    "fees": 24000
+  },
+  {
+    "name": "Zoram Medical College, Falkawn",
+    "state": "Mizoram",
+    "fees": 96850
+  },
+  {
+    "name": "Nagaland Institute of Medical Sciences and Research Phriebage, Kohima",
+    "state": "Nagaland",
+    "fees": 161500
+  }
+]
