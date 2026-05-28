@@ -133,8 +133,8 @@
               <button class="pm-btn pm-btn-outline" onclick="window.pmToggleFilters()">
                 <i class="fas fa-filter"></i> Filters
               </button>
-              <button class="pm-btn pm-btn-filled" onclick="window.pmOpenAddModal()">
-                <i class="fas fa-plus"></i> Add College
+              <button class="pm-btn pm-btn-filled" onclick="window.pmResetPreferences()" title="Clear all your saved preferences">
+                <i class="fas fa-sync-alt"></i> Reset
               </button>
             </div>
           </div>
@@ -802,6 +802,16 @@
       const temp = state.preferences[idx];
       state.preferences[idx] = state.preferences[idx + 1];
       state.preferences[idx + 1] = temp;
+      saveToLocalStorage();
+      window.renderPreferenceMakerTable();
+    }
+  };
+
+  // Reset/clear all preference items
+  window.pmResetPreferences = function() {
+    const confirmed = window.confirm("Are you sure you want to clear your entire preferences list? This action cannot be undone.");
+    if (confirmed) {
+      state.preferences = [];
       saveToLocalStorage();
       window.renderPreferenceMakerTable();
     }

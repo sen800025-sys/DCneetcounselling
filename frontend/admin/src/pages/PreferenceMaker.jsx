@@ -10,7 +10,8 @@ import {
   Bell, 
   ChevronLeft,
   ChevronRight,
-  MoreVertical
+  MoreVertical,
+  RotateCcw
 } from 'lucide-react';
 
 const initialColleges = [
@@ -70,9 +71,16 @@ export default function PreferenceMaker() {
               <Filter size={18} />
               <span className="hidden sm:inline">Filters</span>
             </button>
-            <button className="h-[52px] px-6 rounded-[14px] bg-[#FFC300] text-[#18002E] hover:bg-[#F0B800] hover:-translate-y-0.5 flex items-center gap-2 font-semibold shadow-[0_4px_14px_rgba(255,195,0,0.3)] transition-all duration-250">
-              <Plus size={20} />
-              <span>Add College</span>
+            <button 
+              onClick={() => {
+                if (window.confirm("Are you sure you want to clear your entire preferences list? This action cannot be undone.")) {
+                  setColleges([]);
+                }
+              }}
+              className="h-[52px] px-6 rounded-[14px] bg-[#FFC300] text-[#18002E] hover:bg-[#F0B800] hover:-translate-y-0.5 flex items-center gap-2 font-semibold shadow-[0_4px_14px_rgba(255,195,0,0.3)] transition-all duration-250"
+            >
+              <RotateCcw size={20} />
+              <span>Reset</span>
             </button>
           </div>
         </div>
