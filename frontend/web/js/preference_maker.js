@@ -49,7 +49,7 @@
   // LocalStorage helper routines
   function saveToLocalStorage() {
     try {
-      localStorage.setItem('neet_preferences', JSON.stringify(state.preferences));
+      localStorage.setItem('neet_preferences_v2', JSON.stringify(state.preferences));
     } catch (e) {
       console.error("Failed to save preferences to localStorage:", e);
     }
@@ -57,7 +57,7 @@
 
   function loadFromLocalStorage() {
     try {
-      const saved = localStorage.getItem('neet_preferences');
+      const saved = localStorage.getItem('neet_preferences_v2');
       if (saved) {
         state.preferences = JSON.parse(saved);
         state.isLoaded = true;
@@ -126,8 +126,8 @@
               <p class="pm-subtitle">Add and arrange your preferred medical colleges</p>
             </div>
             <div class="pm-actions">
-              <button class="pm-btn pm-btn-outline" onclick="window.pmImportColleges()" title="Reset preference list from Supabase DB">
-                <i class="fas fa-sync-alt"></i> Import / Reset List
+              <button class="pm-btn pm-btn-outline" onclick="window.pmOpenDownloadModal()" title="Download your Preference List as PDF">
+                <i class="fas fa-file-pdf" style="color: #ef4444;"></i> Download PDF
               </button>
               <button class="pm-btn pm-btn-outline" onclick="window.pmToggleFilters()">
                 <i class="fas fa-filter"></i> Filters
@@ -211,6 +211,56 @@
             </form>
           </div>
         </div>
+
+        <!-- PDF Download Form Modal Overlay -->
+        <div class="pm-modal-overlay" id="pmDownloadModal">
+          <div class="pm-modal">
+            <div class="pm-modal-header">
+              <h2 class="pm-modal-title">Candidate Details for PDF Report</h2>
+              <button class="pm-modal-close" onclick="window.pmCloseDownloadModal()">&times;</button>
+            </div>
+            <form id="pmDownloadForm" onsubmit="window.pmGeneratePDF(event)">
+              <div class="pm-modal-body">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                  <div class="pm-form-group" style="grid-column: span 2;">
+                    <label for="pdfName">Name</label>
+                    <input type="text" id="pdfName" class="pm-form-control" required placeholder="Enter candidate's full name">
+                  </div>
+                  <div class="pm-form-group">
+                    <label for="pdfCategory">Category</label>
+                    <input type="text" id="pdfCategory" class="pm-form-control" required placeholder="e.g. General, OBC, SC, ST">
+                  </div>
+                  <div class="pm-form-group">
+                    <label for="pdfScore">NEET Score</label>
+                    <input type="number" id="pdfScore" class="pm-form-control" required min="1" max="720" placeholder="e.g. 680">
+                  </div>
+                  <div class="pm-form-group">
+                    <label for="pdfRank">NEET Rank (AIR)</label>
+                    <input type="number" id="pdfRank" class="pm-form-control" required min="1" placeholder="e.g. 1500">
+                  </div>
+                  <div class="pm-form-group">
+                    <label for="pdfDomicile">Domicile State</label>
+                    <input type="text" id="pdfDomicile" class="pm-form-control" required placeholder="e.g. Delhi, Rajasthan">
+                  </div>
+                  <div class="pm-form-group" style="grid-column: span 2;">
+                    <label for="pdfCourse">Course</label>
+                    <select id="pdfCourse" class="pm-form-control" required>
+                      <option value="" disabled selected>Select preferred course</option>
+                      <option value="MBBS">MBBS</option>
+                      <option value="BDS">BDS</option>
+                      <option value="AYUSH">AYUSH</option>
+                      <option value="B.Sc. Nursing">B.Sc. Nursing</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="pm-modal-footer">
+                <button type="button" class="pm-btn pm-btn-outline" style="height: 44px; padding: 0 16px; border-radius: 10px;" onclick="window.pmCloseDownloadModal()">Cancel</button>
+                <button type="submit" class="pm-btn pm-btn-filled" style="height: 44px; padding: 0 16px; border-radius: 10px;">Download PDF</button>
+              </div>
+            </form>
+          </div>
+        </div>
       `;
 
       container.innerHTML = html;
@@ -274,53 +324,20 @@
       }
 
       const { data, error } = await window.supabaseClient
-        .from('colleges')
-        .select('id, name, slug, state, type, location');
+        .from('college_preferences')
+        .select('id, college_name, state, fees, bond_details')
+        .order('id', { ascending: true });
 
       if (error) throw error;
 
       if (data) {
         const mapped = data.map((c) => {
-          const normalized = (c.name || '').toLowerCase();
-          let match = null;
-          for (const key of Object.keys(KNOWN_COLLEGES)) {
-            if (normalized.includes(key)) {
-              match = KNOWN_COLLEGES[key];
-              break;
-            }
-          }
-
-          let fees = 0;
-          let bond = "";
-
-          if (match) {
-            fees = match.fees;
-            bond = match.bond;
-          } else {
-            const hash = getDeterministicHash(c.name || c.id);
-            const isGovt = c.type === 'Government' || 
-                           normalized.includes('govt') || 
-                           normalized.includes('government') || 
-                           normalized.includes('municipal') || 
-                           normalized.includes('gmc');
-
-            if (isGovt) {
-              fees = (hash % 80 + 10) * 500; // ₹5,000 to ₹45,000
-              const bondYears = (hash % 3) + 1;
-              const penaltyLakhs = (hash % 3) * 5 + 5; // 5, 10, 15 Lakhs
-              bond = `${bondYears} Year${bondYears > 1 ? 's' : ''} Rural Service | Penalty: ${penaltyLakhs} Lakhs`;
-            } else {
-              fees = (hash % 15 + 8) * 100000; // ₹8,00,000 to ₹22,00,000
-              bond = (hash % 3 === 0) ? 'No Bond' : '1 Year Rural Service';
-            }
-          }
-
           return {
             id: c.id,
-            name: c.name,
+            name: c.college_name,
             state: c.state || 'N/A',
-            fees: fees,
-            bond: bond || 'N/A'
+            fees: c.fees || 0,
+            bond: c.bond_details || 'N/A'
           };
         });
 
@@ -541,13 +558,195 @@
     }
   };
 
-  // Repurposed Import Colleges to act as a reload/reset utility from database
-  window.pmImportColleges = function() {
-    if (confirm("Would you like to reset your preference sheet and reload all colleges fresh from the database? This will clear your custom reorderings, edits, or additions.")) {
-      localStorage.removeItem('neet_preferences');
-      state.preferences = [];
-      state.isLoaded = false;
-      forceRenderLayout();
+  // PDF download modal window controls
+  window.pmOpenDownloadModal = function() {
+    document.getElementById("pmDownloadForm").reset();
+    document.getElementById("pmDownloadModal").style.display = "flex";
+  };
+
+  window.pmCloseDownloadModal = function() {
+    document.getElementById("pmDownloadModal").style.display = "none";
+  };
+
+  // PDF report builder and download generator using jsPDF & AutoTable
+  window.pmGeneratePDF = function(e) {
+    e.preventDefault();
+
+    const name = document.getElementById("pdfName").value.trim();
+    const category = document.getElementById("pdfCategory").value;
+    const score = document.getElementById("pdfScore").value;
+    const rank = document.getElementById("pdfRank").value;
+    const domicile = document.getElementById("pdfDomicile").value.trim();
+    const course = document.getElementById("pdfCourse").value;
+
+    try {
+      if (!window.jspdf || !window.jspdf.jsPDF) {
+        throw new Error("jsPDF library is not loaded. Please wait a moment and try again.");
+      }
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF('p', 'mm', 'a4');
+      
+      const pageWidth = doc.internal.pageSize.width;
+      const pageHeight = doc.internal.pageSize.height;
+
+      // Premium Color Palette
+      const purplePrimary = [45, 11, 82]; // #2D0B52
+      const purpleAccent = [123, 47, 247]; // #7B2FF7
+      const goldAccent = [255, 195, 0]; // #FFC300
+      const textDark = [33, 37, 41]; // #212529
+      const textMuted = [108, 117, 125]; // #6C757D
+      const lightBg = [248, 249, 250]; // #F8F9FA
+      const borderGray = [222, 226, 230]; // #DEE2E6
+
+      let y = 15;
+
+      // 1. Header Banner
+      doc.setFillColor(...purplePrimary);
+      doc.rect(0, 0, pageWidth, 35, 'F');
+
+      doc.setFont("Helvetica", "bold");
+      doc.setFontSize(22);
+      doc.setTextColor(255, 255, 255);
+      doc.text("NEET UG PREFERENCE LIST", 15, 18);
+      
+      doc.setFont("Helvetica", "normal");
+      doc.setFontSize(10);
+      doc.setTextColor(...goldAccent);
+      doc.text("Generated by NEET Counselling Preference Maker", 15, 24);
+
+      doc.setFontSize(9);
+      doc.setTextColor(201, 182, 228);
+      const today = new Date().toLocaleDateString('en-IN', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      doc.text(`Generated: ${today}`, pageWidth - 15, 18, { align: 'right' });
+
+      // 2. Candidate Information Card
+      y = 48;
+      doc.setFillColor(...lightBg);
+      doc.setDrawColor(...borderGray);
+      doc.rect(15, y, pageWidth - 30, 38, 'FD');
+
+      doc.setFont("Helvetica", "bold");
+      doc.setFontSize(11);
+      doc.setTextColor(...purpleAccent);
+      doc.text("CANDIDATE INFORMATION", 20, y + 7);
+      
+      doc.setFontSize(9);
+      
+      // Column 1
+      doc.setFont("Helvetica", "normal");
+      doc.setTextColor(...textMuted);
+      doc.text("Candidate Name:", 20, y + 16);
+      doc.setTextColor(...textDark);
+      doc.setFont("Helvetica", "bold");
+      doc.text(name, 50, y + 16);
+
+      doc.setFont("Helvetica", "normal");
+      doc.setTextColor(...textMuted);
+      doc.text("Preferred Course:", 20, y + 23);
+      doc.setTextColor(...textDark);
+      doc.setFont("Helvetica", "bold");
+      doc.text(course, 50, y + 23);
+
+      doc.setFont("Helvetica", "normal");
+      doc.setTextColor(...textMuted);
+      doc.text("Domicile State:", 20, y + 30);
+      doc.setTextColor(...textDark);
+      doc.setFont("Helvetica", "bold");
+      doc.text(domicile, 50, y + 30);
+
+      // Column 2
+      const col2Left = 110;
+      doc.setFont("Helvetica", "normal");
+      doc.setTextColor(...textMuted);
+      doc.text("All India Rank (AIR):", col2Left, y + 16);
+      doc.setTextColor(...textDark);
+      doc.setFont("Helvetica", "bold");
+      doc.text(Number(rank).toLocaleString('en-IN'), col2Left + 35, y + 16);
+
+      doc.setFont("Helvetica", "normal");
+      doc.setTextColor(...textMuted);
+      doc.text("NEET Score:", col2Left, y + 23);
+      doc.setTextColor(...textDark);
+      doc.setFont("Helvetica", "bold");
+      doc.text(`${score} / 720`, col2Left + 35, y + 23);
+
+      doc.setFont("Helvetica", "normal");
+      doc.setTextColor(...textMuted);
+      doc.text("Category:", col2Left, y + 30);
+      doc.setTextColor(...textDark);
+      doc.setFont("Helvetica", "bold");
+      doc.text(category, col2Left + 35, y + 30);
+
+      // 3. Preferences Table
+      y = 96;
+      doc.setFont("Helvetica", "bold");
+      doc.setFontSize(12);
+      doc.setTextColor(...purplePrimary);
+      doc.text("SAVED COLLEGE PREFERENCE ORDER", 15, y);
+
+      const tableRows = state.preferences.map((item, index) => [
+        String(index + 1),
+        item.name,
+        item.state,
+        item.fees === 0 ? 'N/A' : `Rs. ${Number(item.fees).toLocaleString('en-IN')}`,
+        item.bond || 'N/A'
+      ]);
+
+      doc.autoTable({
+        startY: y + 4,
+        head: [['#', 'College Name', 'State', 'Annual Fees', 'Bond & Service Details']],
+        body: tableRows,
+        theme: 'striped',
+        headStyles: {
+          fillColor: purplePrimary,
+          textColor: [255, 255, 255],
+          fontSize: 9,
+          fontStyle: 'bold',
+          halign: 'left',
+          valign: 'middle'
+        },
+        columnStyles: {
+          0: { cellWidth: 10, halign: 'center' },
+          1: { cellWidth: 70 },
+          2: { cellWidth: 30 },
+          3: { cellWidth: 30 },
+          4: { cellWidth: 40 }
+        },
+        styles: {
+          fontSize: 8,
+          cellPadding: 3,
+          textColor: textDark,
+          lineColor: borderGray,
+          lineWidth: 0.1
+        },
+        alternateRowStyles: {
+          fillColor: [252, 248, 255] // light violet/purple tint
+        },
+        margin: { left: 15, right: 15 },
+        didDrawPage: function(data) {
+          doc.setFont("Helvetica", "normal");
+          doc.setFontSize(8);
+          doc.setTextColor(...textMuted);
+          doc.text("DC NEET COUNSELLING - 9694673555, 8000258339", 15, pageHeight - 10);
+          
+          const pageNum = doc.internal.getNumberOfPages();
+          doc.text(`Page ${data.pageNumber} of ${pageNum}`, pageWidth - 15, pageHeight - 10, { align: 'right' });
+        }
+      });
+
+      const filename = `${name.replace(/\s+/g, '_')}_NEET_Preferences.pdf`;
+      doc.save(filename);
+      window.pmCloseDownloadModal();
+    } catch (err) {
+      console.error("Failed to generate PDF:", err);
+      alert("Error generating PDF: " + err.message);
     }
   };
 
