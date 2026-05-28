@@ -244,6 +244,24 @@ window.addEventListener('load', function() {
 // Enhance the stub navigation with animations and dynamic features
 var originalStub = window.navigate;
 window.navigate = function(route) {
+    // Special NEET Preference Maker UI controls (Exclusive Full Width Topbar Layout)
+    var globalHeader = document.getElementById('header-container');
+    var globalFooter = document.querySelector('footer');
+    if (route === 'preference-maker') {
+        if (globalHeader) globalHeader.style.display = 'none';
+        if (globalFooter) globalFooter.style.display = 'none';
+        var pmEl = document.getElementById('section-preference-maker');
+        if (pmEl) {
+            pmEl.style.display = 'block';
+            if (typeof window.renderPreferenceMaker === 'function') {
+                window.renderPreferenceMaker();
+            }
+        }
+    } else {
+        if (globalHeader) globalHeader.style.display = '';
+        if (globalFooter) globalFooter.style.display = '';
+    }
+
     if (route === 'ebooks') {
         setTimeout(function() { if (window.loadWishlistStates) window.loadWishlistStates(); }, 200);
         setTimeout(function() { if (window.loadCartStates) window.loadCartStates(); }, 250);
