@@ -88,6 +88,12 @@
     const container = document.getElementById("section-preference-maker");
     if (!container) return;
 
+    // Clean up any body-level relocated modals to prevent duplicates before layout injection
+    const bodyModal = document.querySelector('body > #pmModal');
+    const bodyDownloadModal = document.querySelector('body > #pmDownloadModal');
+    if (bodyModal) bodyModal.remove();
+    if (bodyDownloadModal) bodyDownloadModal.remove();
+
     // Only render the wrapper layout if the main table container doesn't exist
     if (!document.getElementById("pmTableBody")) {
       // Create standard states list for the filter dropdown (sorted alphabetically)
@@ -255,6 +261,45 @@
 
       container.innerHTML = html;
 
+      // Relocate modals to document.body to ensure position: fixed aligns with viewport
+      const pmModal = document.getElementById("pmModal");
+      const pmDownloadModal = document.getElementById("pmDownloadModal");
+      if (pmModal) document.body.appendChild(pmModal);
+      if (pmDownloadModal) document.body.appendChild(pmDownloadModal);
+
+      // Centralized event delegation for row action buttons
+      const tableBody = document.getElementById("pmTableBody");
+      if (tableBody) {
+        tableBody.addEventListener("click", function(e) {
+          console.log("[Antigravity Debug] Table body clicked. Target element:", e.target);
+          const editBtn = e.target.closest('.pm-edit-btn');
+          const deleteBtn = e.target.closest('.pm-delete-btn');
+          console.log("[Antigravity Debug] closest editBtn:", editBtn, "closest deleteBtn:", deleteBtn);
+          
+          if (editBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const tr = editBtn.closest('tr');
+            console.log("[Antigravity Debug] Edit button clicked. Target row:", tr);
+            if (tr) {
+              const id = tr.getAttribute('data-id');
+              console.log("[Antigravity Debug] Row ID to edit:", id);
+              window.pmOpenEditModal(e, id);
+            }
+          } else if (deleteBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const tr = deleteBtn.closest('tr');
+            console.log("[Antigravity Debug] Delete button clicked. Target row:", tr);
+            if (tr) {
+              const id = tr.getAttribute('data-id');
+              console.log("[Antigravity Debug] Row ID to delete:", id);
+              window.pmDeleteCollege(e, id);
+            }
+          }
+        });
+      }
+
       // Attach search and filter event listeners
       const searchInput = document.getElementById("pmSearchInput");
       const stateFilter = document.getElementById("pmStateFilter");
@@ -401,15 +446,22 @@
 
     // Populate rows
     tableBody.innerHTML = filteredPreferences.length > 0 ? filteredPreferences.map((college, idx) => `
-      <tr draggable="true" data-id="${college.id}" data-index="${idx}">
+      <tr data-id="${college.id}" data-index="${idx}">
         <td>
           <div class="pm-drag-cell">
-            <div class="pm-drag-handle" title="Drag to reorder"><i class="fas fa-grip-vertical"></i></div>
+            <div class="pm-drag-handle" draggable="true" title="Drag to reorder"><i class="fas fa-grip-vertical"></i></div>
             <div class="pm-order-badge">${idx + 1}</div>
           </div>
         </td>
         <td>
-          <span class="pm-college-name">${college.name}</span>
+          <div class="pm-college-info-wrapper">
+            <span class="pm-college-name">${college.name}</span>
+            <div class="pm-college-meta-mobile">
+              <span class="pm-badge ${getStateBadgeClass(college.state)}">${college.state}</span>
+              <span class="pm-meta-fee"><i class="fas fa-indian-rupee-sign"></i> Rs. ${formatFees(college.fees)}</span>
+              <span class="pm-meta-bond"><i class="fas fa-file-contract"></i> ${college.bond || "N/A"}</span>
+            </div>
+          </div>
         </td>
         <td>
           <span class="pm-badge ${getStateBadgeClass(college.state)}">${college.state}</span>
@@ -422,10 +474,10 @@
         </td>
         <td>
           <div class="pm-row-actions">
-            <button class="pm-row-btn" onclick="window.pmOpenEditModal('${college.id}')" title="Edit Preference">
+            <button type="button" class="pm-row-btn pm-edit-btn" title="Edit Preference">
               <i class="fas fa-pencil-alt"></i>
             </button>
-            <button class="pm-row-btn" onclick="window.pmDeleteCollege('${college.id}')" title="Delete Preference">
+            <button type="button" class="pm-row-btn pm-delete-btn" title="Delete Preference">
               <i class="fas fa-trash-alt"></i>
             </button>
           </div>
@@ -481,7 +533,11 @@
   };
 
   // Edit College Modal Open
-  window.pmOpenEditModal = function(id) {
+  window.pmOpenEditModal = function(e, id) {
+    // If called without event argument (backward compatibility)
+    if (typeof e === 'string' && id === undefined) {
+      id = e;
+    }
     const college = state.preferences.find(item => String(item.id) === String(id));
     if (!college) return;
     state.editingId = id;
@@ -493,12 +549,36 @@
     document.getElementById("colFees").value = college.fees;
     document.getElementById("colBond").value = college.bond || "";
 
-    document.getElementById("pmModal").style.display = "flex";
+    const overlay = document.getElementById("pmModal");
+    const modalContent = overlay.querySelector('.pm-modal');
+    
+    // Clear any previous inline styles to ensure default flex centering
+    if (modalContent) {
+      modalContent.style.position = '';
+      modalContent.style.top = '';
+      modalContent.style.left = '';
+      modalContent.style.transform = '';
+      modalContent.style.margin = '';
+    }
+    
+    // Show overlay (flex aligns it centered in viewport)
+    overlay.style.display = "flex";
   };
 
   // Close Modal
   window.pmCloseModal = function() {
-    document.getElementById("pmModal").style.display = "none";
+    const overlay = document.getElementById("pmModal");
+    if (overlay) {
+      overlay.style.display = "none";
+      const modalContent = overlay.querySelector('.pm-modal');
+      if (modalContent) {
+        modalContent.style.position = '';
+        modalContent.style.top = '';
+        modalContent.style.left = '';
+        modalContent.style.transform = '';
+        modalContent.style.margin = '';
+      }
+    }
     state.editingId = null;
   };
 
@@ -540,9 +620,22 @@
   };
 
   // Delete College preference from state
-  window.pmDeleteCollege = function(id) {
-    if (confirm("Are you sure you want to remove this college from your preferences?")) {
+  window.pmDeleteCollege = function(e, id) {
+    console.log("[Antigravity Debug] pmDeleteCollege entered. e:", e, "id:", id);
+    if (typeof e === 'string' && id === undefined) {
+      id = e;
+      console.log("[Antigravity Debug] Readjusted id from first argument:", id);
+    } else if (e && e.stopPropagation) {
+      e.stopPropagation();
+    }
+    console.log("[Antigravity Debug] Attempting window.confirm check for id:", id);
+    const confirmed = window.confirm("Are you sure you want to remove this college from your preferences?");
+    console.log("[Antigravity Debug] window.confirm response:", confirmed);
+    if (confirmed) {
+      const originalCount = state.preferences.length;
       state.preferences = state.preferences.filter(item => String(item.id) !== String(id));
+      const newCount = state.preferences.length;
+      console.log("[Antigravity Debug] Deletion executed. Original count:", originalCount, "New count:", newCount);
       saveToLocalStorage();
       window.renderPreferenceMakerTable();
     }
@@ -747,24 +840,32 @@
     const tableBody = document.getElementById("pmTableBody");
     if (!tableBody) return;
 
-    const rows = tableBody.querySelectorAll("tr[draggable]");
+    const rows = tableBody.querySelectorAll("tr[data-id]");
 
     rows.forEach(row => {
-      // DragStart Event
-      row.addEventListener("dragstart", function(e) {
-        draggedRow = row;
-        row.classList.add("pm-row-dragging");
-        e.dataTransfer.effectAllowed = "move";
-        e.dataTransfer.setData("text/plain", row.getAttribute("data-id"));
-      });
+      const handle = row.querySelector('.pm-drag-handle');
+      if (handle) {
+        // DragStart Event on the handle itself
+        handle.addEventListener("dragstart", function(e) {
+          draggedRow = row;
+          row.classList.add("pm-row-dragging");
+          e.dataTransfer.effectAllowed = "move";
+          e.dataTransfer.setData("text/plain", row.getAttribute("data-id"));
+          
+          // Set the whole row as the visual drag image
+          if (e.dataTransfer.setDragImage) {
+            e.dataTransfer.setDragImage(row, 20, 20);
+          }
+        });
 
-      // DragEnd Event
-      row.addEventListener("dragend", function() {
-        row.classList.remove("pm-row-dragging");
-        // Clear all dragover indicator classes
-        rows.forEach(r => r.classList.remove("pm-row-over"));
-        draggedRow = null;
-      });
+        // DragEnd Event on the handle itself
+        handle.addEventListener("dragend", function() {
+          row.classList.remove("pm-row-dragging");
+          // Clear all dragover indicator classes
+          rows.forEach(r => r.classList.remove("pm-row-over"));
+          draggedRow = null;
+        });
+      }
 
       // DragOver Event
       row.addEventListener("dragover", function(e) {
@@ -785,7 +886,7 @@
         e.preventDefault();
         row.classList.remove("pm-row-over");
 
-        if (row !== draggedRow) {
+        if (draggedRow && row !== draggedRow) {
           const draggedId = draggedRow.getAttribute("data-id");
           const targetId = row.getAttribute("data-id");
 

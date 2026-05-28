@@ -220,7 +220,7 @@
   background-color: var(--pm-bg-secondary);
   border-radius: 20px;
   border: 1px solid var(--pm-border-color);
-  overflow: hidden;
+  overflow-x: auto;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -361,6 +361,10 @@
   background-color: rgba(123, 47, 247, 0.15);
   border-color: var(--pm-accent-yellow);
   transform: scale(1.05);
+}
+
+.pm-row-btn * {
+  pointer-events: none;
 }
 
 /* Pagination Row */
@@ -581,6 +585,9 @@
     transform: translateY(0);
   }
 }
+.pm-college-meta-mobile {
+  display: none;
+}
 
 /* Mobile responsive styles */
 @media (max-width: 992px) {
@@ -619,6 +626,7 @@
   
   .pm-table td {
     font-size: 13px;
+    height: auto !important;
   }
   
   .pm-badge {
@@ -644,6 +652,98 @@
     flex-direction: column;
     gap: 16px;
     align-items: center;
+  }
+
+  /* Hide separate columns for State, Fees, and Bond on Mobile */
+  .pm-table th:nth-child(3),
+  .pm-table td:nth-child(3),
+  .pm-table th:nth-child(4),
+  .pm-table td:nth-child(4),
+  .pm-table th:nth-child(5),
+  .pm-table td:nth-child(5) {
+    display: none !important;
+  }
+
+  /* Style embedded mobile meta block */
+  .pm-college-meta-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--pm-text-secondary);
+  }
+  
+  .pm-college-meta-mobile .pm-badge {
+    align-self: flex-start;
+    margin-bottom: 2px;
+    padding: 4px 8px;
+  }
+
+  .pm-meta-fee, .pm-meta-bond {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #c9b6e4;
+  }
+  
+  .pm-meta-fee i, .pm-meta-bond i {
+    color: var(--pm-accent-yellow);
+    width: 14px;
+    font-size: 12px;
+  }
+
+  /* Compact Column Widths on Mobile */
+  .pm-table {
+    table-layout: fixed;
+  }
+  
+  .pm-table th:nth-child(1),
+  .pm-table td:nth-child(1) {
+    width: 65px !important;
+    padding: 12px 4px !important;
+  }
+  
+  .pm-table th:nth-child(2),
+  .pm-table td:nth-child(2) {
+    padding: 12px 6px !important;
+  }
+  
+  .pm-table th:nth-child(6),
+  .pm-table td:nth-child(6) {
+    width: 90px !important;
+    padding: 12px 4px !important;
+  }
+
+  .pm-row-actions {
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .pm-row-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  /* Mobile Scrollable Modals */
+  .pm-modal-overlay {
+    align-items: flex-start !important;
+    overflow-y: auto !important;
+    padding: 10px !important;
+  }
+  
+  .pm-modal {
+    margin: 30px auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  
+  .pm-modal-body {
+    padding: 16px !important;
+  }
+  
+  .pm-modal-header, .pm-modal-footer {
+    padding: 16px 20px !important;
   }
 }
 
