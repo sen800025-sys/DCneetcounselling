@@ -104,17 +104,7 @@
             </svg>
             NEET Preference Maker
           </a>
-          <div class="pm-topbar-right">
-            <button class="pm-notif-btn" aria-label="Notifications" onclick="alert('No new notifications');">
-              <i class="far fa-bell"></i>
-              <span class="pm-notif-badge"></span>
-            </button>
-            <div class="pm-profile-dropdown" onclick="window.navigate('dashboard')">
-              <div class="pm-profile-avatar">S</div>
-              <span class="pm-profile-name">Student</span>
-              <i class="fas fa-chevron-down pm-profile-arrow"></i>
-            </div>
-          </div>
+          <div class="pm-topbar-right"></div>
         </header>
 
         <!-- Main Layout Section -->

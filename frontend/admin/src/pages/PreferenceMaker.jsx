@@ -8,7 +8,6 @@ import {
   Pencil, 
   Trash2, 
   Bell, 
-  User,
   ChevronLeft,
   ChevronRight,
   MoreVertical
@@ -49,16 +48,6 @@ export default function PreferenceMaker() {
         <div className="flex items-center gap-4">
           <button className="w-10 h-10 rounded-full bg-[#240046] border border-[rgba(255,255,255,0.08)] flex items-center justify-center hover:bg-[#2D0B52] transition-colors duration-250">
             <Bell size={18} className="text-[#C9B6E4]" />
-          </button>
-          <div className="h-6 w-px bg-[rgba(255,255,255,0.08)] mx-2"></div>
-          <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#7B2FF7] to-[#4A1D96] flex items-center justify-center border border-[rgba(255,255,255,0.1)]">
-              <User size={18} className="text-white" />
-            </div>
-            <div className="hidden sm:block text-left ml-1">
-              <p className="text-sm font-semibold leading-tight text-white">Dr. Student</p>
-              <p className="text-xs text-[#C9B6E4]">Aspirant</p>
-            </div>
           </button>
         </div>
       </header>
