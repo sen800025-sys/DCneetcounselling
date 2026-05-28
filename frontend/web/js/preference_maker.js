@@ -20,8 +20,10 @@
 
   // Global State
   const state = {
+    allColleges: [],
     preferences: [],
-    isLoaded: false,
+    viewMode: "preferences", // "all" or "preferences"
+    dbLoaded: false,
     isLoading: false,
     filters: {
       search: "",
@@ -97,7 +99,7 @@
     // Only render the wrapper layout if the main table container doesn't exist
     if (!document.getElementById("pmTableBody")) {
       // Create standard states list for the filter dropdown (sorted alphabetically)
-      const statesList = Array.from(new Set(state.preferences.map(p => p.state))).sort();
+      const statesList = Array.from(new Set(state.allColleges.map(p => p.state))).sort();
 
       let html = `
         <!-- Dedicated Responsive Topbar -->
@@ -122,6 +124,9 @@
               <p class="pm-subtitle">Add and arrange your preferred medical colleges</p>
             </div>
             <div class="pm-actions">
+              <button class="pm-btn pm-btn-outline" onclick="window.pmShowMyPreferences()" title="Show all your saved preferences">
+                <i class="fas fa-list" style="color: var(--pm-accent-yellow);"></i> My Preferences
+              </button>
               <button class="pm-btn pm-btn-outline" onclick="window.pmOpenDownloadModal()" title="Download your Preference List as PDF">
                 <i class="fas fa-file-pdf" style="color: #ef4444;"></i> Download PDF
               </button>
@@ -163,7 +168,7 @@
                   <th style="width: 160px;">State</th>
                   <th style="width: 140px;">Fees (₹)</th>
                   <th>Bond Details</th>
-                  <th style="width: 120px;">Actions</th>
+                  <th style="width: 150px;">Actions</th>
                 </tr>
               </thead>
               <tbody id="pmTableBody"></tbody>
@@ -272,19 +277,21 @@
       if (tableBody) {
         tableBody.addEventListener("click", function(e) {
           console.log("[Antigravity Debug] Table body clicked. Target element:", e.target);
-          const editBtn = e.target.closest('.pm-edit-btn');
+          const addRowBtn = e.target.closest('.pm-add-row-btn');
           const deleteBtn = e.target.closest('.pm-delete-btn');
-          console.log("[Antigravity Debug] closest editBtn:", editBtn, "closest deleteBtn:", deleteBtn);
+          const upBtn = e.target.closest('.pm-nav-up-btn');
+          const downBtn = e.target.closest('.pm-nav-down-btn');
+          console.log("[Antigravity Debug] closest addRowBtn:", addRowBtn, "closest deleteBtn:", deleteBtn, "closest upBtn:", upBtn, "closest downBtn:", downBtn);
           
-          if (editBtn) {
+          if (addRowBtn) {
             e.preventDefault();
             e.stopPropagation();
-            const tr = editBtn.closest('tr');
-            console.log("[Antigravity Debug] Edit button clicked. Target row:", tr);
+            const tr = addRowBtn.closest('tr');
+            console.log("[Antigravity Debug] Add Similar button clicked. Target row:", tr);
             if (tr) {
               const id = tr.getAttribute('data-id');
-              console.log("[Antigravity Debug] Row ID to edit:", id);
-              window.pmOpenEditModal(e, id);
+              console.log("[Antigravity Debug] Row ID to copy details from:", id);
+              window.pmOpenAddModalWithData(e, id);
             }
           } else if (deleteBtn) {
             e.preventDefault();
@@ -295,6 +302,22 @@
               const id = tr.getAttribute('data-id');
               console.log("[Antigravity Debug] Row ID to delete:", id);
               window.pmDeleteCollege(e, id);
+            }
+          } else if (upBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const tr = upBtn.closest('tr');
+            if (tr) {
+              const id = tr.getAttribute('data-id');
+              window.pmMovePreferenceUp(id);
+            }
+          } else if (downBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const tr = downBtn.closest('tr');
+            if (tr) {
+              const id = tr.getAttribute('data-id');
+              window.pmMovePreferenceDown(id);
             }
           }
         });
@@ -331,7 +354,7 @@
     window.renderPreferenceMakerTable();
 
     // Trigger Supabase fetch if not loaded and not already loading
-    if (!state.isLoaded && !state.isLoading) {
+    if (!state.dbLoaded && !state.isLoading) {
       loadCollegesFromSupabase();
     }
   };
@@ -376,9 +399,17 @@
           };
         });
 
-        state.preferences = mapped;
-        state.isLoaded = true;
-        saveToLocalStorage();
+        state.allColleges = mapped;
+        state.dbLoaded = true;
+        
+        // Auto-migration/clearing of pre-populated legacy cache:
+        // If the preferences list contains all or more colleges than the database (legacy default),
+        // reset it to empty so the user starts with a clean slate.
+        if (mapped.length > 0 && state.preferences.length >= mapped.length) {
+          console.log("[Antigravity] Detected legacy pre-populated preferences cache. Resetting to empty list.");
+          state.preferences = [];
+          saveToLocalStorage();
+        }
         
         // Disable loading state before triggering re-render
         state.isLoading = false;
@@ -436,8 +467,23 @@
       return;
     }
 
-    // Filter local preferences
-    const filteredPreferences = state.preferences.filter(item => {
+    // Toggle button text in header dynamically
+    const myPrefBtn = document.querySelector('[onclick="window.pmShowMyPreferences()"]');
+    if (myPrefBtn) {
+      if (state.viewMode === "all") {
+        myPrefBtn.innerHTML = `<i class="fas fa-list" style="color: var(--pm-accent-yellow);"></i> My Preferences`;
+        myPrefBtn.title = "Show all your saved preferences";
+      } else {
+        myPrefBtn.innerHTML = `<i class="fas fa-globe" style="color: var(--pm-accent-yellow);"></i> Show All Colleges`;
+        myPrefBtn.title = "Show all available colleges";
+      }
+    }
+
+    // Determine source list based on view mode
+    const sourceList = state.viewMode === "all" ? state.allColleges : state.preferences;
+
+    // Filter list
+    const filteredPreferences = sourceList.filter(item => {
       const matchSearch = item.name.toLowerCase().includes(state.filters.search.toLowerCase());
       const matchState = state.filters.state === "All" || item.state === state.filters.state;
       const matchFees = !state.filters.maxFees || item.fees <= Number(state.filters.maxFees);
@@ -445,48 +491,94 @@
     });
 
     // Populate rows
-    tableBody.innerHTML = filteredPreferences.length > 0 ? filteredPreferences.map((college, idx) => `
-      <tr data-id="${college.id}" data-index="${idx}">
-        <td>
+    tableBody.innerHTML = filteredPreferences.length > 0 ? filteredPreferences.map((college, idx) => {
+      const isSaved = state.preferences.some(p => String(p.id) === String(college.id));
+      
+      let actionHtml = '';
+      if (state.viewMode === 'all') {
+        if (isSaved) {
+          actionHtml = `
+            <div class="pm-row-btn pm-check-btn" style="border-color: #22c55e; color: #22c55e; cursor: default;" title="Added to Preferences">
+              <i class="fas fa-check"></i>
+            </div>
+          `;
+        } else {
+          actionHtml = `
+            <button type="button" class="pm-row-btn pm-add-row-btn" title="Add to Preferences">
+              <i class="fas fa-plus"></i>
+            </button>
+          `;
+        }
+      } else {
+        const globalIdx = state.preferences.findIndex(p => String(p.id) === String(college.id));
+        const isFirst = globalIdx === 0;
+        const isLast = globalIdx === state.preferences.length - 1;
+
+        actionHtml = `
+          <button type="button" class="pm-nav-up-btn" title="Move Up" ${isFirst ? 'disabled' : ''}>
+            <i class="fas fa-arrow-up"></i>
+          </button>
+          <button type="button" class="pm-nav-down-btn" title="Move Down" ${isLast ? 'disabled' : ''}>
+            <i class="fas fa-arrow-down"></i>
+          </button>
+          <button type="button" class="pm-row-btn pm-delete-btn" title="Delete Preference">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        `;
+      }
+
+      // Drag and order badge display
+      let orderHtml = '';
+      if (state.viewMode === 'preferences') {
+        orderHtml = `
           <div class="pm-drag-cell">
             <div class="pm-drag-handle" draggable="true" title="Drag to reorder"><i class="fas fa-grip-vertical"></i></div>
             <div class="pm-order-badge">${idx + 1}</div>
           </div>
-        </td>
-        <td>
-          <div class="pm-college-info-wrapper">
-            <span class="pm-college-name">${college.name}</span>
-            <div class="pm-college-meta-mobile">
-              <span class="pm-badge ${getStateBadgeClass(college.state)}">${college.state}</span>
-              <span class="pm-meta-fee"><i class="fas fa-indian-rupee-sign"></i> Rs. ${formatFees(college.fees)}</span>
-              <span class="pm-meta-bond"><i class="fas fa-file-contract"></i> ${college.bond || "N/A"}</span>
+        `;
+      } else {
+        orderHtml = `
+          <div class="pm-drag-cell">
+            <div class="pm-order-badge" style="cursor: default;">${idx + 1}</div>
+          </div>
+        `;
+      }
+
+      return `
+        <tr data-id="${college.id}" data-index="${idx}">
+          <td>
+            ${orderHtml}
+          </td>
+          <td>
+            <div class="pm-college-info-wrapper">
+              <span class="pm-college-name">${college.name}</span>
+              <div class="pm-college-meta-mobile">
+                <span class="pm-badge ${getStateBadgeClass(college.state)}">${college.state}</span>
+                <span class="pm-meta-fee"><i class="fas fa-indian-rupee-sign"></i> Rs. ${formatFees(college.fees)}</span>
+                <span class="pm-meta-bond"><i class="fas fa-file-contract"></i> ${college.bond || "N/A"}</span>
+              </div>
             </div>
-          </div>
-        </td>
-        <td>
-          <span class="pm-badge ${getStateBadgeClass(college.state)}">${college.state}</span>
-        </td>
-        <td>
-          <span class="pm-fees">${formatFees(college.fees)}</span>
-        </td>
-        <td>
-          <span class="pm-bond">${college.bond || "N/A"}</span>
-        </td>
-        <td>
-          <div class="pm-row-actions">
-            <button type="button" class="pm-row-btn pm-edit-btn" title="Edit Preference">
-              <i class="fas fa-pencil-alt"></i>
-            </button>
-            <button type="button" class="pm-row-btn pm-delete-btn" title="Delete Preference">
-              <i class="fas fa-trash-alt"></i>
-            </button>
-          </div>
-        </td>
-      </tr>
-    `).join('') : `
+          </td>
+          <td>
+            <span class="pm-badge ${getStateBadgeClass(college.state)}">${college.state}</span>
+          </td>
+          <td>
+            <span class="pm-fees">${formatFees(college.fees)}</span>
+          </td>
+          <td>
+            <span class="pm-bond">${college.bond || "N/A"}</span>
+          </td>
+          <td>
+            <div class="pm-row-actions">
+              ${actionHtml}
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('') : `
       <tr>
         <td colspan="6" style="text-align: center; color: var(--pm-text-secondary); padding: 48px;">
-          No preferences found. Try adjusting your filters or add a new college.
+          ${state.viewMode === 'all' ? 'No colleges found. Try adjusting your filters.' : 'No preferences saved yet. Go back to Show All Colleges to add some!'}
         </td>
       </tr>
     `;
@@ -515,6 +607,25 @@
     initDragAndDrop();
   };
 
+  // Toggle view mode between all colleges and preferences list
+  window.pmShowMyPreferences = function() {
+    state.viewMode = state.viewMode === "all" ? "preferences" : "all";
+    console.log("[Antigravity Debug] pmShowMyPreferences clicked. Switch viewMode to:", state.viewMode);
+    
+    // Also reset filter UI values when switching views to ensure clean state
+    state.filters.search = "";
+    state.filters.state = "All";
+    state.filters.maxFees = "";
+    const searchInput = document.getElementById("pmSearchInput");
+    const stateFilter = document.getElementById("pmStateFilter");
+    const feesFilter = document.getElementById("pmFeesFilter");
+    if (searchInput) searchInput.value = "";
+    if (stateFilter) stateFilter.value = "All";
+    if (feesFilter) feesFilter.value = "";
+
+    window.renderPreferenceMakerTable();
+  };
+
   // Toggle Filters Panel Expand
   window.pmToggleFilters = function() {
     const filterPanel = document.getElementById("pmFilterPanel");
@@ -530,6 +641,35 @@
     document.getElementById("pmModalSubmitBtn").innerText = "Add College";
     document.getElementById("pmCollegeForm").reset();
     document.getElementById("pmModal").style.display = "flex";
+  };
+
+  // Add College from All Colleges list directly into preferences list
+  window.pmOpenAddModalWithData = function(e, id) {
+    console.log("[Antigravity Debug] pmOpenAddModalWithData entered (add to preferences). e:", e, "id:", id);
+    if (typeof e === 'string' && id === undefined) {
+      id = e;
+    } else if (e && e.stopPropagation) {
+      e.stopPropagation();
+    }
+    const college = state.allColleges.find(item => String(item.id) === String(id));
+    if (!college) return;
+    
+    // Check if it's already in preferences to avoid duplication
+    const alreadyExists = state.preferences.some(item => String(item.id) === String(id));
+    if (!alreadyExists) {
+      state.preferences.push({
+        id: college.id,
+        name: college.name,
+        state: college.state,
+        fees: college.fees,
+        bond: college.bond
+      });
+      console.log(`[Antigravity Debug] Added college to preferences list:`, college.name);
+      saveToLocalStorage();
+    }
+
+    // Re-render table to display the green checkmark
+    window.renderPreferenceMakerTable();
   };
 
   // Edit College Modal Open
@@ -636,6 +776,32 @@
       state.preferences = state.preferences.filter(item => String(item.id) !== String(id));
       const newCount = state.preferences.length;
       console.log("[Antigravity Debug] Deletion executed. Original count:", originalCount, "New count:", newCount);
+      saveToLocalStorage();
+      window.renderPreferenceMakerTable();
+    }
+  };
+
+  // Move College preference Up in state
+  window.pmMovePreferenceUp = function(id) {
+    console.log("[Antigravity Debug] pmMovePreferenceUp entered. id:", id);
+    const idx = state.preferences.findIndex(p => String(p.id) === String(id));
+    if (idx > 0) {
+      const temp = state.preferences[idx];
+      state.preferences[idx] = state.preferences[idx - 1];
+      state.preferences[idx - 1] = temp;
+      saveToLocalStorage();
+      window.renderPreferenceMakerTable();
+    }
+  };
+
+  // Move College preference Down in state
+  window.pmMovePreferenceDown = function(id) {
+    console.log("[Antigravity Debug] pmMovePreferenceDown entered. id:", id);
+    const idx = state.preferences.findIndex(p => String(p.id) === String(id));
+    if (idx !== -1 && idx < state.preferences.length - 1) {
+      const temp = state.preferences[idx];
+      state.preferences[idx] = state.preferences[idx + 1];
+      state.preferences[idx + 1] = temp;
       saveToLocalStorage();
       window.renderPreferenceMakerTable();
     }
@@ -837,6 +1003,7 @@
   let draggedRow = null;
 
   function initDragAndDrop() {
+    if (state.viewMode !== "preferences") return;
     const tableBody = document.getElementById("pmTableBody");
     if (!tableBody) return;
 
