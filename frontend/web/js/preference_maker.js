@@ -38,6 +38,65 @@
     return Number(val).toLocaleString('en-IN');
   }
 
+  // Helper to format bond details into structured HTML for mobile view
+  function formatBondDetails(bondStr) {
+    if (!bondStr || bondStr === 'N/A' || bondStr.trim().toLowerCase() === 'no bond' || bondStr.trim().toLowerCase() === 'no service bond') {
+      return `<div class="pm-bond-service pm-bond-nobond">📝 No Bond</div>`;
+    }
+
+    const parts = bondStr.split(/[|;\n]+/).map(p => p.trim()).filter(Boolean);
+    let html = '';
+    let serviceText = '';
+    let penaltyText = '';
+    let discontinueText = '';
+
+    for (const part of parts) {
+      const partLower = part.toLowerCase();
+      if (partLower.includes('service') || partLower.includes('rural') || partLower.includes('years') || partLower.includes('year') || partLower.includes('bond')) {
+        if (!partLower.includes('penalty') && !partLower.includes('discontinue')) {
+          serviceText = part;
+        }
+      }
+      
+      if (partLower.includes('penalty')) {
+        let val = part.replace(/penalty:?/i, '').trim();
+        if (!val.startsWith('₹') && !val.startsWith('Rs.')) {
+          val = '₹' + val;
+        }
+        penaltyText = `Penalty: ${val}`;
+      } else if (partLower.includes('discontinue')) {
+        let val = part.replace(/discontinue:?/i, '').trim();
+        if (!val.startsWith('₹') && !val.startsWith('Rs.')) {
+          val = '₹' + val;
+        }
+        discontinueText = `Discontinue: ${val}`;
+      }
+    }
+
+    if (!serviceText && parts[0] && !parts[0].toLowerCase().includes('penalty') && !parts[0].toLowerCase().includes('discontinue')) {
+      serviceText = parts[0];
+    }
+
+    if (serviceText) {
+      html += `<div class="pm-bond-service">📝 ${serviceText}</div>`;
+    } else if (bondStr && !penaltyText && !discontinueText) {
+      html += `<div class="pm-bond-service">📝 ${bondStr}</div>`;
+    }
+
+    if (penaltyText || discontinueText) {
+      html += `<div class="pm-bond-penalties">`;
+      if (penaltyText) {
+        html += `<div class="pm-bond-penalty-item">${penaltyText}</div>`;
+      }
+      if (discontinueText) {
+        html += `<div class="pm-bond-penalty-item">${discontinueText}</div>`;
+      }
+      html += `</div>`;
+    }
+
+    return html;
+  }
+
   // Deterministic hash function to generate stable fee/bond values for database entries
   function getDeterministicHash(str) {
     let hash = 0;
@@ -498,13 +557,13 @@
       if (state.viewMode === 'all') {
         if (isSaved) {
           actionHtml = `
-            <div class="pm-row-btn pm-check-btn" style="border-color: #22c55e; color: #22c55e; cursor: default;" title="Added to Preferences">
+            <button type="button" class="pm-row-btn pm-btn-selected" style="cursor: default;" title="Added to Preferences">
               <i class="fas fa-check"></i>
-            </div>
+            </button>
           `;
         } else {
           actionHtml = `
-            <button type="button" class="pm-row-btn pm-add-row-btn" title="Add to Preferences">
+            <button type="button" class="pm-row-btn pm-add-row-btn pm-btn-unselected" title="Add to Preferences">
               <i class="fas fa-plus"></i>
             </button>
           `;
@@ -544,33 +603,111 @@
         `;
       }
 
+      // Mobile Action HTML
+      let mobileActionHtml = '';
+      if (state.viewMode === 'all') {
+        if (isSaved) {
+          mobileActionHtml = `
+            <button type="button" class="pm-row-btn pm-btn-selected" style="cursor: default;" title="Added to Preferences">
+              <i class="fas fa-check"></i>
+            </button>
+          `;
+        } else {
+          mobileActionHtml = `
+            <button type="button" class="pm-row-btn pm-add-row-btn pm-btn-unselected" title="Add to Preferences">
+              <i class="fas fa-plus"></i>
+            </button>
+          `;
+        }
+      } else {
+        const globalIdx = state.preferences.findIndex(p => String(p.id) === String(college.id));
+        const isFirst = globalIdx === 0;
+        const isLast = globalIdx === state.preferences.length - 1;
+
+        mobileActionHtml = `
+          <div class="pm-mobile-actions-wrapper">
+            <button type="button" class="pm-nav-up-btn" title="Move Up" ${isFirst ? 'disabled' : ''}>
+              <i class="fas fa-arrow-up"></i>
+            </button>
+            <button type="button" class="pm-nav-down-btn" title="Move Down" ${isLast ? 'disabled' : ''}>
+              <i class="fas fa-arrow-down"></i>
+            </button>
+            <button type="button" class="pm-row-btn pm-delete-btn" title="Delete Preference">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
+        `;
+      }
+
+      // Mobile Order Badge HTML
+      let mobileOrderHtml = '';
+      if (state.viewMode === 'preferences') {
+        mobileOrderHtml = `
+          <div class="pm-card-order-wrapper">
+            <div class="pm-drag-handle" draggable="true" title="Drag to reorder"><i class="fas fa-grip-vertical"></i></div>
+            <div class="pm-card-order-badge">${idx + 1}</div>
+          </div>
+        `;
+      } else {
+        mobileOrderHtml = `
+          <div class="pm-card-order-wrapper">
+            <div class="pm-card-order-badge" style="cursor: default;">${idx + 1}</div>
+          </div>
+        `;
+      }
+
       return `
-        <tr data-id="${college.id}" data-index="${idx}">
-          <td>
+        <tr data-id="${college.id}" data-index="${idx}" class="pm-college-row">
+          <!-- Desktop View Cells -->
+          <td class="pm-desktop-only">
             ${orderHtml}
           </td>
-          <td>
+          <td class="pm-desktop-only">
             <div class="pm-college-info-wrapper">
               <span class="pm-college-name">${college.name}</span>
-              <div class="pm-college-meta-mobile">
-                <span class="pm-badge ${getStateBadgeClass(college.state)}">${college.state}</span>
-                <span class="pm-meta-fee"><i class="fas fa-indian-rupee-sign"></i> Rs. ${formatFees(college.fees)}</span>
-                <span class="pm-meta-bond"><i class="fas fa-file-contract"></i> ${college.bond || "N/A"}</span>
-              </div>
             </div>
           </td>
-          <td>
+          <td class="pm-desktop-only">
             <span class="pm-badge ${getStateBadgeClass(college.state)}">${college.state}</span>
           </td>
-          <td>
+          <td class="pm-desktop-only">
             <span class="pm-fees">${formatFees(college.fees)}</span>
           </td>
-          <td>
+          <td class="pm-desktop-only">
             <span class="pm-bond">${college.bond || "N/A"}</span>
           </td>
-          <td>
+          <td class="pm-desktop-only">
             <div class="pm-row-actions">
               ${actionHtml}
+            </div>
+          </td>
+
+          <!-- Mobile View Premium Card Cell -->
+          <td class="pm-mobile-only" colspan="6">
+            <div class="pm-mobile-card">
+              <!-- Top Row: Order Badge, Title, and Actions -->
+              <div class="pm-card-top-row">
+                <div class="pm-card-top-left">
+                  ${mobileOrderHtml}
+                  <h3 class="pm-card-title">${college.name}</h3>
+                </div>
+                <div class="pm-card-actions">
+                  ${mobileActionHtml}
+                </div>
+              </div>
+
+              <!-- Second Row: State badge, Fee badge -->
+              <div class="pm-card-second-row">
+                <span class="pm-card-state-badge ${getStateBadgeClass(college.state)}">${college.state}</span>
+                <span class="pm-card-fee-badge">₹${formatFees(college.fees)}</span>
+              </div>
+
+              <!-- Third Row: Bond details container -->
+              <div class="pm-card-third-row">
+                <div class="pm-bond-container">
+                  ${formatBondDetails(college.bond)}
+                </div>
+              </div>
             </div>
           </td>
         </tr>

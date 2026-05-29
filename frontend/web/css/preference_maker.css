@@ -627,6 +627,35 @@
   display: none;
 }
 
+/* Visibility helpers */
+.pm-desktop-only {
+  display: table-cell;
+}
+.pm-mobile-only {
+  display: none;
+}
+
+/* Premium Selected/Unselected Action Buttons */
+.pm-btn-selected {
+  background-color: var(--pm-accent-yellow) !important;
+  border: none !important;
+  color: #18002E !important;
+}
+.pm-btn-selected:hover {
+  background-color: #ffd233 !important;
+  box-shadow: 0 0 12px rgba(255, 195, 0, 0.4) !important;
+}
+.pm-btn-unselected {
+  background-color: transparent !important;
+  border: 1.5px solid var(--pm-accent-purple) !important;
+  color: var(--pm-accent-purple) !important;
+}
+.pm-btn-unselected:hover {
+  background-color: rgba(123, 47, 247, 0.1) !important;
+  border-color: var(--pm-accent-yellow) !important;
+  color: var(--pm-accent-yellow) !important;
+}
+
 /* Mobile responsive styles */
 @media (max-width: 992px) {
   .pm-header-row {
@@ -650,6 +679,19 @@
 }
 
 @media (max-width: 768px) {
+  .pm-desktop-only {
+    display: none !important;
+  }
+  
+  .pm-mobile-only {
+    display: block !important;
+    width: 100% !important;
+    padding: 0 !important;
+    border: none !important;
+    height: auto !important;
+    background: transparent !important;
+  }
+
   .pm-topbar {
     padding: 0 16px;
   }
@@ -658,109 +700,202 @@
     padding: 16px;
   }
   
-  .pm-table th, .pm-table td {
-    padding: 12px 14px;
+  /* Make the card table layout block-based on mobile */
+  .pm-table-card {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    overflow: visible !important;
   }
   
-  .pm-table td {
-    font-size: 13px;
+  .pm-table {
+    display: block !important;
+    width: 100% !important;
+    table-layout: auto !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+  }
+
+  .pm-table thead {
+    display: none !important;
+  }
+
+  .pm-table tbody {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important; /* Spacing between cards */
+    width: 100% !important;
+  }
+
+  /* Make row behave like a card */
+  .pm-table tr.pm-college-row {
+    display: block !important;
+    width: 100% !important;
+    background: linear-gradient(135deg, #2D0B52 0%, #150029 100%) !important; /* Dark purple gradient card */
+    border-radius: 20px !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45) !important; /* Soft shadow */
+    padding: 16px !important; /* Reducing empty space on left */
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    margin-bottom: 0 !important;
     height: auto !important;
   }
-  
-  .pm-badge {
-    padding: 6px 10px;
-    font-size: 12px;
+
+  /* Hover/Tap animation */
+  .pm-table tr.pm-college-row:hover,
+  .pm-table tr.pm-college-row:active {
+    transform: translateY(-3px) scale(1.015) !important;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
   }
-  
-  .pm-bond {
-    font-size: 12px;
+
+  /* Card content styling */
+  .pm-mobile-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
   }
-  
-  .pm-drag-cell {
+
+  .pm-card-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .pm-card-top-left {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px; /* Reducing empty space on left */
+  }
+
+  /* Preference Order badge & drag handle container */
+  .pm-card-order-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 99px;
+    padding: 4px 8px;
+    flex-shrink: 0;
+  }
+
+  .pm-card-order-badge {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--pm-accent-yellow);
+  }
+
+  .pm-card-order-wrapper .pm-drag-handle {
+    padding: 0;
+    opacity: 0.7;
+    font-size: 12px;
+    color: var(--pm-text-secondary);
+    cursor: grab;
+  }
+
+  .pm-card-title {
+    font-size: 18px; /* 18px-20px college name */
+    font-weight: 700;
+    color: #FFFFFF;
+    margin: 0;
+    line-height: 1.3;
+    text-align: left;
+  }
+
+  .pm-card-actions {
+    flex-shrink: 0;
+  }
+
+  /* Actions wrapper for preferences view */
+  .pm-mobile-actions-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .pm-mobile-actions-wrapper button {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Second Row: Badges */
+  .pm-card-second-row {
+    display: flex;
     gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
   }
-  
-  .pm-order-badge {
-    width: 28px;
-    height: 28px;
-    font-size: 12px;
+
+  .pm-card-state-badge {
+    background: rgba(139, 92, 246, 0.25) !important; /* rgba(139,92,246,0.25) */
+    color: #FFFFFF !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    font-size: 13px !important; /* 13px State badge */
+    font-weight: 600 !important;
+    padding: 6px 12px !important;
+    border-radius: 99px !important;
   }
-  
+
+  .pm-card-fee-badge {
+    background: rgba(255, 195, 0, 0.15) !important; /* rgba(255,195,0,0.15) */
+    color: #FFC300 !important;
+    font-size: 14px !important; /* 14px fees */
+    font-weight: 700 !important;
+    padding: 6px 12px !important;
+    border-radius: 99px !important;
+    border: none !important;
+  }
+
+  /* Third Row: Bond section */
+  .pm-card-third-row {
+    width: 100%;
+  }
+
+  .pm-bond-container {
+    background: rgba(255, 255, 255, 0.04) !important; /* rgba(255,255,255,0.04) */
+    border-radius: 12px !important; /* 12px border radius */
+    padding: 10px !important; /* 10px padding */
+    font-size: 13px !important; /* 13px bond details */
+    line-height: 1.4;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .pm-bond-service {
+    font-weight: 600;
+    color: #FFFFFF;
+  }
+
+  .pm-bond-penalties {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-left: 12px;
+    border-left: 1.5px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .pm-bond-penalty-item {
+    color: var(--pm-text-secondary);
+    font-weight: 500;
+  }
+
   .pm-pagination-row {
     flex-direction: column;
     gap: 16px;
     align-items: center;
-  }
-
-  /* Hide separate columns for State, Fees, and Bond on Mobile */
-  .pm-table th:nth-child(3),
-  .pm-table td:nth-child(3),
-  .pm-table th:nth-child(4),
-  .pm-table td:nth-child(4),
-  .pm-table th:nth-child(5),
-  .pm-table td:nth-child(5) {
-    display: none !important;
-  }
-
-  /* Style embedded mobile meta block */
-  .pm-college-meta-mobile {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-top: 8px;
-    font-size: 12px;
-    color: var(--pm-text-secondary);
-  }
-  
-  .pm-college-meta-mobile .pm-badge {
-    align-self: flex-start;
-    margin-bottom: 2px;
-    padding: 4px 8px;
-  }
-
-  .pm-meta-fee, .pm-meta-bond {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: #c9b6e4;
-  }
-  
-  .pm-meta-fee i, .pm-meta-bond i {
-    color: var(--pm-accent-yellow);
-    width: 14px;
-    font-size: 12px;
-  }
-
-  /* Compact Column Widths on Mobile */
-  .pm-table {
-    table-layout: fixed;
-  }
-  
-  .pm-table th:nth-child(1),
-  .pm-table td:nth-child(1) {
-    width: 65px !important;
-    padding: 12px 4px !important;
-  }
-  
-  .pm-table th:nth-child(2),
-  .pm-table td:nth-child(2) {
-    padding: 12px 6px !important;
-  }
-  
-  .pm-table th:nth-child(6),
-  .pm-table td:nth-child(6) {
-    width: 90px !important;
-    padding: 12px 4px !important;
-  }
-
-  .pm-row-actions {
-    justify-content: center;
-    gap: 4px;
-  }
-
-  .pm-row-btn {
-    width: 32px;
-    height: 32px;
   }
 
   /* Mobile Scrollable Modals */
