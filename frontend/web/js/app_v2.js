@@ -243,12 +243,12 @@ window.addEventListener('load', function() {
 
 // Enhance the stub navigation with animations and dynamic features
 var originalStub = window.navigate;
-window.navigate = function(route) {
+window.navigate = function(route, isPopState) {
     // Special NEET Preference Maker UI controls (Exclusive Full Width Topbar Layout)
     var globalHeader = document.getElementById('header-container');
     var globalFooter = document.querySelector('footer');
+    if (globalHeader) globalHeader.style.display = ''; // Make sure header is always shown
     if (route === 'preference-maker') {
-        if (globalHeader) globalHeader.style.display = 'none';
         if (globalFooter) globalFooter.style.display = 'none';
         var pmEl = document.getElementById('section-preference-maker');
         if (pmEl) {
@@ -258,7 +258,6 @@ window.navigate = function(route) {
             }
         }
     } else {
-        if (globalHeader) globalHeader.style.display = '';
         if (globalFooter) globalFooter.style.display = '';
     }
 
@@ -310,7 +309,7 @@ window.navigate = function(route) {
     }
     
     if (originalStub && originalStub !== window.navigate) {
-        originalStub(route);
+        originalStub(route, isPopState);
     }
 
     // Update active nav highlight for desktop + mobile

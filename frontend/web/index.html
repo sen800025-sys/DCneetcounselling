@@ -106,7 +106,7 @@
         ? 'https://rlqmdylbzapyepuwncwt.supabase.co/functions/v1' 
         : 'https://rlqmdylbzapyepuwncwt.supabase.co/functions/v1';
 
-    window.navigate = function (route) {
+    window.navigate = function (route, isPopState) {
       console.log("Navigating to:", route);
       // Immediate UI update
       document.querySelectorAll(".page-section").forEach(function (s) {
@@ -127,7 +127,9 @@
       var target = document.getElementById("section-" + baseRoute);
       if (target) {
         target.style.display = "block";
-        window.history.pushState(null, null, "#" + route);
+        if (!isPopState) {
+          window.history.pushState(null, null, "#" + route);
+        }
         window.scrollTo(0, 0);
       }
       // Update active state in nav
@@ -164,7 +166,7 @@
       }
 
       // Priority 2: Standard hash navigation
-      window.navigate(hash || "home");
+      window.navigate(hash || "home", true);
     };
 
     // Run routing on initial load
