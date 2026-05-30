@@ -30,7 +30,15 @@
       state: "All",
       maxFees: ""
     },
-    editingId: null
+    editingId: null,
+    userMobile: null,
+    planType: "free",
+    listsRemaining: 0,
+    paymentStatus: "unpaid",
+    lists: [],
+    activeListId: null,
+    userDetails: null,
+    pendingAction: null
   };
 
   // Helper to format fees in Indian Rupees format (e.g. 1,628)
@@ -164,6 +172,401 @@
     }
   }
 
+  // Trigger premium upgrade Razorpay checkout
+  window.pmInitiatePremiumUpgrade = async function() {
+    if (!state.userMobile || !window.supabaseClient || !window._authUser) {
+      alert("Billing details unavailable. Make sure you are logged in with mobile number saved.");
+      return;
+    }
+
+    const upgradeBtn = document.querySelector('#pmUpgradeModal .pm-btn-yellow');
+    const originalText = upgradeBtn ? upgradeBtn.innerText : "Upgrade Now";
+    if (upgradeBtn) {
+      upgradeBtn.disabled = true;
+      upgradeBtn.innerText = "Initiating Payment...";
+    }
+
+    try {
+      const backendUrl = "https://rlqmdylbzapyepuwncwt.supabase.co/functions/v1";
+      const anonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJscW1keWxiemFweWVwdXduY3d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTcwNzYsImV4cCI6MjA5MTgzMzA3Nn0.oNNK1pwLnykQlNfUkw7IdB-ZBkKDoWxszsKDSIjsLeo";
+      const sessionData = await window.supabaseClient.auth.getSession();
+      const session = sessionData?.data?.session;
+
+      const createRes = await fetch(`${backendUrl}/razorpay-payment`, {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "apikey": anonKey,
+          "Authorization": session?.access_token ? `Bearer ${session.access_token}` : `Bearer ${anonKey}`
+        },
+        body: JSON.stringify({
+          email: window._authUser.email,
+          full_name: window._authUser.user_metadata?.full_name || window._authUser.user_metadata?.name || 'Student',
+          mobile: state.userMobile,
+          product_name: "Premium Preference Maker",
+          amount: 99.00,
+          coupon: null,
+          user_id: window._authUser.id,
+          wallet_enabled: false,
+          counselling_type: "preference_maker"
+        })
+      });
+
+      if (!createRes.ok) throw new Error(`Order creation failed with status: ${createRes.status}`);
+      const order = await createRes.json();
+      if (!order.success) throw new Error(order.error || "Failed to create order");
+
+      var options = {
+        "key": order.key_id,
+        "amount": Math.round(order.final_amount * 100),
+        "currency": "INR",
+        "name": "DC Neet Counselling",
+        "description": "Premium Preference Maker Upgrade",
+        "order_id": order.razorpay_order_id,
+        "handler": async function (response) {
+          try {
+            if (upgradeBtn) upgradeBtn.innerText = "Verifying Payment...";
+            
+            const responseVerify = await fetch(`${backendUrl}/verify-payment`, {
+              method: "POST",
+              headers: { 
+                "Content-Type": "application/json", 
+                "Authorization": session?.access_token ? `Bearer ${session.access_token}` : `Bearer ${anonKey}` 
+              },
+              body: JSON.stringify({ 
+                order_id: order.order_id, 
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
+                is_wallet_only: false 
+              })
+            });
+            const dataVerify = await responseVerify.json();
+            if (dataVerify.success) {
+              alert("Congratulations! Upgrade successful. You are now a Premium User.");
+              const upgradeModal = document.getElementById('pmUpgradeModal');
+              if (upgradeModal) upgradeModal.style.display = 'none';
+              await loadUserPreferenceMakerData();
+            } else {
+              throw new Error("Payment verification failed");
+            }
+          } catch (err) {
+            console.error(err);
+            alert("Payment verification error: " + err.message);
+          } finally {
+            if (upgradeBtn) {
+              upgradeBtn.disabled = false;
+              upgradeBtn.innerText = originalText;
+            }
+          }
+        },
+        "modal": {
+          "ondismiss": function() {
+            if (upgradeBtn) {
+              upgradeBtn.disabled = false;
+              upgradeBtn.innerText = originalText;
+            }
+          }
+        },
+        "prefill": {
+          "name": window._authUser.user_metadata?.full_name || "",
+          "email": window._authUser.email || "",
+          "contact": state.userMobile || ""
+        },
+        "theme": {
+          "color": "#7B2FF7"
+        }
+      };
+      var rzp1 = new window.Razorpay(options);
+      rzp1.open();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to initiate payment: " + err.message);
+      if (upgradeBtn) {
+        upgradeBtn.disabled = false;
+        upgradeBtn.innerText = originalText;
+      }
+    }
+  };
+
+  // Show premium upgrade popup modal
+  function showUpgradeModal() {
+    let popup = document.getElementById("pmUpgradeModal");
+    if (!popup) {
+      popup = document.createElement("div");
+      popup.id = "pmUpgradeModal";
+      popup.className = "pm-modal-overlay";
+      popup.style.display = "flex";
+      
+      // Inject helper button styles in document head if not loaded
+      if (!document.getElementById("pmUpgradeBtnStyles")) {
+        const style = document.createElement('style');
+        style.id = "pmUpgradeBtnStyles";
+        style.innerHTML = `
+          .pm-btn-yellow {
+            background: #FFC300 !important;
+            color: #1e0b36 !important;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.2s ease;
+          }
+          .pm-btn-yellow:hover {
+            background: #e5b000 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 195, 0, 0.4);
+          }
+        `;
+        document.head.appendChild(style);
+      }
+
+      popup.innerHTML = `
+        <div class="pm-modal" style="max-width: 440px; text-align: center; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(21, 0, 41, 0.98);">
+          <div class="pm-modal-header" style="justify-content: center; position: relative;">
+            <h2 class="pm-modal-title" style="color: #FFC300; font-size: 20px;"><i class="fas fa-crown"></i> Unlock Unlimited Preferences</h2>
+            <button class="pm-modal-close" style="position: absolute; right: 20px;" onclick="document.getElementById('pmUpgradeModal').style.display='none'">&times;</button>
+          </div>
+          <div class="pm-modal-body" style="padding: 24px;">
+            <p style="font-size: 14px; line-height: 1.6; color: var(--pm-text-secondary); margin: 0 0 24px 0;">
+              Upgrade to Premium for ₹99 and create up to 3 complete preference lists with unlimited college additions, editing, and PDF export.
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <button class="pm-btn pm-btn-yellow" style="width: 100%; height: 48px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer;" onclick="window.pmInitiatePremiumUpgrade()">
+                Upgrade Now
+              </button>
+              <button type="button" class="pm-btn pm-btn-outline" style="width: 100%; height: 48px; border-radius: 12px; font-size: 15px; cursor: pointer;" onclick="document.getElementById('pmUpgradeModal').style.display='none'">
+                Maybe Later
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(popup);
+    } else {
+      popup.style.display = "flex";
+    }
+  }
+
+  // Fetch or create user Preference Maker info and lists
+  async function loadUserPreferenceMakerData() {
+    if (!state.userMobile || !window.supabaseClient) return;
+
+    try {
+      let { data: userProfile, error: profileErr } = await window.supabaseClient
+        .from('preference_maker_users')
+        .select('*')
+        .eq('mobile', state.userMobile)
+        .maybeSingle();
+
+      if (profileErr) throw profileErr;
+
+      if (!userProfile) {
+        const { data: newProfile, error: insErr } = await window.supabaseClient
+          .from('preference_maker_users')
+          .insert({
+            name: window._authUser.user_metadata?.full_name || window._authUser.user_metadata?.name || 'Student',
+            email: window._authUser.email,
+            mobile: state.userMobile,
+            category: 'General',
+            score: 0,
+            rank: 0,
+            domicile: 'N/A',
+            course: 'MBBS',
+            plan_type: 'free',
+            lists_remaining: 0,
+            payment_status: 'unpaid'
+          })
+          .select('*')
+          .single();
+
+        if (insErr) throw insErr;
+        userProfile = newProfile;
+      }
+
+      state.planType = userProfile.plan_type || 'free';
+      state.listsRemaining = userProfile.lists_remaining || 0;
+      state.paymentStatus = userProfile.payment_status || 'unpaid';
+      state.userDetails = {
+        name: userProfile.name,
+        email: userProfile.email,
+        category: userProfile.category,
+        score: userProfile.score,
+        rank: userProfile.rank,
+        domicile: userProfile.domicile,
+        course: userProfile.course
+      };
+
+      let { data: lists, error: listsErr } = await window.supabaseClient
+        .from('preference_maker_lists')
+        .select('*')
+        .eq('mobile', state.userMobile)
+        .order('created_at', { ascending: true });
+
+      if (listsErr) throw listsErr;
+
+      if (!lists || lists.length === 0) {
+        const { data: newList, error: createListErr } = await window.supabaseClient
+          .from('preference_maker_lists')
+          .insert({
+            mobile: state.userMobile,
+            list_name: 'Default List',
+            colleges: state.preferences
+          })
+          .select('*')
+          .single();
+
+        if (createListErr) throw createListErr;
+        lists = [newList];
+      }
+
+      state.lists = lists;
+
+      if (!state.activeListId || !lists.some(l => l.id === state.activeListId)) {
+        state.activeListId = lists[0].id;
+      }
+
+      const activeList = lists.find(l => l.id === state.activeListId);
+      state.preferences = activeList.colleges || [];
+
+      saveToLocalStorage();
+      updateListSelectorUI();
+      window.renderPreferenceMakerTable();
+
+    } catch (err) {
+      console.error("Error loading user Preference Maker data:", err);
+    }
+  }
+
+  window.pmOnMobileSaved = async function(mobile) {
+    state.userMobile = mobile;
+    await loadUserPreferenceMakerData();
+  };
+
+  // Update List selection HTML and status display
+  function updateListSelectorUI() {
+    const badge = document.getElementById("pmUserBadge");
+    const remaining = document.getElementById("pmRemainingLists");
+    const select = document.getElementById("pmActiveListSelect");
+    
+    if (badge) {
+      if (state.planType === 'premium') {
+        badge.innerHTML = `Premium Plan • 3 Lists Included`;
+        badge.style.background = "rgba(123, 47, 247, 0.15)";
+        badge.style.color = "#a78bfa";
+        badge.style.borderColor = "rgba(123, 47, 247, 0.4)";
+      } else {
+        badge.innerHTML = `10 College Limit`;
+        badge.style.background = "rgba(255, 195, 0, 0.15)";
+        badge.style.color = "#FFC300";
+        badge.style.borderColor = "rgba(255, 195, 0, 0.4)";
+      }
+    }
+
+    if (remaining) {
+      if (state.planType === 'premium') {
+        remaining.innerHTML = `Preference Lists Remaining: ${state.listsRemaining} / 3`;
+        remaining.style.display = "inline-block";
+      } else {
+        remaining.innerHTML = "";
+        remaining.style.display = "none";
+      }
+    }
+
+    if (select) {
+      select.innerHTML = state.lists.map(l => 
+        `<option value="${l.id}" ${state.activeListId === l.id ? 'selected' : ''}>${l.list_name}</option>`
+      ).join('');
+    }
+  }
+
+  // Switch active list callback
+  window.pmSwitchActiveList = function(listId) {
+    const parsedId = Number(listId);
+    state.activeListId = parsedId;
+    const activeList = state.lists.find(l => l.id === parsedId);
+    if (activeList) {
+      state.preferences = activeList.colleges || [];
+      saveToLocalStorage();
+      window.renderPreferenceMakerTable();
+    }
+  };
+
+  // Create new list action callback
+  window.pmCreateNewList = async function() {
+    if (state.planType !== 'premium') {
+      showUpgradeModal();
+      return;
+    }
+
+    if (state.listsRemaining <= 0) {
+      alert("You have used all 3 Premium Preference Lists.");
+      return;
+    }
+
+    const listName = prompt("Enter a name for your new preference list:", `Preference List ${state.lists.length + 1}`);
+    if (!listName || !listName.trim()) return;
+
+    try {
+      const { data: newList, error } = await window.supabaseClient
+        .from('preference_maker_lists')
+        .insert({
+          mobile: state.userMobile,
+          list_name: listName.trim(),
+          colleges: []
+        })
+        .select('*')
+        .single();
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      alert("New preference list created successfully!");
+      await loadUserPreferenceMakerData();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to create new list: " + err.message);
+    }
+  };
+
+  // Sync state.preferences to DB active list
+  async function syncActiveListWithDB() {
+    if (!state.activeListId || !state.userMobile || !window.supabaseClient) {
+      saveToLocalStorage();
+      return true;
+    }
+
+    try {
+      const { error } = await window.supabaseClient
+        .from('preference_maker_lists')
+        .update({ colleges: state.preferences })
+        .eq('id', state.activeListId);
+
+      if (error) {
+        console.error("DB Sync Error:", error.message);
+        if (error.message.includes("Free users can only add up to 10 colleges")) {
+          showUpgradeModal();
+        } else {
+          alert("Error saving preferences: " + error.message);
+        }
+        return false;
+      }
+      
+      const activeList = state.lists.find(l => l.id === state.activeListId);
+      if (activeList) {
+        activeList.colleges = [...state.preferences];
+      }
+
+      saveToLocalStorage();
+      return true;
+    } catch (err) {
+      console.error("Error in syncActiveListWithDB:", err);
+      alert("Failed to connect to database: " + err.message);
+      return false;
+    }
+  }
+
   // Display premium styling popup when free attempts limit is reached
   function showLimitReachedPopup() {
     let popup = document.getElementById("pmLimitReachedModal");
@@ -251,14 +654,14 @@
     const container = document.getElementById("section-preference-maker");
     if (!container) return;
 
-    // Clean up any body-level relocated modals to prevent duplicates before layout injection
-    const bodyModal = document.querySelector('body > #pmModal');
-    const bodyDownloadModal = document.querySelector('body > #pmDownloadModal');
-    if (bodyModal) bodyModal.remove();
-    if (bodyDownloadModal) bodyDownloadModal.remove();
-
     // Only render the wrapper layout if the main table container doesn't exist
     if (!document.getElementById("pmTableBody")) {
+      // Clean up any body-level relocated modals to prevent duplicates before layout injection
+      const bodyModal = document.querySelector('body > #pmModal');
+      const bodyDownloadModal = document.querySelector('body > #pmDownloadModal');
+      if (bodyModal) bodyModal.remove();
+      if (bodyDownloadModal) bodyDownloadModal.remove();
+
       // Create standard states list for the filter dropdown (sorted alphabetically)
       const statesList = Array.from(new Set(state.allColleges.map(p => p.state))).sort();
 
@@ -283,6 +686,21 @@
               </button>
               <button class="pm-btn pm-btn-filled" onclick="window.pmResetPreferences()" title="Clear all your saved preferences">
                 <i class="fas fa-sync-alt"></i> Reset
+              </button>
+            </div>
+          </div>
+
+          <!-- Premium Plan & List Selector Row -->
+          <div class="pm-list-selector-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 16px; background: rgba(255, 255, 255, 0.03); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05); gap: 16px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+              <span class="pm-badge" id="pmUserBadge" style="padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; border: 1px solid; transition: all 0.2s ease;"></span>
+              <span id="pmRemainingLists" style="font-size: 13px; color: var(--pm-text-secondary); font-weight: 500;"></span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <label for="pmActiveListSelect" style="font-size: 13px; font-weight: 600; color: var(--pm-text-secondary);">Select List:</label>
+              <select id="pmActiveListSelect" class="pm-form-control" style="width: auto; min-width: 180px; height: 38px; padding: 0 12px; border-radius: 8px; font-size: 13px;" onchange="window.pmSwitchActiveList(this.value)"></select>
+              <button class="pm-btn pm-btn-outline" style="height: 38px; padding: 0 16px; border-radius: 8px; font-size: 13px; display: flex; align-items: center; gap: 6px;" onclick="window.pmCreateNewList()">
+                <i class="fas fa-plus"></i> New List
               </button>
             </div>
           </div>
@@ -361,14 +779,14 @@
           </div>
         </div>
 
-        <!-- PDF Download Form Modal Overlay -->
+        <!-- Candidate Details Form Modal Overlay -->
         <div class="pm-modal-overlay" id="pmDownloadModal">
           <div class="pm-modal">
             <div class="pm-modal-header">
-              <h2 class="pm-modal-title">Candidate Details for PDF Report</h2>
+              <h2 class="pm-modal-title">Candidate Details</h2>
               <button class="pm-modal-close" onclick="window.pmCloseDownloadModal()">&times;</button>
             </div>
-            <form id="pmDownloadForm" onsubmit="window.pmGeneratePDF(event)">
+            <form id="pmDownloadForm" onsubmit="window.pmHandleDetailsSubmit(event)">
               <div class="pm-modal-body">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                   <div class="pm-form-group" style="grid-column: span 2;">
@@ -401,14 +819,11 @@
                       <option value="B.Sc. Nursing">B.Sc. Nursing</option>
                     </select>
                   </div>
-                  <div class="pm-form-group" style="grid-column: span 2;">
-                    <div id="pmAttemptsStatus" style="font-size: 13px; font-weight: 500; display: none; margin-top: -8px; padding-bottom: 8px;"></div>
-                  </div>
                 </div>
               </div>
               <div class="pm-modal-footer">
                 <button type="button" class="pm-btn pm-btn-outline" style="height: 44px; padding: 0 16px; border-radius: 10px;" onclick="window.pmCloseDownloadModal()">Cancel</button>
-                <button type="submit" class="pm-btn pm-btn-filled" style="height: 44px; padding: 0 16px; border-radius: 10px;">Download PDF</button>
+                <button type="submit" class="pm-btn pm-btn-filled" style="height: 44px; padding: 0 16px; border-radius: 10px;">Save & Continue</button>
               </div>
             </form>
           </div>
@@ -563,6 +978,36 @@
       container.style.position = "relative";
       container.appendChild(overlay);
     }
+
+    if (window._authUser) {
+      if (!state.userMobile) {
+        (async function() {
+          try {
+            if (window.supabaseClient) {
+              const { data, error } = await window.supabaseClient
+                .from('users')
+                .select('mobile_number')
+                .eq('id', window._authUser.id)
+                .single();
+              
+              if (error) throw error;
+              
+              if (data && data.mobile_number) {
+                state.userMobile = data.mobile_number;
+                await loadUserPreferenceMakerData();
+              } else {
+                alert("Please add your mobile number to start creating preference lists.");
+                window.openAddMobileModal();
+              }
+            }
+          } catch (err) {
+            console.error("Error loading user mobile number:", err);
+          }
+        })();
+      } else {
+        updateListSelectorUI();
+      }
+    }
   };
 
   // Asynchronously fetch colleges from Supabase with realistic fallbacks
@@ -708,6 +1153,12 @@
               <i class="fas fa-check"></i>
             </button>
           `;
+        } else if (state.planType === 'free' && state.preferences.length >= 10) {
+          actionHtml = `
+            <button type="button" class="pm-row-btn pm-add-row-btn pm-btn-locked" style="background: rgba(255, 195, 0, 0.1); border: 1px solid rgba(255, 195, 0, 0.3); color: #FFC300; cursor: pointer;" title="Add College (Locked - Free Limit Reached)">
+              <i class="fas fa-lock" style="color: #FFC300;"></i>
+            </button>
+          `;
         } else {
           actionHtml = `
             <button type="button" class="pm-row-btn pm-add-row-btn pm-btn-unselected" title="Add to Preferences">
@@ -757,6 +1208,12 @@
           mobileActionHtml = `
             <button type="button" class="pm-row-btn pm-btn-selected" style="cursor: default;" title="Added to Preferences">
               <i class="fas fa-check"></i>
+            </button>
+          `;
+        } else if (state.planType === 'free' && state.preferences.length >= 10) {
+          mobileActionHtml = `
+            <button type="button" class="pm-row-btn pm-add-row-btn pm-btn-locked" style="background: rgba(255, 195, 0, 0.1); border: 1px solid rgba(255, 195, 0, 0.3); color: #FFC300; cursor: pointer;" title="Add College (Locked - Free Limit Reached)">
+              <i class="fas fa-lock" style="color: #FFC300;"></i>
             </button>
           `;
         } else {
@@ -928,19 +1385,38 @@
   };
 
   // Add College from All Colleges list directly into preferences list
-  window.pmOpenAddModalWithData = function(e, id) {
+  window.pmOpenAddModalWithData = async function(e, id) {
     console.log("[Antigravity Debug] pmOpenAddModalWithData entered (add to preferences). e:", e, "id:", id);
     if (typeof e === 'string' && id === undefined) {
       id = e;
     } else if (e && e.stopPropagation) {
       e.stopPropagation();
     }
+
+    if (state.planType === 'free' && state.preferences.length >= 10) {
+      showUpgradeModal();
+      return;
+    }
+
     const college = state.allColleges.find(item => String(item.id) === String(id));
     if (!college) return;
+
+    // Check if we need to show candidate details form (details not filled yet)
+    const detailsFilled = state.userDetails && state.userDetails.score > 0 && state.userDetails.domicile && state.userDetails.domicile !== 'N/A';
+
+    if (!detailsFilled) {
+      state.pendingAction = {
+        type: 'add-college',
+        college: college
+      };
+      window.pmOpenDetailsModal();
+      return;
+    }
     
     // Check if it's already in preferences to avoid duplication
     const alreadyExists = state.preferences.some(item => String(item.id) === String(id));
     if (!alreadyExists) {
+      const previousPreferences = [...state.preferences];
       state.preferences.push({
         id: college.id,
         name: college.name,
@@ -949,7 +1425,11 @@
         bond: college.bond
       });
       console.log(`[Antigravity Debug] Added college to preferences list:`, college.name);
-      saveToLocalStorage();
+      
+      const success = await syncActiveListWithDB();
+      if (!success) {
+        state.preferences = previousPreferences;
+      }
     }
 
     // Re-render table to display the green checkmark
@@ -1007,7 +1487,7 @@
   };
 
   // Add/Edit Form submission
-  window.pmHandleFormSubmit = function(e) {
+  window.pmHandleFormSubmit = async function(e) {
     e.preventDefault();
     const name = document.getElementById("colName").value.trim();
     const stateVal = document.getElementById("colState").value.trim();
@@ -1016,6 +1496,7 @@
 
     if (state.editingId !== null) {
       // Edit state
+      const previousPreferences = [...state.preferences];
       const collegeIdx = state.preferences.findIndex(item => String(item.id) === String(state.editingId));
       if (collegeIdx !== -1) {
         state.preferences[collegeIdx] = {
@@ -1026,25 +1507,54 @@
           bond: bond
         };
       }
+      window.pmCloseModal();
+      const success = await syncActiveListWithDB();
+      if (!success) {
+        state.preferences = previousPreferences;
+      }
+      window.renderPreferenceMakerTable();
     } else {
-      // Add state - generate a unique string ID to support string UUIDs and avoid math max conflicts
+      // Add state
+      if (state.planType === 'free' && state.preferences.length >= 10) {
+        showUpgradeModal();
+        return;
+      }
+
       const newId = 'custom-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
-      state.preferences.push({
+      const customCollege = {
         id: newId,
         name: name,
         state: stateVal,
         fees: fees,
         bond: bond
-      });
-    }
+      };
 
-    window.pmCloseModal();
-    saveToLocalStorage();
-    window.renderPreferenceMakerTable();
+      // Check if we need to show candidate details form (details not filled yet)
+      const detailsFilled = state.userDetails && state.userDetails.score > 0 && state.userDetails.domicile && state.userDetails.domicile !== 'N/A';
+
+      if (!detailsFilled) {
+        state.pendingAction = {
+          type: 'add-custom-college',
+          college: customCollege
+        };
+        window.pmCloseModal();
+        window.pmOpenDetailsModal();
+        return;
+      }
+
+      const previousPreferences = [...state.preferences];
+      state.preferences.push(customCollege);
+      window.pmCloseModal();
+      const success = await syncActiveListWithDB();
+      if (!success) {
+        state.preferences = previousPreferences;
+      }
+      window.renderPreferenceMakerTable();
+    }
   };
 
   // Delete College preference from state
-  window.pmDeleteCollege = function(e, id) {
+  window.pmDeleteCollege = async function(e, id) {
     console.log("[Antigravity Debug] pmDeleteCollege entered. e:", e, "id:", id);
     if (typeof e === 'string' && id === undefined) {
       id = e;
@@ -1056,52 +1566,69 @@
     const confirmed = window.confirm("Are you sure you want to remove this college from your preferences?");
     console.log("[Antigravity Debug] window.confirm response:", confirmed);
     if (confirmed) {
-      const originalCount = state.preferences.length;
+      const previousPreferences = [...state.preferences];
       state.preferences = state.preferences.filter(item => String(item.id) !== String(id));
-      const newCount = state.preferences.length;
-      console.log("[Antigravity Debug] Deletion executed. Original count:", originalCount, "New count:", newCount);
-      saveToLocalStorage();
+      
+      const success = await syncActiveListWithDB();
+      if (!success) {
+        state.preferences = previousPreferences;
+      }
       window.renderPreferenceMakerTable();
     }
   };
 
   // Move College preference Up in state
-  window.pmMovePreferenceUp = function(id) {
+  window.pmMovePreferenceUp = async function(id) {
     console.log("[Antigravity Debug] pmMovePreferenceUp entered. id:", id);
     const idx = state.preferences.findIndex(p => String(p.id) === String(id));
     if (idx > 0) {
+      const previousPreferences = [...state.preferences];
       const temp = state.preferences[idx];
       state.preferences[idx] = state.preferences[idx - 1];
       state.preferences[idx - 1] = temp;
-      saveToLocalStorage();
+      
+      const success = await syncActiveListWithDB();
+      if (!success) {
+        state.preferences = previousPreferences;
+      }
       window.renderPreferenceMakerTable();
     }
   };
 
   // Move College preference Down in state
-  window.pmMovePreferenceDown = function(id) {
+  window.pmMovePreferenceDown = async function(id) {
     console.log("[Antigravity Debug] pmMovePreferenceDown entered. id:", id);
     const idx = state.preferences.findIndex(p => String(p.id) === String(id));
     if (idx !== -1 && idx < state.preferences.length - 1) {
+      const previousPreferences = [...state.preferences];
       const temp = state.preferences[idx];
       state.preferences[idx] = state.preferences[idx + 1];
       state.preferences[idx + 1] = temp;
-      saveToLocalStorage();
+      
+      const success = await syncActiveListWithDB();
+      if (!success) {
+        state.preferences = previousPreferences;
+      }
       window.renderPreferenceMakerTable();
     }
   };
 
   // Reset/clear all preference items
-  window.pmResetPreferences = function() {
+  window.pmResetPreferences = async function() {
     const confirmed = window.confirm("Are you sure you want to clear your entire preferences list? This action cannot be undone.");
     if (confirmed) {
+      const previousPreferences = [...state.preferences];
       state.preferences = [];
-      saveToLocalStorage();
+      
+      const success = await syncActiveListWithDB();
+      if (!success) {
+        state.preferences = previousPreferences;
+      }
       window.renderPreferenceMakerTable();
     }
   };
 
-  // PDF download modal window controls
+  // PDF download modal window controls (downloads PDF directly or requests details first)
   window.pmOpenDownloadModal = async function() {
     // 1. Verify if user is logged in
     const session = window.supabaseClient ? await window.validateSession() : null;
@@ -1112,26 +1639,140 @@
       return;
     }
 
-    document.getElementById("pmDownloadForm").reset();
-    document.getElementById("pmDownloadModal").style.display = "flex";
-
-    // Prefill name if possible
-    const nameField = document.getElementById("pdfName");
-    if (nameField) {
-      nameField.value = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0] || '';
+    const detailsFilled = state.userDetails && state.userDetails.score > 0 && state.userDetails.domicile !== 'N/A';
+    if (!detailsFilled) {
+      state.pendingAction = { type: 'download-pdf' };
+      window.pmOpenDetailsModal();
+    } else {
+      await window.pmGeneratePDF();
     }
-
-    // Check attempts left for the user's email
-    await checkEmailAttempts(user.email);
   };
 
   window.pmCloseDownloadModal = function() {
     document.getElementById("pmDownloadModal").style.display = "none";
   };
 
+  // Open the Candidate Details modal and prefill if cache exists
+  window.pmOpenDetailsModal = function() {
+    document.getElementById("pmDownloadForm").reset();
+    document.getElementById("pmDownloadModal").style.display = "flex";
+
+    if (state.userDetails) {
+      if (document.getElementById("pdfName")) document.getElementById("pdfName").value = state.userDetails.name || '';
+      if (document.getElementById("pdfCategory")) document.getElementById("pdfCategory").value = state.userDetails.category || '';
+      if (document.getElementById("pdfScore")) document.getElementById("pdfScore").value = state.userDetails.score > 0 ? state.userDetails.score : '';
+      if (document.getElementById("pdfRank")) document.getElementById("pdfRank").value = state.userDetails.rank > 0 ? state.userDetails.rank : '';
+      if (document.getElementById("pdfDomicile")) document.getElementById("pdfDomicile").value = state.userDetails.domicile !== 'N/A' ? state.userDetails.domicile : '';
+      if (document.getElementById("pdfCourse")) document.getElementById("pdfCourse").value = state.userDetails.course || '';
+    } else if (window._authUser) {
+      const nameField = document.getElementById("pdfName");
+      if (nameField) {
+        nameField.value = window._authUser.user_metadata?.full_name || window._authUser.user_metadata?.name || window._authUser.email.split('@')[0] || '';
+      }
+    }
+  };
+
+  // Handle Candidate Details form submission
+  window.pmHandleDetailsSubmit = async function(e) {
+    if (e && e.preventDefault) e.preventDefault();
+
+    const name = document.getElementById("pdfName").value.trim();
+    const category = document.getElementById("pdfCategory").value.trim();
+    const score = Number(document.getElementById("pdfScore").value);
+    const rank = Number(document.getElementById("pdfRank").value);
+    const domicile = document.getElementById("pdfDomicile").value.trim();
+    const course = document.getElementById("pdfCourse").value;
+
+    const submitBtn = document.querySelector('#pmDownloadForm button[type="submit"]');
+    const originalBtnText = submitBtn ? submitBtn.innerText : "Save & Continue";
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Saving...";
+    }
+
+    try {
+      if (window.supabaseClient) {
+        const { error } = await window.supabaseClient
+          .from('preference_maker_users')
+          .upsert({
+            mobile: state.userMobile,
+            name: name,
+            email: window._authUser.email,
+            category: category,
+            score: score,
+            rank: rank,
+            domicile: domicile,
+            course: course,
+            updated_at: new Date().toISOString()
+          }, { onConflict: 'mobile' });
+
+        if (error) throw error;
+      }
+
+      // Update state details cache
+      state.userDetails = {
+        name: name,
+        email: window._authUser.email,
+        category: category,
+        score: score,
+        rank: rank,
+        domicile: domicile,
+        course: course
+      };
+
+      // Close details modal
+      window.pmCloseDownloadModal();
+
+      // Handle pending actions
+      if (state.pendingAction) {
+        const action = state.pendingAction;
+        state.pendingAction = null;
+
+        if (action.type === 'add-college') {
+          const college = action.college;
+          const alreadyExists = state.preferences.some(item => String(item.id) === String(college.id));
+          if (!alreadyExists) {
+            const previousPreferences = [...state.preferences];
+            state.preferences.push({
+              id: college.id,
+              name: college.name,
+              state: college.state,
+              fees: college.fees,
+              bond: college.bond
+            });
+            const success = await syncActiveListWithDB();
+            if (!success) {
+              state.preferences = previousPreferences;
+            }
+          }
+          window.renderPreferenceMakerTable();
+        } else if (action.type === 'add-custom-college') {
+          const college = action.college;
+          const previousPreferences = [...state.preferences];
+          state.preferences.push(college);
+          const success = await syncActiveListWithDB();
+          if (!success) {
+            state.preferences = previousPreferences;
+          }
+          window.renderPreferenceMakerTable();
+        } else if (action.type === 'download-pdf') {
+          await window.pmGeneratePDF();
+        }
+      }
+    } catch (err) {
+      console.error("Error saving candidate details:", err);
+      alert("Failed to save candidate details: " + err.message);
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerText = originalBtnText;
+      }
+    }
+  };
+
   // PDF report builder and download generator using jsPDF & AutoTable
   window.pmGeneratePDF = async function(e) {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
 
     // 1. Verify if user is logged in
     const session = window.supabaseClient ? await window.validateSession() : null;
@@ -1143,18 +1784,19 @@
     }
     const email = user.email;
 
-    const name = document.getElementById("pdfName").value.trim();
-    const category = document.getElementById("pdfCategory").value;
-    const score = document.getElementById("pdfScore").value;
-    const rank = document.getElementById("pdfRank").value;
-    const domicile = document.getElementById("pdfDomicile").value.trim();
-    const course = document.getElementById("pdfCourse").value;
+    const detailsFilled = state.userDetails && state.userDetails.score > 0 && state.userDetails.domicile !== 'N/A';
+    const name = detailsFilled ? state.userDetails.name : (user.user_metadata?.full_name || user.user_metadata?.name || 'Student');
+    const category = detailsFilled ? state.userDetails.category : 'General';
+    const score = detailsFilled ? state.userDetails.score : 0;
+    const rank = detailsFilled ? state.userDetails.rank : 0;
+    const domicile = detailsFilled ? state.userDetails.domicile : 'N/A';
+    const course = detailsFilled ? state.userDetails.course : 'MBBS';
 
-    const submitBtn = document.querySelector('#pmDownloadForm button[type="submit"]');
-    const originalBtnText = submitBtn ? submitBtn.innerHTML : "Download PDF";
-    if (submitBtn) {
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Verifying...`;
+    const downloadBtn = document.querySelector('[onclick="window.pmOpenDownloadModal()"]');
+    const originalBtnText = downloadBtn ? downloadBtn.innerHTML : "Download PDF";
+    if (downloadBtn) {
+      downloadBtn.disabled = true;
+      downloadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Generating...`;
     }
 
     let allowGeneration = false;
@@ -1164,11 +1806,11 @@
       if (window.supabaseClient) {
         console.log("[Preference Maker] Verifying attempts with database...");
         
-        // 1. Fetch user by email
+        // 1. Fetch user by email/mobile
         const { data: userRecord, error: fetchErr } = await window.supabaseClient
           .from('preference_maker_users')
           .select('*')
-          .eq('email', email)
+          .eq('mobile', state.userMobile)
           .maybeSingle();
 
         if (fetchErr) {
@@ -1176,12 +1818,13 @@
         }
 
         if (!userRecord) {
-          // New User - Insert with attempts_used = 1
+          // Fallback registration (should already exist)
           const { error: insertErr } = await window.supabaseClient
             .from('preference_maker_users')
             .insert({
               name: name,
               email: email,
+              mobile: state.userMobile,
               category: category,
               score: Number(score),
               rank: Number(rank),
@@ -1197,59 +1840,34 @@
         } else {
           // Existing User
           if (userRecord.is_unlimited) {
-            // Unlimited user - Update details and increment attempts
+            // Unlimited user - increment attempts
             const { error: updateErr } = await window.supabaseClient
               .from('preference_maker_users')
               .update({
-                name: name,
-                category: category,
-                score: Number(score),
-                rank: Number(rank),
-                domicile: domicile,
-                course: course,
                 attempts_used: userRecord.attempts_used + 1
               })
               .eq('id', userRecord.id);
 
             if (updateErr) {
-              throw new Error("Failed to update details: " + updateErr.message);
+              throw new Error("Failed to update attempts: " + updateErr.message);
             }
             allowGeneration = true;
           } else {
             // Limited user
             if (userRecord.attempts_used >= 3) {
               showLimitReachedPopup();
-              if (submitBtn) {
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = `Limit Reached`;
-                submitBtn.style.opacity = "0.5";
-                submitBtn.style.cursor = "not-allowed";
-              }
               return;
             } else {
-              // attempts_used < 3 - Update details and increment attempts
+              // attempts_used < 3 - increment attempts
               const { error: updateErr } = await window.supabaseClient
                 .from('preference_maker_users')
                 .update({
-                  name: name,
-                  category: category,
-                  score: Number(score),
-                  rank: Number(rank),
-                  domicile: domicile,
-                  course: course,
                   attempts_used: userRecord.attempts_used + 1
                 })
                 .eq('id', userRecord.id);
 
               if (updateErr) {
-                // DB constraint or trigger validation failure
                 showLimitReachedPopup();
-                if (submitBtn) {
-                  submitBtn.disabled = true;
-                  submitBtn.innerHTML = `Limit Reached`;
-                  submitBtn.style.opacity = "0.5";
-                  submitBtn.style.cursor = "not-allowed";
-                }
                 return;
               }
               allowGeneration = true;
@@ -1262,15 +1880,11 @@
     } catch (dbErr) {
       console.error("Database validation error:", dbErr);
       alert("Verification Error: " + dbErr.message);
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalBtnText;
-      }
       return;
     } finally {
-      if (submitBtn && !allowGeneration) {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalBtnText;
+      if (downloadBtn && !allowGeneration) {
+        downloadBtn.disabled = false;
+        downloadBtn.innerHTML = originalBtnText;
       }
     }
 
@@ -1497,7 +2111,7 @@
       });
 
       // Drop Event
-      row.addEventListener("drop", function(e) {
+      row.addEventListener("drop", async function(e) {
         e.preventDefault();
         row.classList.remove("pm-row-over");
 
@@ -1509,11 +2123,15 @@
           const targetIdx = state.preferences.findIndex(p => String(p.id) === String(targetId));
 
           if (draggedIdx !== -1 && targetIdx !== -1) {
+            const previousPreferences = [...state.preferences];
             // Swap items or re-insert item into the array
             const [removed] = state.preferences.splice(draggedIdx, 1);
             state.preferences.splice(targetIdx, 0, removed);
 
-            saveToLocalStorage();
+            const success = await syncActiveListWithDB();
+            if (!success) {
+              state.preferences = previousPreferences;
+            }
 
             // Re-render table with updated preference state
             window.renderPreferenceMakerTable();

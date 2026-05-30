@@ -1131,6 +1131,10 @@ window.saveMobileNumber = async function() {
                     if (html) dashEl.innerHTML = html;
                 });
             }
+
+            if (typeof window.pmOnMobileSaved === 'function') {
+                window.pmOnMobileSaved(num);
+            }
         }
     } catch(e) {
         if(err) { err.innerText = e.message || "Failed to save number."; err.style.display = "block"; }
