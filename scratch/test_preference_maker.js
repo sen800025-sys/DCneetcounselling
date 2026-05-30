@@ -28,7 +28,8 @@ async function runTests() {
       score: 620,
       rank: 15420,
       domicile: 'Maharashtra',
-      course: 'MBBS'
+      course: 'MBBS',
+      email: 'teststudent@example.com'
     };
     
     console.log('Inserting test student...');
@@ -65,7 +66,7 @@ async function runTests() {
 
     const { data: updatedUser, error: updateUserErr } = await supabase
       .from('preference_maker_users')
-      .update({ rank: 15410 })
+      .update({ rank: 15410, attempts_used: 2 })
       .eq('id', insertedUser.id)
       .select()
       .single();
@@ -73,7 +74,7 @@ async function runTests() {
     if (updateUserErr) {
       throw new Error(`Failed to update student: ${updateUserErr.message}`);
     }
-    console.log('✅ Update successful. New Rank:', updatedUser.rank);
+    console.log('✅ Update successful. New Rank:', updatedUser.rank, 'Attempts Used:', updatedUser.attempts_used);
     console.log('Original updated_at:', originalUpdatedAt);
     console.log('New updated_at:', updatedUser.updated_at);
     
@@ -81,6 +82,19 @@ async function runTests() {
       console.log('✅ Trigger verified: updated_at was successfully updated on row edit.');
     } else {
       console.warn('⚠️ Warning: updated_at trigger did not update the timestamp.');
+    }
+
+    // E. Test Constraint Violation (attempt to set attempts_used > 3 when not unlimited)
+    console.log('Testing attempts check constraint (setting attempts_used = 4)...');
+    const { error: limitErr } = await supabase
+      .from('preference_maker_users')
+      .update({ attempts_used: 4 })
+      .eq('id', insertedUser.id);
+
+    if (limitErr) {
+      console.log('✅ Constraint block working! DB successfully rejected setting attempts_used = 4. Error:', limitErr.message);
+    } else {
+      console.warn('⚠️ Warning: DB allowed setting attempts_used = 4. Constraint check failed.');
     }
 
     // D. Delete

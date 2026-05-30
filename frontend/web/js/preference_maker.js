@@ -97,6 +97,108 @@
     return html;
   }
 
+  // Helper to check attempts left for email
+  async function checkEmailAttempts(email) {
+    const statusDiv = document.getElementById("pmAttemptsStatus");
+    const submitBtn = document.querySelector('#pmDownloadForm button[type="submit"]');
+    if (!statusDiv || !submitBtn) return;
+
+    statusDiv.style.display = "block";
+    statusDiv.style.color = "var(--pm-text-secondary)";
+    statusDiv.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Checking attempts...`;
+
+    try {
+      if (!window.supabaseClient) {
+        statusDiv.style.display = "none";
+        return;
+      }
+
+      const { data: user, error } = await window.supabaseClient
+        .from('preference_maker_users')
+        .select('attempts_used, is_unlimited')
+        .eq('email', email)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      if (!user) {
+        statusDiv.style.color = "#22c55e";
+        statusDiv.innerHTML = `<i class="fas fa-check-circle"></i> Attempts Remaining: 3 / 3`;
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = "1";
+        submitBtn.style.cursor = "pointer";
+      } else {
+        if (user.is_unlimited) {
+          statusDiv.style.color = "#22c55e";
+          statusDiv.innerHTML = `<i class="fas fa-infinity"></i> Attempts Remaining: Unlimited`;
+          submitBtn.disabled = false;
+          submitBtn.style.opacity = "1";
+          submitBtn.style.cursor = "pointer";
+        } else {
+          const remaining = Math.max(0, 3 - user.attempts_used);
+          if (remaining === 0) {
+            statusDiv.style.color = "#ef4444";
+            statusDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> Attempts Remaining: 0 / 3 (Limit Reached)`;
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = "0.5";
+            submitBtn.style.cursor = "not-allowed";
+          } else if (remaining === 1) {
+            statusDiv.style.color = "#ffc300";
+            statusDiv.innerHTML = `<span class="pm-attempts-warn-badge" style="background: rgba(255, 195, 0, 0.15); color: #FFC300; padding: 2px 6px; border-radius: 4px; display: inline-block;"><i class="fas fa-exclamation-triangle"></i> Attempts Remaining: 1 / 3 (Last attempt!)</span>`;
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = "1";
+            submitBtn.style.cursor = "pointer";
+          } else {
+            statusDiv.style.color = "#22c55e";
+            statusDiv.innerHTML = `<i class="fas fa-check-circle"></i> Attempts Remaining: ${remaining} / 3`;
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = "1";
+            submitBtn.style.cursor = "pointer";
+          }
+        }
+      }
+    } catch (err) {
+      console.error("Error checking email attempts:", err);
+      statusDiv.style.color = "#ef4444";
+      statusDiv.innerHTML = `⚠️ Failed to check attempts status.`;
+    }
+  }
+
+  // Display premium styling popup when free attempts limit is reached
+  function showLimitReachedPopup() {
+    let popup = document.getElementById("pmLimitReachedModal");
+    if (!popup) {
+      popup = document.createElement("div");
+      popup.id = "pmLimitReachedModal";
+      popup.className = "pm-modal-overlay";
+      popup.style.display = "flex";
+      popup.innerHTML = `
+        <div class="pm-modal" style="max-width: 420px; text-align: center; border-radius: 20px;">
+          <div class="pm-modal-header" style="justify-content: center; position: relative;">
+            <h2 class="pm-modal-title" style="color: #ef4444; font-size: 18px;"><i class="fas fa-exclamation-triangle"></i> Free Limit Reached</h2>
+            <button class="pm-modal-close" style="position: absolute; right: 20px;" onclick="document.getElementById('pmLimitReachedModal').style.display='none'">&times;</button>
+          </div>
+          <div class="pm-modal-body" style="padding: 24px;">
+            <p style="font-size: 14px; line-height: 1.5; color: var(--pm-text-secondary); margin: 0 0 20px 0;">
+              You have already used all 3 free preference list generations. Please contact our counselling team to continue.
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <a href="tel:9694673555" class="pm-btn pm-btn-filled" style="width: 100%; height: 48px; border-radius: 12px; text-decoration: none; display: flex; align-items: center; justify-content: center; font-size: 14px;">
+                <i class="fas fa-phone-alt" style="margin-right: 8px;"></i> Call Counselling Team
+              </a>
+              <button type="button" class="pm-btn pm-btn-outline" style="width: 100%; height: 48px; border-radius: 12px; font-size: 14px;" onclick="document.getElementById('pmLimitReachedModal').style.display='none'">
+                Dismiss
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(popup);
+    } else {
+      popup.style.display = "flex";
+    }
+  }
+
   // Deterministic hash function to generate stable fee/bond values for database entries
   function getDeterministicHash(str) {
     let hash = 0;
@@ -312,6 +414,9 @@
                       <option value="B.Sc. Nursing">B.Sc. Nursing</option>
                     </select>
                   </div>
+                  <div class="pm-form-group" style="grid-column: span 2;">
+                    <div id="pmAttemptsStatus" style="font-size: 13px; font-weight: 500; display: none; margin-top: -8px; padding-bottom: 8px;"></div>
+                  </div>
                 </div>
               </div>
               <div class="pm-modal-footer">
@@ -407,6 +512,8 @@
           window.renderPreferenceMakerTable();
         });
       }
+
+
     }
 
     // Render table rows and pagination dynamically
@@ -955,9 +1062,27 @@
   };
 
   // PDF download modal window controls
-  window.pmOpenDownloadModal = function() {
+  window.pmOpenDownloadModal = async function() {
+    // 1. Verify if user is logged in
+    const session = window.supabaseClient ? await window.validateSession() : null;
+    const user = session ? session.user : window._authUser;
+    if (!user) {
+      alert("Please log in to generate and download your preference list.");
+      window.navigate('login');
+      return;
+    }
+
     document.getElementById("pmDownloadForm").reset();
     document.getElementById("pmDownloadModal").style.display = "flex";
+
+    // Prefill name if possible
+    const nameField = document.getElementById("pdfName");
+    if (nameField) {
+      nameField.value = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0] || '';
+    }
+
+    // Check attempts left for the user's email
+    await checkEmailAttempts(user.email);
   };
 
   window.pmCloseDownloadModal = function() {
@@ -965,8 +1090,18 @@
   };
 
   // PDF report builder and download generator using jsPDF & AutoTable
-  window.pmGeneratePDF = function(e) {
+  window.pmGeneratePDF = async function(e) {
     e.preventDefault();
+
+    // 1. Verify if user is logged in
+    const session = window.supabaseClient ? await window.validateSession() : null;
+    const user = session ? session.user : window._authUser;
+    if (!user) {
+      alert("Please log in to generate and download your preference list.");
+      window.navigate('login');
+      return;
+    }
+    const email = user.email;
 
     const name = document.getElementById("pdfName").value.trim();
     const category = document.getElementById("pdfCategory").value;
@@ -974,6 +1109,132 @@
     const rank = document.getElementById("pdfRank").value;
     const domicile = document.getElementById("pdfDomicile").value.trim();
     const course = document.getElementById("pdfCourse").value;
+
+    const submitBtn = document.querySelector('#pmDownloadForm button[type="submit"]');
+    const originalBtnText = submitBtn ? submitBtn.innerHTML : "Download PDF";
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Verifying...`;
+    }
+
+    let allowGeneration = false;
+
+    // Verify and track attempts in Supabase database
+    try {
+      if (window.supabaseClient) {
+        console.log("[Preference Maker] Verifying attempts with database...");
+        
+        // 1. Fetch user by email
+        const { data: userRecord, error: fetchErr } = await window.supabaseClient
+          .from('preference_maker_users')
+          .select('*')
+          .eq('email', email)
+          .maybeSingle();
+
+        if (fetchErr) {
+          throw new Error("Attempts verification failed: " + fetchErr.message);
+        }
+
+        if (!userRecord) {
+          // New User - Insert with attempts_used = 1
+          const { error: insertErr } = await window.supabaseClient
+            .from('preference_maker_users')
+            .insert({
+              name: name,
+              email: email,
+              category: category,
+              score: Number(score),
+              rank: Number(rank),
+              domicile: domicile,
+              course: course,
+              attempts_used: 1
+            });
+          
+          if (insertErr) {
+            throw new Error("Failed to register details: " + insertErr.message);
+          }
+          allowGeneration = true;
+        } else {
+          // Existing User
+          if (userRecord.is_unlimited) {
+            // Unlimited user - Update details and increment attempts
+            const { error: updateErr } = await window.supabaseClient
+              .from('preference_maker_users')
+              .update({
+                name: name,
+                category: category,
+                score: Number(score),
+                rank: Number(rank),
+                domicile: domicile,
+                course: course,
+                attempts_used: userRecord.attempts_used + 1
+              })
+              .eq('id', userRecord.id);
+
+            if (updateErr) {
+              throw new Error("Failed to update details: " + updateErr.message);
+            }
+            allowGeneration = true;
+          } else {
+            // Limited user
+            if (userRecord.attempts_used >= 3) {
+              showLimitReachedPopup();
+              if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `Limit Reached`;
+                submitBtn.style.opacity = "0.5";
+                submitBtn.style.cursor = "not-allowed";
+              }
+              return;
+            } else {
+              // attempts_used < 3 - Update details and increment attempts
+              const { error: updateErr } = await window.supabaseClient
+                .from('preference_maker_users')
+                .update({
+                  name: name,
+                  category: category,
+                  score: Number(score),
+                  rank: Number(rank),
+                  domicile: domicile,
+                  course: course,
+                  attempts_used: userRecord.attempts_used + 1
+                })
+                .eq('id', userRecord.id);
+
+              if (updateErr) {
+                // DB constraint or trigger validation failure
+                showLimitReachedPopup();
+                if (submitBtn) {
+                  submitBtn.disabled = true;
+                  submitBtn.innerHTML = `Limit Reached`;
+                  submitBtn.style.opacity = "0.5";
+                  submitBtn.style.cursor = "not-allowed";
+                }
+                return;
+              }
+              allowGeneration = true;
+            }
+          }
+        }
+      } else {
+        allowGeneration = true;
+      }
+    } catch (dbErr) {
+      console.error("Database validation error:", dbErr);
+      alert("Verification Error: " + dbErr.message);
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
+      }
+      return;
+    } finally {
+      if (submitBtn && !allowGeneration) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
+      }
+    }
+
+    if (!allowGeneration) return;
 
     try {
       if (!window.jspdf || !window.jspdf.jsPDF) {
