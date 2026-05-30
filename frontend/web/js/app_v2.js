@@ -526,6 +526,9 @@ function bindDynamicEvents() {
         heroBtn.addEventListener('click', function() {
             document.getElementById('predictorModal').style.display = 'block';
             document.getElementById('modalOverlay').style.display = 'block';
+            if (typeof window.checkPredictorAuth === 'function') {
+                window.checkPredictorAuth();
+            }
         });
     }
 }
@@ -1452,12 +1455,90 @@ async function signInWithGoogle() {
 }
 
 // ─── Predictor Modal ──────────────────────────────────────────────────────────
+window.checkPredictorAuth = function() {
+    var user = window._authUser;
+    var modal = document.getElementById('predictorModal');
+    if (!modal) return;
+    
+    // Check if an auth prompt already exists, if so remove it
+    var existingPrompt = document.getElementById('predictorAuthPrompt');
+    if (existingPrompt) existingPrompt.remove();
+    
+    if (!user) {
+        // Blur the existing content steps
+        var inputStep = document.getElementById('predictorInputStep');
+        var title = modal.querySelector('h2');
+        var closeBtn = document.getElementById('closePredictorBtn');
+
+        if (inputStep) {
+            inputStep.style.filter = 'blur(6px)';
+            inputStep.style.pointerEvents = 'none';
+        }
+        if (title) title.style.filter = 'blur(6px)';
+        if (closeBtn) closeBtn.style.display = 'none';
+        
+        // Create a premium overlay block
+        var prompt = document.createElement('div');
+        prompt.id = 'predictorAuthPrompt';
+        prompt.style.position = 'absolute';
+        prompt.style.top = '0';
+        prompt.style.left = '0';
+        prompt.style.width = '100%';
+        prompt.style.height = '100%';
+        prompt.style.display = 'flex';
+        prompt.style.flexDirection = 'column';
+        prompt.style.alignItems = 'center';
+        prompt.style.justifyContent = 'center';
+        prompt.style.padding = '30px';
+        prompt.style.textAlign = 'center';
+        prompt.style.zIndex = '10';
+        prompt.style.background = 'rgba(15, 7, 36, 0.4)';
+        prompt.style.borderRadius = 'var(--radius-lg)';
+        prompt.style.backdropFilter = 'blur(4px)';
+        prompt.style.webkitBackdropFilter = 'blur(4px)';
+        
+        prompt.innerHTML = `
+            <div style="background: rgba(45, 11, 82, 0.95); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 32px 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); max-width: 360px;">
+                <div style="font-size: 40px; margin-bottom: 16px; filter: drop-shadow(0 0 10px rgba(244, 180, 0, 0.4));">🔒</div>
+                <h3 style="color: #fff; font-size: 20px; font-weight: 700; margin-bottom: 10px;">Access Restricted</h3>
+                <p style="color: rgba(255, 255, 255, 0.7); font-size: 14px; line-height: 1.5; margin-bottom: 24px;">
+                    Please log in to your account to use the Rank Predictor tool and see your top college options.
+                </p>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <button class="btn btn-primary glow-hover" style="width: 100%; height: 44px; font-weight: 700; cursor: pointer;" onclick="window.navigate('login'); document.getElementById('closePredictorBtn').click();">
+                        Sign In / Register
+                    </button>
+                    <button class="btn btn-ghost" style="width: 100%; height: 44px; color: rgba(255, 255, 255, 0.6); cursor: pointer;" onclick="document.getElementById('predictorModal').style.display='none'; document.getElementById('modalOverlay').style.display='none';">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        `;
+        // Make sure the modal has relative positioning
+        modal.style.position = 'fixed';
+        modal.appendChild(prompt);
+    } else {
+        // Restore standard layout if logged in
+        var inputStep = document.getElementById('predictorInputStep');
+        var title = modal.querySelector('h2');
+        var closeBtn = document.getElementById('closePredictorBtn');
+
+        if (inputStep) {
+            inputStep.style.filter = '';
+            inputStep.style.pointerEvents = '';
+        }
+        if (title) title.style.filter = '';
+        if (closeBtn) closeBtn.style.display = 'block';
+    }
+};
+
 function setupPredictorModal() {
     var navBtn = document.getElementById('predictorBtn');
     if (navBtn) {
         navBtn.addEventListener('click', function() {
             document.getElementById('predictorModal').style.display = 'block';
             document.getElementById('modalOverlay').style.display = 'block';
+            window.checkPredictorAuth();
         });
     }
     var closeBtn = document.getElementById('closePredictorBtn');

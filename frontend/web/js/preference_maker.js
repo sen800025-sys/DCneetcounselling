@@ -510,6 +510,59 @@
     if (!state.dbLoaded && !state.isLoading) {
       loadCollegesFromSupabase();
     }
+
+    // Auth validation overlay check
+    const pmContainer = container.querySelector(".pm-container");
+    const existingOverlay = document.getElementById("pmAuthOverlay");
+    if (existingOverlay) existingOverlay.remove();
+    if (pmContainer) {
+      pmContainer.style.filter = "";
+      pmContainer.style.pointerEvents = "";
+      pmContainer.style.userSelect = "";
+    }
+
+    if (!window._authUser) {
+      if (pmContainer) {
+        pmContainer.style.filter = "blur(12px)";
+        pmContainer.style.pointerEvents = "none";
+        pmContainer.style.userSelect = "none";
+      }
+
+      const overlay = document.createElement("div");
+      overlay.id = "pmAuthOverlay";
+      overlay.style.position = "absolute";
+      overlay.style.top = "0";
+      overlay.style.left = "0";
+      overlay.style.width = "100%";
+      overlay.style.height = "100%";
+      overlay.style.minHeight = "80vh";
+      overlay.style.display = "flex";
+      overlay.style.alignItems = "center";
+      overlay.style.justifyContent = "center";
+      overlay.style.zIndex = "100";
+      overlay.style.background = "rgba(15, 7, 36, 0.45)";
+      overlay.style.backdropFilter = "blur(8px)";
+      overlay.style.webkitBackdropFilter = "blur(8px)";
+      overlay.innerHTML = `
+        <div class="pm-modal" style="max-width: 420px; text-align: center; border-radius: 24px; padding: 40px 30px; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(45, 11, 82, 0.95); box-shadow: 0 20px 50px rgba(0,0,0,0.6);">
+          <div style="font-size: 50px; margin-bottom: 20px; filter: drop-shadow(0 0 12px rgba(244, 180, 0, 0.5));">🔒</div>
+          <h2 style="color: #fff; font-size: 24px; font-weight: 800; margin-bottom: 12px;">Access Restricted</h2>
+          <p style="color: rgba(255, 255, 255, 0.7); font-size: 14px; line-height: 1.6; margin: 0 0 30px 0;">
+            To design, organize, and download your personalized college preference list, please sign in or create an account first.
+          </p>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <button class="pm-btn pm-btn-filled" style="width: 100%; height: 48px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer;" onclick="window.navigate('login')">
+              Sign In / Register
+            </button>
+            <button class="pm-btn pm-btn-outline" style="width: 100%; height: 48px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer;" onclick="window.navigate('home')">
+              Return to Home
+            </button>
+          </div>
+        </div>
+      `;
+      container.style.position = "relative";
+      container.appendChild(overlay);
+    }
   };
 
   // Asynchronously fetch colleges from Supabase with realistic fallbacks
