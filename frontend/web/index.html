@@ -428,6 +428,7 @@
     window.doLogout = function () {
       if (window.supabaseClient) {
         window.supabaseClient.auth.signOut().then(function () {
+          localStorage.removeItem('neet_preferences_v2'); // Clear Preference Maker cached colleges
           window.location.hash = "home";
           window.location.reload();
         });

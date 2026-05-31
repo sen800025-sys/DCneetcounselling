@@ -45,7 +45,7 @@
 
   // Helper to check if user details and mobile are filled
   function isDetailsFilled() {
-    return !!(state.userMobile && state.userDetails && state.userDetails.score > 0 && state.userDetails.domicile && state.userDetails.domicile !== 'N/A');
+    return !!(state.userMobile && state.userDetails && state.userDetails.name);
   }
 
   // Helper to format fees in Indian Rupees format (e.g. 1,628)
@@ -219,7 +219,16 @@
         })
       });
 
-      if (!createRes.ok) throw new Error(`Order creation failed with status: ${createRes.status}`);
+      if (!createRes.ok) {
+        let errMsg = `Status ${createRes.status}`;
+        try {
+          const errData = await createRes.json();
+          if (errData && errData.error) {
+            errMsg = errData.error;
+          }
+        } catch (_) {}
+        throw new Error(errMsg);
+      }
       const order = await createRes.json();
       if (!order.success) throw new Error(order.error || "Failed to create order");
 
@@ -621,7 +630,7 @@
     }
   }
 
-  // Display premium styling popup when free attempts limit is reached
+  // Display premium styling popup when free/premium attempts limit is reached
   function showLimitReachedPopup() {
     let popup = document.getElementById("pmLimitReachedModal");
     if (!popup) {
@@ -629,31 +638,37 @@
       popup.id = "pmLimitReachedModal";
       popup.className = "pm-modal-overlay";
       popup.style.display = "flex";
-      popup.innerHTML = `
-        <div class="pm-modal" style="max-width: 440px; text-align: center; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(21, 0, 41, 0.98);">
-          <div class="pm-modal-header" style="justify-content: center; position: relative;">
-            <h2 class="pm-modal-title" style="color: #FFC300; font-size: 20px;"><i class="fas fa-exclamation-triangle"></i> Free Attempts Used</h2>
-            <button class="pm-modal-close" style="position: absolute; right: 20px;" onclick="document.getElementById('pmLimitReachedModal').style.display='none'">&times;</button>
-          </div>
-          <div class="pm-modal-body" style="padding: 24px;">
-            <p style="font-size: 14px; line-height: 1.6; color: var(--pm-text-secondary); margin: 0 0 24px 0;">
-              You have used all 3 free preference list generations. Upgrade to Premium for ₹1 and create up to 3 complete preference lists with unlimited college additions, editing and PDF export.
-            </p>
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-              <button class="pm-btn pm-btn-yellow" style="width: 100%; height: 48px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer;" onclick="document.getElementById('pmLimitReachedModal').style.display='none'; window.pmInitiatePremiumUpgrade();">
-                Upgrade Now
-              </button>
-              <button type="button" class="pm-btn pm-btn-outline" style="width: 100%; height: 48px; border-radius: 12px; font-size: 15px; cursor: pointer;" onclick="document.getElementById('pmLimitReachedModal').style.display='none'">
-                Maybe Later
-              </button>
-            </div>
+      document.body.appendChild(popup);
+    }
+    
+    const isPremium = state.planType === 'premium' && state.paymentStatus === 'paid';
+    const titleText = isPremium ? "Premium Limit Reached" : "Free Attempts Used";
+    const bodyText = isPremium 
+      ? "You have used all 3 of your Premium preference list downloads. Upgrade again for ₹1 to get 3 additional downloads and lists with unlimited college additions."
+      : "You have used all 3 free preference list generations. Upgrade to Premium for ₹1 and create up to 3 complete preference lists with unlimited college additions, editing and PDF export.";
+
+    popup.innerHTML = `
+      <div class="pm-modal" style="max-width: 440px; text-align: center; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(21, 0, 41, 0.98);">
+        <div class="pm-modal-header" style="justify-content: center; position: relative;">
+          <h2 class="pm-modal-title" style="color: #FFC300; font-size: 20px;"><i class="fas fa-exclamation-triangle"></i> ${titleText}</h2>
+          <button class="pm-modal-close" style="position: absolute; right: 20px;" onclick="document.getElementById('pmLimitReachedModal').style.display='none'">&times;</button>
+        </div>
+        <div class="pm-modal-body" style="padding: 24px;">
+          <p style="font-size: 14px; line-height: 1.6; color: var(--pm-text-secondary); margin: 0 0 24px 0;">
+            ${bodyText}
+          </p>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <button class="pm-btn pm-btn-yellow" style="width: 100%; height: 48px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer;" onclick="document.getElementById('pmLimitReachedModal').style.display='none'; window.pmInitiatePremiumUpgrade();">
+              Upgrade Now
+            </button>
+            <button type="button" class="pm-btn pm-btn-outline" style="width: 100%; height: 48px; border-radius: 12px; font-size: 15px; cursor: pointer;" onclick="document.getElementById('pmLimitReachedModal').style.display='none'">
+              Maybe Later
+            </button>
           </div>
         </div>
-      `;
-      document.body.appendChild(popup);
-    } else {
-      popup.style.display = "flex";
-    }
+      </div>
+    `;
+    popup.style.display = "flex";
   }
 
   // Display premium styling popup when free college limit is reached
@@ -691,8 +706,14 @@
     }
   }
 
-  // Check if adding another college is allowed (free limit of 10 colleges)
+  // Check if adding another college is allowed (free limit of 10 colleges, and attempts limits)
   function checkCollegeAdditionLimit() {
+    // If attempts limit is reached, lock everything
+    if (state.attemptsUsed >= state.maxAttempts) {
+      showLimitReachedPopup();
+      return false;
+    }
+
     const isPremium = state.planType === 'premium' && state.paymentStatus === 'paid';
     if (!isPremium && state.preferences.length >= 10) {
       showUnlockUnlimitedCollegesPopup();
@@ -894,7 +915,7 @@
                   </div>
                   <div class="pm-form-group">
                     <label for="pdfCategory">Category</label>
-                    <input type="text" id="pdfCategory" class="pm-form-control" required placeholder="e.g. General, OBC, SC, ST">
+                    <input type="text" id="pdfCategory" class="pm-form-control" placeholder="e.g. General, OBC, SC, ST">
                   </div>
                   <div class="pm-form-group">
                     <label for="pdfMobileNum">Mobile Number</label>
@@ -902,19 +923,19 @@
                   </div>
                   <div class="pm-form-group">
                     <label for="pdfScore">NEET Score</label>
-                    <input type="number" id="pdfScore" class="pm-form-control" required min="1" max="720" placeholder="e.g. 680">
+                    <input type="number" id="pdfScore" class="pm-form-control" max="720" placeholder="e.g. 680">
                   </div>
                   <div class="pm-form-group">
                     <label for="pdfRank">NEET Rank (AIR)</label>
-                    <input type="number" id="pdfRank" class="pm-form-control" required min="1" placeholder="e.g. 1500">
+                    <input type="number" id="pdfRank" class="pm-form-control" placeholder="e.g. 1500">
                   </div>
                   <div class="pm-form-group">
                     <label for="pdfDomicile">Domicile State</label>
-                    <input type="text" id="pdfDomicile" class="pm-form-control" required placeholder="e.g. Delhi, Rajasthan">
+                    <input type="text" id="pdfDomicile" class="pm-form-control" placeholder="e.g. Delhi, Rajasthan">
                   </div>
                   <div class="pm-form-group">
                     <label for="pdfCourse">Course</label>
-                    <select id="pdfCourse" class="pm-form-control" required>
+                    <select id="pdfCourse" class="pm-form-control">
                       <option value="" disabled selected>Select course</option>
                       <option value="MBBS">MBBS</option>
                       <option value="BDS">BDS</option>
@@ -1257,9 +1278,11 @@
               <i class="fas fa-check"></i>
             </button>
           `;
-        } else if (!isPremiumUser && state.preferences.length >= 10) {
+        } else if ((state.attemptsUsed >= state.maxAttempts) || (!isPremiumUser && state.preferences.length >= 10)) {
+          const isAttemptsLimitReached = state.attemptsUsed >= state.maxAttempts;
+          const lockTitle = isAttemptsLimitReached ? "Add College (Locked - Limit Reached)" : "Add College (Locked - Free Limit Reached)";
           actionHtml = `
-            <button type="button" class="pm-row-btn pm-add-row-btn pm-btn-locked" style="background: rgba(255, 195, 0, 0.1); border: 1px solid rgba(255, 195, 0, 0.3); color: #FFC300; cursor: pointer;" title="Add College (Locked - Free Limit Reached)">
+            <button type="button" class="pm-row-btn pm-add-row-btn pm-btn-locked" style="background: rgba(255, 195, 0, 0.1); border: 1px solid rgba(255, 195, 0, 0.3); color: #FFC300; cursor: pointer;" title="${lockTitle}">
               <i class="fas fa-lock" style="color: #FFC300;"></i>
             </button>
           `;
@@ -1314,9 +1337,11 @@
               <i class="fas fa-check"></i>
             </button>
           `;
-        } else if (!isPremiumUser && state.preferences.length >= 10) {
+        } else if ((state.attemptsUsed >= state.maxAttempts) || (!isPremiumUser && state.preferences.length >= 10)) {
+          const isAttemptsLimitReached = state.attemptsUsed >= state.maxAttempts;
+          const lockTitle = isAttemptsLimitReached ? "Add College (Locked - Limit Reached)" : "Add College (Locked - Free Limit Reached)";
           mobileActionHtml = `
-            <button type="button" class="pm-row-btn pm-add-row-btn pm-btn-locked" style="background: rgba(255, 195, 0, 0.1); border: 1px solid rgba(255, 195, 0, 0.3); color: #FFC300; cursor: pointer;" title="Add College (Locked - Free Limit Reached)">
+            <button type="button" class="pm-row-btn pm-add-row-btn pm-btn-locked" style="background: rgba(255, 195, 0, 0.1); border: 1px solid rgba(255, 195, 0, 0.3); color: #FFC300; cursor: pointer;" title="${lockTitle}">
               <i class="fas fa-lock" style="color: #FFC300;"></i>
             </button>
           `;
@@ -1481,6 +1506,9 @@
 
   // Add College Modal Open
   window.pmOpenAddModal = function() {
+    if (!checkCollegeAdditionLimit()) {
+      return;
+    }
     state.editingId = null;
     document.getElementById("pmModalTitle").innerText = "Add College";
     document.getElementById("pmModalSubmitBtn").innerText = "Add College";
@@ -1738,6 +1766,11 @@
       return;
     }
 
+    if (state.attemptsUsed >= state.maxAttempts) {
+      showLimitReachedPopup();
+      return;
+    }
+
     if (!isDetailsFilled()) {
       state.pendingAction = { type: 'download-pdf' };
       window.pmOpenDetailsModal();
@@ -1786,12 +1819,12 @@
     if (e && e.preventDefault) e.preventDefault();
 
     const name = document.getElementById("pdfName").value.trim();
-    const category = document.getElementById("pdfCategory").value.trim();
+    const category = document.getElementById("pdfCategory").value.trim() || 'General';
     const mobile = document.getElementById("pdfMobileNum").value.trim();
-    const score = Number(document.getElementById("pdfScore").value);
-    const rank = Number(document.getElementById("pdfRank").value);
-    const domicile = document.getElementById("pdfDomicile").value.trim();
-    const course = document.getElementById("pdfCourse").value;
+    const score = Number(document.getElementById("pdfScore").value) || 0;
+    const rank = Number(document.getElementById("pdfRank").value) || 0;
+    const domicile = document.getElementById("pdfDomicile").value.trim() || 'N/A';
+    const course = document.getElementById("pdfCourse").value || 'MBBS';
 
     const submitBtn = document.querySelector('#pmDownloadForm button[type="submit"]');
     const originalBtnText = submitBtn ? submitBtn.innerText : "Save & Continue";
@@ -2014,13 +2047,17 @@
             throw new Error("Failed to register details: " + insertErr.message);
           }
           state.attemptsUsed = 1;
+          state.maxAttempts = 3;
           updateListSelectorUI();
           allowGeneration = true;
         } else {
           // Existing User
-          const isPremium = userRecord.plan_type === 'premium' && userRecord.payment_status === 'paid';
-          if (isPremium) {
-            // Premium user - increment attempts_used by 1, no limit checks
+          const maxAtt = userRecord.max_attempts !== undefined ? userRecord.max_attempts : 3;
+          if (userRecord.attempts_used >= maxAtt) {
+            showLimitReachedPopup();
+            return;
+          } else {
+            // increment attempts
             const { error: updateErr } = await window.supabaseClient
               .from('preference_maker_users')
               .update({
@@ -2029,34 +2066,13 @@
               .eq('id', userRecord.id);
 
             if (updateErr) {
-              throw new Error("Failed to update attempts: " + updateErr.message);
-            }
-            state.attemptsUsed = userRecord.attempts_used + 1;
-            updateListSelectorUI();
-            allowGeneration = true;
-          } else {
-            // Free user - check attempts_used < max_attempts
-            const maxAtt = userRecord.max_attempts !== undefined ? userRecord.max_attempts : 3;
-            if (userRecord.attempts_used >= maxAtt) {
               showLimitReachedPopup();
               return;
-            } else {
-              // attempts_used < max_attempts - increment attempts
-              const { error: updateErr } = await window.supabaseClient
-                .from('preference_maker_users')
-                .update({
-                  attempts_used: userRecord.attempts_used + 1
-                })
-                .eq('id', userRecord.id);
-
-              if (updateErr) {
-                showLimitReachedPopup();
-                return;
-              }
-              state.attemptsUsed = userRecord.attempts_used + 1;
-              updateListSelectorUI();
-              allowGeneration = true;
             }
+            state.attemptsUsed = userRecord.attempts_used + 1;
+            state.maxAttempts = maxAtt;
+            updateListSelectorUI();
+            allowGeneration = true;
           }
         }
       } else {
