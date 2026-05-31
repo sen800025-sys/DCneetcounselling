@@ -29,7 +29,8 @@ async function runTests() {
       rank: 15420,
       domicile: 'Maharashtra',
       course: 'MBBS',
-      email: 'teststudent@example.com'
+      email: 'teststudent@example.com',
+      mobile: '9999999999'
     };
     
     console.log('Inserting test student...');

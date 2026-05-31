@@ -33,6 +33,8 @@
     editingId: null,
     userMobile: null,
     planType: "free",
+    attemptsUsed: 0,
+    maxAttempts: 3,
     listsRemaining: 0,
     paymentStatus: "unpaid",
     lists: [],
@@ -386,9 +388,11 @@
             .insert({
               ...insertData,
               email: window._authUser.email,
+              attempts_used: 0,
+              max_attempts: 3,
               plan_type: 'free',
-              lists_remaining: 0,
-              payment_status: 'unpaid'
+              payment_status: 'unpaid',
+              lists_remaining: 0
             })
             .select('*')
             .single();
@@ -414,6 +418,8 @@
       }
 
       state.planType = userProfile.plan_type || 'free';
+      state.attemptsUsed = userProfile.attempts_used || 0;
+      state.maxAttempts = userProfile.max_attempts !== undefined ? userProfile.max_attempts : 3;
       state.listsRemaining = userProfile.lists_remaining || 0;
       state.paymentStatus = userProfile.payment_status || 'unpaid';
       state.userDetails = {
@@ -478,6 +484,8 @@
 
   function fallbackToLocalStorageMode() {
     state.planType = 'free';
+    state.attemptsUsed = 0;
+    state.maxAttempts = 3;
     state.listsRemaining = 0;
     state.paymentStatus = 'unpaid';
     state.lists = [{
@@ -502,14 +510,16 @@
     const remaining = document.getElementById("pmRemainingLists");
     const select = document.getElementById("pmActiveListSelect");
     
+    const isPremium = state.planType === 'premium' && state.paymentStatus === 'paid';
     if (badge) {
-      if (state.planType === 'premium') {
-        badge.innerHTML = `Premium Plan • 3 Lists Included`;
+      if (isPremium) {
+        badge.innerHTML = `PREMIUM PLAN • College Limit: Unlimited`;
         badge.style.background = "rgba(123, 47, 247, 0.15)";
         badge.style.color = "#a78bfa";
         badge.style.borderColor = "rgba(123, 47, 247, 0.4)";
       } else {
-        badge.innerHTML = `10 College Limit`;
+        const attemptsLeft = Math.max(0, state.maxAttempts - state.attemptsUsed);
+        badge.innerHTML = `FREE PLAN • Attempts Remaining: ${attemptsLeft} • College Limit: 10 Colleges`;
         badge.style.background = "rgba(255, 195, 0, 0.15)";
         badge.style.color = "#FFC300";
         badge.style.borderColor = "rgba(255, 195, 0, 0.4)";
@@ -517,7 +527,7 @@
     }
 
     if (remaining) {
-      if (state.planType === 'premium') {
+      if (isPremium) {
         remaining.innerHTML = `Preference Lists Remaining: ${state.listsRemaining} / 3`;
         remaining.style.display = "inline-block";
       } else {
@@ -547,13 +557,14 @@
 
   // Create new list action callback
   window.pmCreateNewList = async function() {
-    if (state.planType !== 'premium') {
+    const isPremium = state.planType === 'premium' && state.paymentStatus === 'paid';
+    if (!isPremium) {
       showUpgradeModal();
       return;
     }
 
     if (state.listsRemaining <= 0) {
-      alert("You have used all 3 Premium Preference Lists.");
+      alert("You have already used all 3 Premium Preference Lists.");
       return;
     }
 
@@ -599,8 +610,8 @@
 
       if (error) {
         console.error("DB Sync Error:", error.message);
-        if (error.message.includes("Free users can only add up to 10 colleges")) {
-          showUpgradeModal();
+        if (error.message.includes("Free users can only add up to 10 colleges") || error.message.includes("up to 10 colleges")) {
+          showUnlockUnlimitedCollegesPopup();
         } else {
           alert("Error saving preferences: " + error.message);
         }
@@ -630,21 +641,21 @@
       popup.className = "pm-modal-overlay";
       popup.style.display = "flex";
       popup.innerHTML = `
-        <div class="pm-modal" style="max-width: 420px; text-align: center; border-radius: 20px;">
+        <div class="pm-modal" style="max-width: 440px; text-align: center; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(21, 0, 41, 0.98);">
           <div class="pm-modal-header" style="justify-content: center; position: relative;">
-            <h2 class="pm-modal-title" style="color: #ef4444; font-size: 18px;"><i class="fas fa-exclamation-triangle"></i> Free Limit Reached</h2>
+            <h2 class="pm-modal-title" style="color: #FFC300; font-size: 20px;"><i class="fas fa-exclamation-triangle"></i> Free Attempts Used</h2>
             <button class="pm-modal-close" style="position: absolute; right: 20px;" onclick="document.getElementById('pmLimitReachedModal').style.display='none'">&times;</button>
           </div>
           <div class="pm-modal-body" style="padding: 24px;">
-            <p style="font-size: 14px; line-height: 1.5; color: var(--pm-text-secondary); margin: 0 0 20px 0;">
-              You have already used all 3 free preference list generations. Please contact our counselling team to continue.
+            <p style="font-size: 14px; line-height: 1.6; color: var(--pm-text-secondary); margin: 0 0 24px 0;">
+              You have used all 3 free preference list generations. Upgrade to Premium and create up to 3 complete preference lists with unlimited college additions, editing and PDF export.
             </p>
             <div style="display: flex; flex-direction: column; gap: 12px;">
-              <a href="tel:9694673555" class="pm-btn pm-btn-filled" style="width: 100%; height: 48px; border-radius: 12px; text-decoration: none; display: flex; align-items: center; justify-content: center; font-size: 14px;">
-                <i class="fas fa-phone-alt" style="margin-right: 8px;"></i> Call Counselling Team
-              </a>
-              <button type="button" class="pm-btn pm-btn-outline" style="width: 100%; height: 48px; border-radius: 12px; font-size: 14px;" onclick="document.getElementById('pmLimitReachedModal').style.display='none'">
-                Dismiss
+              <button class="pm-btn pm-btn-yellow" style="width: 100%; height: 48px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer;" onclick="document.getElementById('pmLimitReachedModal').style.display='none'; window.pmInitiatePremiumUpgrade();">
+                Upgrade Now
+              </button>
+              <button type="button" class="pm-btn pm-btn-outline" style="width: 100%; height: 48px; border-radius: 12px; font-size: 15px; cursor: pointer;" onclick="document.getElementById('pmLimitReachedModal').style.display='none'">
+                Maybe Later
               </button>
             </div>
           </div>
@@ -654,6 +665,51 @@
     } else {
       popup.style.display = "flex";
     }
+  }
+
+  // Display premium styling popup when free college limit is reached
+  function showUnlockUnlimitedCollegesPopup() {
+    let popup = document.getElementById("pmUnlockUnlimitedModal");
+    if (!popup) {
+      popup = document.createElement("div");
+      popup.id = "pmUnlockUnlimitedModal";
+      popup.className = "pm-modal-overlay";
+      popup.style.display = "flex";
+      popup.innerHTML = `
+        <div class="pm-modal" style="max-width: 440px; text-align: center; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(21, 0, 41, 0.98);">
+          <div class="pm-modal-header" style="justify-content: center; position: relative;">
+            <h2 class="pm-modal-title" style="color: #FFC300; font-size: 20px;"><i class="fas fa-crown"></i> Unlock Unlimited Colleges</h2>
+            <button class="pm-modal-close" style="position: absolute; right: 20px;" onclick="document.getElementById('pmUnlockUnlimitedModal').style.display='none'">&times;</button>
+          </div>
+          <div class="pm-modal-body" style="padding: 24px;">
+            <p style="font-size: 14px; line-height: 1.6; color: var(--pm-text-secondary); margin: 0 0 24px 0;">
+              Free users can add up to 10 colleges. Upgrade to Premium and create complete preference lists without college limits.
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <button class="pm-btn pm-btn-yellow" style="width: 100%; height: 48px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer;" onclick="document.getElementById('pmUnlockUnlimitedModal').style.display='none'; window.pmInitiatePremiumUpgrade();">
+                Upgrade Now
+              </button>
+              <button type="button" class="pm-btn pm-btn-outline" style="width: 100%; height: 48px; border-radius: 12px; font-size: 15px; cursor: pointer;" onclick="document.getElementById('pmUnlockUnlimitedModal').style.display='none'">
+                Continue Free
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(popup);
+    } else {
+      popup.style.display = "flex";
+    }
+  }
+
+  // Check if adding another college is allowed (free limit of 10 colleges)
+  function checkCollegeAdditionLimit() {
+    const isPremium = state.planType === 'premium' && state.paymentStatus === 'paid';
+    if (!isPremium && state.preferences.length >= 10) {
+      showUnlockUnlimitedCollegesPopup();
+      return false;
+    }
+    return true;
   }
 
   // Deterministic hash function to generate stable fee/bond values for database entries
@@ -1203,6 +1259,7 @@
     tableBody.innerHTML = filteredPreferences.length > 0 ? filteredPreferences.map((college, idx) => {
       const isSaved = state.preferences.some(p => String(p.id) === String(college.id));
       
+      const isPremiumUser = state.planType === 'premium' && state.paymentStatus === 'paid';
       let actionHtml = '';
       if (state.viewMode === 'all') {
         if (isSaved) {
@@ -1211,7 +1268,7 @@
               <i class="fas fa-check"></i>
             </button>
           `;
-        } else if (state.planType === 'free' && state.preferences.length >= 10) {
+        } else if (!isPremiumUser && state.preferences.length >= 10) {
           actionHtml = `
             <button type="button" class="pm-row-btn pm-add-row-btn pm-btn-locked" style="background: rgba(255, 195, 0, 0.1); border: 1px solid rgba(255, 195, 0, 0.3); color: #FFC300; cursor: pointer;" title="Add College (Locked - Free Limit Reached)">
               <i class="fas fa-lock" style="color: #FFC300;"></i>
@@ -1268,7 +1325,7 @@
               <i class="fas fa-check"></i>
             </button>
           `;
-        } else if (state.planType === 'free' && state.preferences.length >= 10) {
+        } else if (!isPremiumUser && state.preferences.length >= 10) {
           mobileActionHtml = `
             <button type="button" class="pm-row-btn pm-add-row-btn pm-btn-locked" style="background: rgba(255, 195, 0, 0.1); border: 1px solid rgba(255, 195, 0, 0.3); color: #FFC300; cursor: pointer;" title="Add College (Locked - Free Limit Reached)">
               <i class="fas fa-lock" style="color: #FFC300;"></i>
@@ -1451,8 +1508,7 @@
       e.stopPropagation();
     }
 
-    if (state.planType === 'free' && state.preferences.length >= 10) {
-      showUpgradeModal();
+    if (!checkCollegeAdditionLimit()) {
       return;
     }
 
@@ -1571,8 +1627,8 @@
       window.renderPreferenceMakerTable();
     } else {
       // Add state
-      if (state.planType === 'free' && state.preferences.length >= 10) {
-        showUpgradeModal();
+      if (!checkCollegeAdditionLimit()) {
+        window.pmCloseModal();
         return;
       }
 
@@ -1777,6 +1833,15 @@
 
         state.userMobile = mobile;
 
+        // 1. Check if mobile number already exists in preference_maker_users
+        const { data: existingUser, error: checkErr } = await window.supabaseClient
+          .from('preference_maker_users')
+          .select('*')
+          .eq('mobile', mobile)
+          .maybeSingle();
+
+        if (checkErr) throw checkErr;
+
         const detailsData = {
           mobile: mobile,
           name: name,
@@ -1785,23 +1850,41 @@
           rank: rank,
           domicile: domicile,
           course: course,
+          email: window._authUser.email,
           updated_at: new Date().toISOString()
         };
 
-        const { error } = await window.supabaseClient
-          .from('preference_maker_users')
-          .upsert({
-            ...detailsData,
-            email: window._authUser.email
-          }, { onConflict: 'mobile' });
-
-        if (error) {
-          console.warn("Upsert with email column failed. Retrying upsert with basic columns...", error.message);
-          const { error: retryError } = await window.supabaseClient
+        if (!existingUser) {
+          // 2. If user does not exist: Create new record and set default free values
+          const { error: insertErr } = await window.supabaseClient
             .from('preference_maker_users')
-            .upsert(detailsData, { onConflict: 'mobile' });
+            .insert({
+              ...detailsData,
+              attempts_used: 0,
+              max_attempts: 3,
+              plan_type: 'free',
+              payment_status: 'unpaid',
+              lists_remaining: 0
+            });
           
-          if (retryError) throw retryError;
+          if (insertErr) throw insertErr;
+        } else {
+          // If user exists: update details
+          const { error: updateErr } = await window.supabaseClient
+            .from('preference_maker_users')
+            .update({
+              name: name,
+              category: category,
+              score: score,
+              rank: rank,
+              domicile: domicile,
+              course: course,
+              email: window._authUser.email,
+              updated_at: new Date().toISOString()
+            })
+            .eq('mobile', mobile);
+          
+          if (updateErr) throw updateErr;
         }
 
         // Reload user Preference Maker lists and settings
@@ -1931,17 +2014,24 @@
               rank: Number(rank),
               domicile: domicile,
               course: course,
-              attempts_used: 1
+              attempts_used: 1,
+              max_attempts: 3,
+              plan_type: 'free',
+              payment_status: 'unpaid',
+              lists_remaining: 0
             });
           
           if (insertErr) {
             throw new Error("Failed to register details: " + insertErr.message);
           }
+          state.attemptsUsed = 1;
+          updateListSelectorUI();
           allowGeneration = true;
         } else {
           // Existing User
-          if (userRecord.is_unlimited) {
-            // Unlimited user - increment attempts
+          const isPremium = userRecord.plan_type === 'premium' && userRecord.payment_status === 'paid';
+          if (isPremium) {
+            // Premium user - increment attempts_used by 1, no limit checks
             const { error: updateErr } = await window.supabaseClient
               .from('preference_maker_users')
               .update({
@@ -1952,14 +2042,17 @@
             if (updateErr) {
               throw new Error("Failed to update attempts: " + updateErr.message);
             }
+            state.attemptsUsed = userRecord.attempts_used + 1;
+            updateListSelectorUI();
             allowGeneration = true;
           } else {
-            // Limited user
-            if (userRecord.attempts_used >= 3) {
+            // Free user - check attempts_used < max_attempts
+            const maxAtt = userRecord.max_attempts !== undefined ? userRecord.max_attempts : 3;
+            if (userRecord.attempts_used >= maxAtt) {
               showLimitReachedPopup();
               return;
             } else {
-              // attempts_used < 3 - increment attempts
+              // attempts_used < max_attempts - increment attempts
               const { error: updateErr } = await window.supabaseClient
                 .from('preference_maker_users')
                 .update({
@@ -1971,6 +2064,8 @@
                 showLimitReachedPopup();
                 return;
               }
+              state.attemptsUsed = userRecord.attempts_used + 1;
+              updateListSelectorUI();
               allowGeneration = true;
             }
           }
@@ -2159,6 +2254,11 @@
     } catch (err) {
       console.error("Failed to generate PDF:", err);
       alert("Error generating PDF: " + err.message);
+    } finally {
+      if (downloadBtn) {
+        downloadBtn.disabled = false;
+        downloadBtn.innerHTML = originalBtnText;
+      }
     }
   };
 
