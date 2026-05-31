@@ -365,6 +365,13 @@ function bootApp() {
                 }
             }
 
+            // Ensure preference maker catches the loaded user session
+            if (window.location.hash === '#preference-maker') {
+                if (typeof window.renderPreferenceMaker === 'function') {
+                    window.renderPreferenceMaker();
+                }
+            }
+
             // REFERRAL SYSTEM: Auto-link on first login/signup if pending referral exists
             // Uses a synchronous global lock to prevent duplicate inserts from concurrent SIGNED_IN events
             if (event === 'SIGNED_IN' && session && session.user) {

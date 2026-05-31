@@ -41,6 +41,11 @@
     pendingAction: null
   };
 
+  // Helper to check if user details and mobile are filled
+  function isDetailsFilled() {
+    return !!(state.userMobile && state.userDetails && state.userDetails.score > 0 && state.userDetails.domicile && state.userDetails.domicile !== 'N/A');
+  }
+
   // Helper to format fees in Indian Rupees format (e.g. 1,628)
   function formatFees(val) {
     return Number(val).toLocaleString('en-IN');
@@ -358,29 +363,54 @@
         .eq('mobile', state.userMobile)
         .maybeSingle();
 
-      if (profileErr) throw profileErr;
+      if (profileErr) {
+        console.warn("Could not load user profile from preference_maker_users, falling back to local storage:", profileErr.message);
+        fallbackToLocalStorageMode();
+        return;
+      }
 
       if (!userProfile) {
-        const { data: newProfile, error: insErr } = await window.supabaseClient
-          .from('preference_maker_users')
-          .insert({
-            name: window._authUser.user_metadata?.full_name || window._authUser.user_metadata?.name || 'Student',
-            email: window._authUser.email,
-            mobile: state.userMobile,
-            category: 'General',
-            score: 0,
-            rank: 0,
-            domicile: 'N/A',
-            course: 'MBBS',
-            plan_type: 'free',
-            lists_remaining: 0,
-            payment_status: 'unpaid'
-          })
-          .select('*')
-          .single();
+        const insertData = {
+          name: window._authUser.user_metadata?.full_name || window._authUser.user_metadata?.name || 'Student',
+          mobile: state.userMobile,
+          category: 'General',
+          score: 0,
+          rank: 0,
+          domicile: 'N/A',
+          course: 'MBBS'
+        };
 
-        if (insErr) throw insErr;
-        userProfile = newProfile;
+        try {
+          const { data: newProfile, error: insErr } = await window.supabaseClient
+            .from('preference_maker_users')
+            .insert({
+              ...insertData,
+              email: window._authUser.email,
+              plan_type: 'free',
+              lists_remaining: 0,
+              payment_status: 'unpaid'
+            })
+            .select('*')
+            .single();
+
+          if (insErr) {
+            console.warn("Inserting with premium columns failed. Retrying insertion with basic columns...");
+            const { data: retryProfile, error: retryErr } = await window.supabaseClient
+              .from('preference_maker_users')
+              .insert(insertData)
+              .select('*')
+              .single();
+            
+            if (retryErr) throw retryErr;
+            userProfile = retryProfile;
+          } else {
+            userProfile = newProfile;
+          }
+        } catch (insertCatchErr) {
+          console.warn("Failed to create preference_maker_users profile, falling back to local storage:", insertCatchErr.message);
+          fallbackToLocalStorageMode();
+          return;
+        }
       }
 
       state.planType = userProfile.plan_type || 'free';
@@ -388,7 +418,7 @@
       state.paymentStatus = userProfile.payment_status || 'unpaid';
       state.userDetails = {
         name: userProfile.name,
-        email: userProfile.email,
+        email: userProfile.email || window._authUser.email,
         category: userProfile.category,
         score: userProfile.score,
         rank: userProfile.rank,
@@ -396,13 +426,21 @@
         course: userProfile.course
       };
 
-      let { data: lists, error: listsErr } = await window.supabaseClient
-        .from('preference_maker_lists')
-        .select('*')
-        .eq('mobile', state.userMobile)
-        .order('created_at', { ascending: true });
+      let lists = [];
+      try {
+        let { data: dbLists, error: listsErr } = await window.supabaseClient
+          .from('preference_maker_lists')
+          .select('*')
+          .eq('mobile', state.userMobile)
+          .order('created_at', { ascending: true });
 
-      if (listsErr) throw listsErr;
+        if (listsErr) throw listsErr;
+        lists = dbLists;
+      } catch (listQueryErr) {
+        console.warn("preference_maker_lists table is missing or query failed. Falling back to local storage list mode.", listQueryErr.message);
+        fallbackToLocalStorageMode();
+        return;
+      }
 
       if (!lists || lists.length === 0) {
         const { data: newList, error: createListErr } = await window.supabaseClient
@@ -434,7 +472,23 @@
 
     } catch (err) {
       console.error("Error loading user Preference Maker data:", err);
+      fallbackToLocalStorageMode();
     }
+  }
+
+  function fallbackToLocalStorageMode() {
+    state.planType = 'free';
+    state.listsRemaining = 0;
+    state.paymentStatus = 'unpaid';
+    state.lists = [{
+      id: 'local-default',
+      list_name: 'Default List (Local)',
+      colleges: state.preferences
+    }];
+    state.activeListId = 'local-default';
+    loadFromLocalStorage();
+    updateListSelectorUI();
+    window.renderPreferenceMakerTable();
   }
 
   window.pmOnMobileSaved = async function(mobile) {
@@ -532,7 +586,7 @@
 
   // Sync state.preferences to DB active list
   async function syncActiveListWithDB() {
-    if (!state.activeListId || !state.userMobile || !window.supabaseClient) {
+    if (!state.activeListId || !state.userMobile || !window.supabaseClient || state.activeListId === 'local-default') {
       saveToLocalStorage();
       return true;
     }
@@ -654,8 +708,8 @@
     const container = document.getElementById("section-preference-maker");
     if (!container) return;
 
-    // Only render the wrapper layout if the main table container doesn't exist
-    if (!document.getElementById("pmTableBody")) {
+    // Only render the wrapper layout if the main table container and modals exist in the DOM
+    if (!document.getElementById("pmTableBody") || !document.getElementById("pmDownloadModal") || !document.getElementById("pmModal")) {
       // Clean up any body-level relocated modals to prevent duplicates before layout injection
       const bodyModal = document.querySelector('body > #pmModal');
       const bodyDownloadModal = document.querySelector('body > #pmDownloadModal');
@@ -798,6 +852,10 @@
                     <input type="text" id="pdfCategory" class="pm-form-control" required placeholder="e.g. General, OBC, SC, ST">
                   </div>
                   <div class="pm-form-group">
+                    <label for="pdfMobileNum">Mobile Number</label>
+                    <input type="tel" id="pdfMobileNum" class="pm-form-control" required pattern="[0-9]{10}" placeholder="Enter 10-digit number">
+                  </div>
+                  <div class="pm-form-group">
                     <label for="pdfScore">NEET Score</label>
                     <input type="number" id="pdfScore" class="pm-form-control" required min="1" max="720" placeholder="e.g. 680">
                   </div>
@@ -809,10 +867,10 @@
                     <label for="pdfDomicile">Domicile State</label>
                     <input type="text" id="pdfDomicile" class="pm-form-control" required placeholder="e.g. Delhi, Rajasthan">
                   </div>
-                  <div class="pm-form-group" style="grid-column: span 2;">
+                  <div class="pm-form-group">
                     <label for="pdfCourse">Course</label>
                     <select id="pdfCourse" class="pm-form-control" required>
-                      <option value="" disabled selected>Select preferred course</option>
+                      <option value="" disabled selected>Select course</option>
                       <option value="MBBS">MBBS</option>
                       <option value="BDS">BDS</option>
                       <option value="AYUSH">AYUSH</option>
@@ -988,7 +1046,7 @@
                 .from('users')
                 .select('mobile_number')
                 .eq('id', window._authUser.id)
-                .single();
+                .maybeSingle();
               
               if (error) throw error;
               
@@ -996,8 +1054,8 @@
                 state.userMobile = data.mobile_number;
                 await loadUserPreferenceMakerData();
               } else {
-                alert("Please add your mobile number to start creating preference lists.");
-                window.openAddMobileModal();
+                console.log("[Preference Maker] User has no mobile number yet. Details form will collect it on first action.");
+                updateListSelectorUI();
               }
             }
           } catch (err) {
@@ -1401,10 +1459,8 @@
     const college = state.allColleges.find(item => String(item.id) === String(id));
     if (!college) return;
 
-    // Check if we need to show candidate details form (details not filled yet)
-    const detailsFilled = state.userDetails && state.userDetails.score > 0 && state.userDetails.domicile && state.userDetails.domicile !== 'N/A';
-
-    if (!detailsFilled) {
+    // Check if we need to show candidate details form (adding the first college or details missing)
+    if (!isDetailsFilled()) {
       state.pendingAction = {
         type: 'add-college',
         college: college
@@ -1529,10 +1585,8 @@
         bond: bond
       };
 
-      // Check if we need to show candidate details form (details not filled yet)
-      const detailsFilled = state.userDetails && state.userDetails.score > 0 && state.userDetails.domicile && state.userDetails.domicile !== 'N/A';
-
-      if (!detailsFilled) {
+      // Check if we need to show candidate details form (adding the first college or details missing)
+      if (!isDetailsFilled()) {
         state.pendingAction = {
           type: 'add-custom-college',
           college: customCollege
@@ -1639,8 +1693,7 @@
       return;
     }
 
-    const detailsFilled = state.userDetails && state.userDetails.score > 0 && state.userDetails.domicile !== 'N/A';
-    if (!detailsFilled) {
+    if (!isDetailsFilled()) {
       state.pendingAction = { type: 'download-pdf' };
       window.pmOpenDetailsModal();
     } else {
@@ -1657,17 +1710,28 @@
     document.getElementById("pmDownloadForm").reset();
     document.getElementById("pmDownloadModal").style.display = "flex";
 
+    // Hide close and cancel buttons if details are not filled yet (forcing user to fill the form to proceed)
+    const canClose = isDetailsFilled();
+    const closeBtn = document.querySelector("#pmDownloadModal .pm-modal-close");
+    const cancelBtn = document.querySelector("#pmDownloadModal .pm-btn-outline");
+    if (closeBtn) closeBtn.style.display = canClose ? "block" : "none";
+    if (cancelBtn) cancelBtn.style.display = canClose ? "block" : "none";
+
     if (state.userDetails) {
       if (document.getElementById("pdfName")) document.getElementById("pdfName").value = state.userDetails.name || '';
       if (document.getElementById("pdfCategory")) document.getElementById("pdfCategory").value = state.userDetails.category || '';
+      if (document.getElementById("pdfMobileNum")) document.getElementById("pdfMobileNum").value = state.userMobile || '';
       if (document.getElementById("pdfScore")) document.getElementById("pdfScore").value = state.userDetails.score > 0 ? state.userDetails.score : '';
       if (document.getElementById("pdfRank")) document.getElementById("pdfRank").value = state.userDetails.rank > 0 ? state.userDetails.rank : '';
       if (document.getElementById("pdfDomicile")) document.getElementById("pdfDomicile").value = state.userDetails.domicile !== 'N/A' ? state.userDetails.domicile : '';
       if (document.getElementById("pdfCourse")) document.getElementById("pdfCourse").value = state.userDetails.course || '';
-    } else if (window._authUser) {
-      const nameField = document.getElementById("pdfName");
-      if (nameField) {
-        nameField.value = window._authUser.user_metadata?.full_name || window._authUser.user_metadata?.name || window._authUser.email.split('@')[0] || '';
+    } else {
+      if (document.getElementById("pdfMobileNum")) document.getElementById("pdfMobileNum").value = state.userMobile || '';
+      if (window._authUser) {
+        const nameField = document.getElementById("pdfName");
+        if (nameField) {
+          nameField.value = window._authUser.user_metadata?.full_name || window._authUser.user_metadata?.name || (window._authUser.email ? window._authUser.email.split('@')[0] : '') || '';
+        }
       }
     }
   };
@@ -1678,6 +1742,7 @@
 
     const name = document.getElementById("pdfName").value.trim();
     const category = document.getElementById("pdfCategory").value.trim();
+    const mobile = document.getElementById("pdfMobileNum").value.trim();
     const score = Number(document.getElementById("pdfScore").value);
     const rank = Number(document.getElementById("pdfRank").value);
     const domicile = document.getElementById("pdfDomicile").value.trim();
@@ -1685,6 +1750,12 @@
 
     const submitBtn = document.querySelector('#pmDownloadForm button[type="submit"]');
     const originalBtnText = submitBtn ? submitBtn.innerText : "Save & Continue";
+
+    if (!/^[0-9]{10}$/.test(mobile)) {
+      alert("Please enter a valid 10-digit mobile number.");
+      return;
+    }
+
     if (submitBtn) {
       submitBtn.disabled = true;
       submitBtn.innerText = "Saving...";
@@ -1692,21 +1763,51 @@
 
     try {
       if (window.supabaseClient) {
+        // Upsert users with the mobile number first to avoid foreign key/constraint violations
+        const { error: userError } = await window.supabaseClient
+          .from('users')
+          .upsert({
+            id: window._authUser.id,
+            mobile_number: mobile,
+            email: window._authUser.email,
+            name: name
+          }, { onConflict: 'id' });
+
+        if (userError) throw userError;
+
+        state.userMobile = mobile;
+
+        const detailsData = {
+          mobile: mobile,
+          name: name,
+          category: category,
+          score: score,
+          rank: rank,
+          domicile: domicile,
+          course: course,
+          updated_at: new Date().toISOString()
+        };
+
         const { error } = await window.supabaseClient
           .from('preference_maker_users')
           .upsert({
-            mobile: state.userMobile,
-            name: name,
-            email: window._authUser.email,
-            category: category,
-            score: score,
-            rank: rank,
-            domicile: domicile,
-            course: course,
-            updated_at: new Date().toISOString()
+            ...detailsData,
+            email: window._authUser.email
           }, { onConflict: 'mobile' });
 
-        if (error) throw error;
+        if (error) {
+          console.warn("Upsert with email column failed. Retrying upsert with basic columns...", error.message);
+          const { error: retryError } = await window.supabaseClient
+            .from('preference_maker_users')
+            .upsert(detailsData, { onConflict: 'mobile' });
+          
+          if (retryError) throw retryError;
+        }
+
+        // Reload user Preference Maker lists and settings
+        await loadUserPreferenceMakerData();
+      } else {
+        state.userMobile = mobile;
       }
 
       // Update state details cache
@@ -1784,7 +1885,7 @@
     }
     const email = user.email;
 
-    const detailsFilled = state.userDetails && state.userDetails.score > 0 && state.userDetails.domicile !== 'N/A';
+    const detailsFilled = isDetailsFilled();
     const name = detailsFilled ? state.userDetails.name : (user.user_metadata?.full_name || user.user_metadata?.name || 'Student');
     const category = detailsFilled ? state.userDetails.category : 'General';
     const score = detailsFilled ? state.userDetails.score : 0;
