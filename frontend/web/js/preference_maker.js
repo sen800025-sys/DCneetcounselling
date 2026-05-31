@@ -22,7 +22,7 @@
   const state = {
     allColleges: [],
     preferences: [],
-    viewMode: "preferences", // "all" or "preferences"
+    viewMode: "all", // "all" or "preferences"
     dbLoaded: false,
     isLoading: false,
     filters: {
@@ -211,7 +211,7 @@
           full_name: window._authUser.user_metadata?.full_name || window._authUser.user_metadata?.name || 'Student',
           mobile: state.userMobile,
           product_name: "Premium Preference Maker",
-          amount: 99.00,
+          amount: 1.00,
           coupon: null,
           user_id: window._authUser.id,
           wallet_enabled: false,
@@ -335,7 +335,7 @@
           </div>
           <div class="pm-modal-body" style="padding: 24px;">
             <p style="font-size: 14px; line-height: 1.6; color: var(--pm-text-secondary); margin: 0 0 24px 0;">
-              Upgrade to Premium for ₹99 and create up to 3 complete preference lists with unlimited college additions, editing, and PDF export.
+              Upgrade to Premium for ₹1 and create up to 3 complete preference lists with unlimited college additions, editing, and PDF export.
             </p>
             <div style="display: flex; flex-direction: column; gap: 12px;">
               <button class="pm-btn pm-btn-yellow" style="width: 100%; height: 48px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer;" onclick="window.pmInitiatePremiumUpgrade()">
@@ -512,18 +512,7 @@
     
     const isPremium = state.planType === 'premium' && state.paymentStatus === 'paid';
     if (badge) {
-      if (isPremium) {
-        badge.innerHTML = `PREMIUM PLAN • College Limit: Unlimited`;
-        badge.style.background = "rgba(123, 47, 247, 0.15)";
-        badge.style.color = "#a78bfa";
-        badge.style.borderColor = "rgba(123, 47, 247, 0.4)";
-      } else {
-        const attemptsLeft = Math.max(0, state.maxAttempts - state.attemptsUsed);
-        badge.innerHTML = `FREE PLAN • Attempts Remaining: ${attemptsLeft} • College Limit: 10 Colleges`;
-        badge.style.background = "rgba(255, 195, 0, 0.15)";
-        badge.style.color = "#FFC300";
-        badge.style.borderColor = "rgba(255, 195, 0, 0.4)";
-      }
+      badge.style.display = "none";
     }
 
     if (remaining) {
@@ -648,7 +637,7 @@
           </div>
           <div class="pm-modal-body" style="padding: 24px;">
             <p style="font-size: 14px; line-height: 1.6; color: var(--pm-text-secondary); margin: 0 0 24px 0;">
-              You have used all 3 free preference list generations. Upgrade to Premium and create up to 3 complete preference lists with unlimited college additions, editing and PDF export.
+              You have used all 3 free preference list generations. Upgrade to Premium for ₹1 and create up to 3 complete preference lists with unlimited college additions, editing and PDF export.
             </p>
             <div style="display: flex; flex-direction: column; gap: 12px;">
               <button class="pm-btn pm-btn-yellow" style="width: 100%; height: 48px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer;" onclick="document.getElementById('pmLimitReachedModal').style.display='none'; window.pmInitiatePremiumUpgrade();">
@@ -683,7 +672,7 @@
           </div>
           <div class="pm-modal-body" style="padding: 24px;">
             <p style="font-size: 14px; line-height: 1.6; color: var(--pm-text-secondary); margin: 0 0 24px 0;">
-              Free users can add up to 10 colleges. Upgrade to Premium and create complete preference lists without college limits.
+              Free users can add up to 10 colleges. Upgrade to Premium for ₹1 to add unlimited colleges and create up to 3 complete preference lists.
             </p>
             <div style="display: flex; flex-direction: column; gap: 12px;">
               <button class="pm-btn pm-btn-yellow" style="width: 100%; height: 48px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer;" onclick="document.getElementById('pmUnlockUnlimitedModal').style.display='none'; window.pmInitiatePremiumUpgrade();">
@@ -801,7 +790,7 @@
           </div>
 
           <!-- Premium Plan & List Selector Row -->
-          <div class="pm-list-selector-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 16px; background: rgba(255, 255, 255, 0.03); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05); gap: 16px; flex-wrap: wrap;">
+          <div class="pm-list-selector-row" style="display: none !important;">
             <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
               <span class="pm-badge" id="pmUserBadge" style="padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; border: 1px solid; transition: all 0.2s ease;"></span>
               <span id="pmRemainingLists" style="font-size: 13px; color: var(--pm-text-secondary); font-weight: 500;"></span>
