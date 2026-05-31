@@ -1069,16 +1069,15 @@
 
       const overlay = document.createElement("div");
       overlay.id = "pmAuthOverlay";
-      overlay.style.position = "absolute";
+      overlay.style.position = "fixed";
       overlay.style.top = "0";
       overlay.style.left = "0";
       overlay.style.width = "100%";
       overlay.style.height = "100%";
-      overlay.style.minHeight = "80vh";
       overlay.style.display = "flex";
       overlay.style.alignItems = "center";
       overlay.style.justifyContent = "center";
-      overlay.style.zIndex = "100";
+      overlay.style.zIndex = "10000005";
       overlay.style.background = "rgba(15, 7, 36, 0.45)";
       overlay.style.backdropFilter = "blur(8px)";
       overlay.style.webkitBackdropFilter = "blur(8px)";
@@ -1089,18 +1088,17 @@
           <p style="color: rgba(255, 255, 255, 0.7); font-size: 14px; line-height: 1.6; margin: 0 0 30px 0;">
             To design, organize, and download your personalized college preference list, please sign in or create an account first.
           </p>
-          <div style="display: flex; flex-direction: column; gap: 12px;">
-            <button class="pm-btn pm-btn-filled" style="width: 100%; height: 48px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer;" onclick="window.navigate('login')">
+          <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
+            <button class="pm-btn pm-btn-filled" style="width: 100%; height: 50px !important; flex: none !important; display: flex !important; align-items: center !important; justify-content: center !important; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer;" onclick="window.navigate('login')">
               Sign In / Register
             </button>
-            <button class="pm-btn pm-btn-outline" style="width: 100%; height: 48px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer;" onclick="window.navigate('home')">
+            <button class="pm-btn pm-btn-outline" style="width: 100%; height: 50px !important; flex: none !important; display: flex !important; align-items: center !important; justify-content: center !important; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer;" onclick="window.navigate('home')">
               Return to Home
             </button>
           </div>
         </div>
       `;
-      container.style.position = "relative";
-      container.appendChild(overlay);
+      document.body.appendChild(overlay);
     }
 
     if (window._authUser) {

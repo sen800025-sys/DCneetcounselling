@@ -244,6 +244,9 @@ window.addEventListener('load', function() {
 // Enhance the stub navigation with animations and dynamic features
 var originalStub = window.navigate;
 window.navigate = function(route, isPopState) {
+    var pmAuth = document.getElementById('pmAuthOverlay');
+    if (pmAuth) pmAuth.remove();
+
     // Special NEET Preference Maker UI controls (Exclusive Full Width Topbar Layout)
     var globalHeader = document.getElementById('header-container');
     var globalFooter = document.querySelector('footer');

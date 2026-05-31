@@ -57,7 +57,7 @@
   <!-- Deferred: Dashboard CSS (not needed for initial paint) -->
   <link rel="stylesheet" href="css/dashboard.min.css?v=2026.04.24.2" media="print" onload="this.media='all'" />
   <noscript><link rel="stylesheet" href="css/dashboard.min.css?v=2026.04.24.2" /></noscript>
-  <link rel="stylesheet" href="css/preference_maker.css?v=2026.05.31.2" />
+  <link rel="stylesheet" href="css/preference_maker.css?v=2026.05.31.3" />
 
   <!-- NProgress: loaded async -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" media="print" onload="this.media='all'" />
@@ -8329,11 +8329,11 @@
                   <p style="color: rgba(255, 255, 255, 0.7); font-size: 14px; line-height: 1.6; margin: 0 0 30px 0;">
                     To estimate your Rank and see top college probabilities, please sign in or create an account first.
                   </p>
-                  <div style="display: flex; flex-direction: column; gap: 12px;">
-                    <button class="pm-btn pm-btn-yellow" style="width: 100%; height: 48px; border-radius: 12px; font-size: 15px;" onclick="document.getElementById('predictorAuthModalPopup').style.display='none'; window.navigate('login');">
+                  <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
+                    <button class="pm-btn pm-btn-yellow" style="width: 100%; height: 50px !important; flex: none !important; display: flex !important; align-items: center !important; justify-content: center !important; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer;" onclick="document.getElementById('predictorAuthModalPopup').style.display='none'; window.navigate('login');">
                       Sign In / Register
                     </button>
-                    <button class="pm-btn pm-btn-purple-outline" style="width: 100%; height: 48px; border-radius: 12px; font-size: 15px;" onclick="document.getElementById('predictorAuthModalPopup').style.display='none';">
+                    <button class="pm-btn pm-btn-purple-outline" style="width: 100%; height: 50px !important; flex: none !important; display: flex !important; align-items: center !important; justify-content: center !important; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer;" onclick="document.getElementById('predictorAuthModalPopup').style.display='none';">
                       Cancel
                     </button>
                   </div>
@@ -8550,10 +8550,10 @@
   <script defer src="js/supabase.js?v=2026.04.24.1"></script>
   <script defer src="js/supabase-config.js?v=2026.05.11.1"></script>
   <script defer src="js/supabaseClient.js?v=2026.05.15.patch3"></script>
-  <script defer src="js/app_v2.js?v=2026.05.31.2"></script>
+  <script defer src="js/app_v2.js?v=2026.05.31.3"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.6.0/jspdf.plugin.autotable.min.js"></script>
-  <script defer src="js/preference_maker.js?v=2026.05.31.3"></script>
+  <script defer src="js/preference_maker.js?v=2026.05.31.4"></script>
 
   <!-- Auth Popup Modal -->
   <div id="authModal" style="

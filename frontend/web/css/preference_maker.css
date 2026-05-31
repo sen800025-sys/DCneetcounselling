@@ -317,13 +317,13 @@
 }
 
 /* Custom color classes for state badges based on JSON backgrounds mapping */
-.pm-badge-delhi { background-color: #5B21B6; }
-.pm-badge-tamilnadu { background-color: #7C3AED; }
-.pm-badge-gujarat { background-color: #B45309; }
-.pm-badge-maharashtra { background-color: #6D28D9; }
-.pm-badge-karnataka { background-color: #4338CA; }
-.pm-badge-uttarpradesh { background-color: #7C3AED; }
-.pm-badge-puducherry { background-color: #8B5CF6; } /* fallback / custom state badge */
+.pm-badge-delhi { background-color: var(--pm-accent-purple); }
+.pm-badge-tamilnadu { background-color: var(--pm-accent-purple); }
+.pm-badge-gujarat { background-color: var(--pm-accent-purple); }
+.pm-badge-maharashtra { background-color: var(--pm-accent-purple); }
+.pm-badge-karnataka { background-color: var(--pm-accent-purple); }
+.pm-badge-uttarpradesh { background-color: var(--pm-accent-purple); }
+.pm-badge-puducherry { background-color: var(--pm-accent-purple); } /* fallback / custom state badge */
 .pm-badge-default { background-color: var(--pm-accent-purple); }
 
 .pm-fees {
