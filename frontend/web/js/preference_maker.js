@@ -481,6 +481,7 @@
       const activeList = lists.find(l => l.id === state.activeListId);
       state.preferences = activeList.colleges || [];
 
+      checkAndClearLegacyCache();
       saveToLocalStorage();
       updateListSelectorUI();
       window.renderPreferenceMakerTable();
@@ -504,6 +505,7 @@
     }];
     state.activeListId = 'local-default';
     loadFromLocalStorage();
+    checkAndClearLegacyCache();
     updateListSelectorUI();
     window.renderPreferenceMakerTable();
   }
@@ -548,6 +550,7 @@
     const activeList = state.lists.find(l => l.id === parsedId);
     if (activeList) {
       state.preferences = activeList.colleges || [];
+      checkAndClearLegacyCache();
       saveToLocalStorage();
       window.renderPreferenceMakerTable();
     }
@@ -757,6 +760,15 @@
 
   // Initialize from storage immediately
   loadFromLocalStorage();
+
+  function checkAndClearLegacyCache() {
+    if (state.allColleges.length > 0 && state.preferences.length >= state.allColleges.length) {
+      console.log("[Antigravity] Detected legacy pre-populated preferences cache. Resetting to empty list.");
+      state.preferences = [];
+      saveToLocalStorage();
+      syncActiveListWithDB();
+    }
+  }
 
 
   // Get state badge class name
@@ -1175,14 +1187,7 @@
         state.allColleges = mapped;
         state.dbLoaded = true;
         
-        // Auto-migration/clearing of pre-populated legacy cache:
-        // If the preferences list contains all or more colleges than the database (legacy default),
-        // reset it to empty so the user starts with a clean slate.
-        if (mapped.length > 0 && state.preferences.length >= mapped.length) {
-          console.log("[Antigravity] Detected legacy pre-populated preferences cache. Resetting to empty list.");
-          state.preferences = [];
-          saveToLocalStorage();
-        }
+        checkAndClearLegacyCache();
         
         // Disable loading state before triggering re-render
         state.isLoading = false;
