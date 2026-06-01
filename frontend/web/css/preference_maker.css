@@ -500,7 +500,7 @@
   height: 100vh;
   background: rgba(11, 0, 20, 0.85);
   backdrop-filter: blur(10px);
-  z-index: 2000;
+  z-index: 10000005;
   display: none;
   align-items: center;
   justify-content: center;

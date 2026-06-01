@@ -193,6 +193,9 @@
       upgradeBtn.innerText = "Initiating Payment...";
     }
 
+    const isMobile = window.innerWidth <= 768;
+    const payAmount = isMobile ? 1.00 : 99.00;
+
     try {
       const backendUrl = "https://rlqmdylbzapyepuwncwt.supabase.co/functions/v1";
       const anonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJscW1keWxiemFweWVwdXduY3d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTcwNzYsImV4cCI6MjA5MTgzMzA3Nn0.oNNK1pwLnykQlNfUkw7IdB-ZBkKDoWxszsKDSIjsLeo";
@@ -211,7 +214,7 @@
           full_name: window._authUser.user_metadata?.full_name || window._authUser.user_metadata?.name || 'Student',
           mobile: state.userMobile,
           product_name: "Premium Preference Maker",
-          amount: 99.00,
+          amount: payAmount,
           coupon: null,
           user_id: window._authUser.id,
           wallet_enabled: false,
@@ -325,7 +328,7 @@
           <div class="pm-paywall-header-icon">🔒</div>
           <h2 class="pm-paywall-title">Unlock Unlimited Preferences</h2>
           <p class="pm-paywall-subtitle">
-            Upgrade to Premium for ₹99 and create up to 3 complete preference lists with unlimited college additions, editing, and PDF export.
+            Upgrade to Premium for ₹1 and create up to 3 complete preference lists with unlimited college additions, editing, and PDF export.
           </p>
           <div class="pm-paywall-benefits-card">
             <div class="pm-paywall-benefit-item"><i class="fas fa-check-circle"></i> Create 3 Complete Preference Lists</div>
@@ -335,11 +338,11 @@
             <div class="pm-paywall-benefit-item"><i class="fas fa-check-circle"></i> Save Lists Permanently</div>
           </div>
           <div class="pm-paywall-price-section">
-            <div class="pm-paywall-price">₹99 Only</div>
+            <div class="pm-paywall-price">₹1 Only</div>
             <div class="pm-paywall-price-subtext">One-time payment</div>
           </div>
           <button class="pm-paywall-btn-primary" onclick="document.getElementById('pmUpgradeModal').style.display='none'; window.pmInitiatePremiumUpgrade();">
-            Unlock Premium for ₹99
+            Unlock Premium for ₹1
           </button>
           <button type="button" class="pm-paywall-btn-secondary" onclick="document.getElementById('pmUpgradeModal').style.display='none'">
             Continue with Free Version
@@ -660,7 +663,7 @@
       const titleText = isPremium ? "Premium Limit Reached" : "Unlock Unlimited Preference Lists";
       const headerIcon = isPremium ? "⚠" : "🔒";
       const subtitleText = isPremium 
-        ? "You have used all 3 of your Premium preference list downloads. Upgrade again for ₹99 to get 3 additional downloads."
+        ? "You have used all 3 of your Premium preference list downloads. Upgrade again for ₹1 to get 3 additional downloads."
         : "You have used all 3 free attempts. Upgrade to Premium and continue creating personalized medical college preference lists.";
         
       popup.innerHTML = `
@@ -677,11 +680,11 @@
             <div class="pm-paywall-benefit-item"><i class="fas fa-check-circle"></i> Save Lists Permanently</div>
           </div>
           <div class="pm-paywall-price-section">
-            <div class="pm-paywall-price">₹99 Only</div>
+            <div class="pm-paywall-price">₹1 Only</div>
             <div class="pm-paywall-price-subtext">One-time payment</div>
           </div>
           <button class="pm-paywall-btn-primary" onclick="document.getElementById('pmLimitReachedModal').style.display='none'; window.pmInitiatePremiumUpgrade();">
-            Unlock Premium for ₹99
+            Unlock Premium for ₹1
           </button>
           <button type="button" class="pm-paywall-btn-secondary" onclick="document.getElementById('pmLimitReachedModal').style.display='none'">
             Continue with Free Version
@@ -738,7 +741,7 @@
           <div class="pm-paywall-header-icon">🔒</div>
           <h2 class="pm-paywall-title">Unlock Unlimited Colleges</h2>
           <p class="pm-paywall-subtitle">
-            Free users can add up to 10 colleges. Upgrade to Premium for ₹99 to add unlimited colleges and create up to 3 complete preference lists.
+            Free users can add up to 10 colleges. Upgrade to Premium for ₹1 to add unlimited colleges and create up to 3 complete preference lists.
           </p>
           <div class="pm-paywall-benefits-card">
             <div class="pm-paywall-benefit-item"><i class="fas fa-check-circle"></i> Create 3 Complete Preference Lists</div>
@@ -748,11 +751,11 @@
             <div class="pm-paywall-benefit-item"><i class="fas fa-check-circle"></i> Save Lists Permanently</div>
           </div>
           <div class="pm-paywall-price-section">
-            <div class="pm-paywall-price">₹99 Only</div>
+            <div class="pm-paywall-price">₹1 Only</div>
             <div class="pm-paywall-price-subtext">One-time payment</div>
           </div>
           <button class="pm-paywall-btn-primary" onclick="document.getElementById('pmUnlockUnlimitedModal').style.display='none'; window.pmInitiatePremiumUpgrade();">
-            Unlock Premium for ₹99
+            Unlock Premium for ₹1
           </button>
           <button type="button" class="pm-paywall-btn-secondary" onclick="document.getElementById('pmUnlockUnlimitedModal').style.display='none'">
             Continue with Free Version
@@ -1219,13 +1222,42 @@
     }
   };
 
+  let backgroundFetchStarted = false;
+
   // Asynchronously fetch colleges from Supabase with realistic fallbacks
   async function loadCollegesFromSupabase() {
     if (state.isLoading) return;
+
+    // Load from localStorage cache first if state.allColleges is empty
+    if (state.allColleges.length === 0) {
+      try {
+        const savedColleges = localStorage.getItem('pm_cached_colleges');
+        if (savedColleges) {
+          const parsed = JSON.parse(savedColleges);
+          if (parsed && parsed.length > 0) {
+            state.allColleges = parsed;
+            state.dbLoaded = true;
+            // Trigger a render so the UI displays the cached colleges immediately
+            setTimeout(() => {
+              forceRenderLayout();
+            }, 0);
+          }
+        }
+      } catch (e) {
+        console.warn("Failed to load cached colleges:", e);
+      }
+    }
+
+    // If we already have colleges AND we have already fetched from DB in this session, return
+    if (state.allColleges.length > 0 && backgroundFetchStarted) {
+      return;
+    }
+
     state.isLoading = true;
 
+    // Show loading spinner ONLY if we don't have cached colleges to display
     const tableBody = document.getElementById("pmTableBody");
-    if (tableBody) {
+    if (state.allColleges.length === 0 && tableBody) {
       tableBody.innerHTML = `
         <tr>
           <td colspan="6" style="text-align: center; color: var(--pm-text-secondary); padding: 48px;">
@@ -1259,20 +1291,36 @@
           };
         });
 
-        state.allColleges = mapped;
-        state.dbLoaded = true;
-        
-        checkAndClearLegacyCache();
-        
-        // Disable loading state before triggering re-render
-        state.isLoading = false;
-        
-        // Full layout refresh to populate the filter dropdown with actual states
-        forceRenderLayout();
+        backgroundFetchStarted = true;
+
+        // Check if data is different from cache to avoid redundant DOM refreshes
+        const hasCache = state.allColleges.length > 0;
+        const cacheDifferent = JSON.stringify(state.allColleges) !== JSON.stringify(mapped);
+
+        if (!hasCache || cacheDifferent) {
+          state.allColleges = mapped;
+          state.dbLoaded = true;
+          try {
+            localStorage.setItem('pm_cached_colleges', JSON.stringify(mapped));
+          } catch (e) {
+            console.error("Failed to save colleges to cache:", e);
+          }
+          
+          checkAndClearLegacyCache();
+          
+          // Disable loading state before triggering re-render
+          state.isLoading = false;
+          
+          // Full layout refresh to populate the filter dropdown with actual states
+          forceRenderLayout();
+        } else {
+          state.isLoading = false;
+        }
       }
     } catch (err) {
       console.error("Failed to load colleges:", err);
-      if (tableBody) {
+      // If we don't have any colleges (cache missing/corrupted and DB fetch failed), show error UI
+      if (state.allColleges.length === 0 && tableBody) {
         tableBody.innerHTML = `
           <tr>
             <td colspan="6" style="text-align: center; color: #ef4444; padding: 48px;">
@@ -1299,6 +1347,8 @@
   }
 
   window.pmRetryLoadColleges = function() {
+    backgroundFetchStarted = false;
+    state.isLoading = false;
     loadCollegesFromSupabase();
   };
 
@@ -1308,7 +1358,7 @@
     const paginationWrapper = document.getElementById("pmPaginationWrapper");
     if (!tableBody) return;
 
-    if (state.isLoading) {
+    if (state.isLoading && state.allColleges.length === 0) {
       tableBody.innerHTML = `
         <tr>
           <td colspan="6" style="text-align: center; color: var(--pm-text-secondary); padding: 48px;">
