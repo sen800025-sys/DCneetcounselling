@@ -950,6 +950,47 @@
   .pm-modal-header, .pm-modal-footer {
     padding: 16px 20px !important;
   }
+
+  .pm-auth-btn-container {
+    gap: 12px !important;
+    margin-top: 24px !important;
+    padding-bottom: 24px !important;
+    align-items: center !important;
+  }
+  .pm-auth-desc {
+    margin-bottom: 0 !important;
+  }
+  .pm-auth-btn-primary {
+    height: 56px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 18px !important;
+    background: linear-gradient(90deg, #FFD54F 0%, #FFC107 100%) !important;
+    color: #1A0033 !important;
+    font-size: 17px !important;
+    font-weight: 700 !important;
+    box-shadow: 0 8px 24px rgba(255,193,7,0.35) !important;
+    transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+  }
+  .pm-auth-btn-primary:active, .pm-auth-btn-primary:hover {
+    transform: scale(0.98) !important;
+  }
+  .pm-auth-btn-secondary {
+    height: 52px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 18px !important;
+    background: rgba(255,255,255,0.06) !important;
+    border: 1.5px solid rgba(255,255,255,0.18) !important;
+    color: #FFFFFF !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    box-shadow: none !important;
+    transition: background-color 0.25s ease !important;
+  }
+  .pm-auth-btn-secondary:hover, .pm-auth-btn-secondary:active {
+    background: rgba(255,255,255,0.10) !important;
+  }
 }
 
 /* Spinner for Loading State */
@@ -1153,4 +1194,53 @@
 
 .pm-paywall-btn-secondary:active {
   transform: scale(0.95);
+}
+
+/* Auth / Restricted Modal Button styles */
+.pm-auth-btn-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  align-items: center;
+}
+.pm-auth-btn-primary {
+  background: #ffffff !important;
+  color: #1e0b36 !important;
+  border: none !important;
+  width: 100%;
+  max-width: 280px;
+  height: 48px !important;
+  border-radius: 12px !important;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+.pm-auth-btn-primary:hover {
+  background: #f0f0f0 !important;
+}
+.pm-auth-btn-secondary {
+  background: transparent !important;
+  border: 1.5px solid #7B2FF7 !important;
+  color: #ffffff !important;
+  width: 100%;
+  max-width: 280px;
+  height: 48px !important;
+  border-radius: 12px !important;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+.pm-auth-btn-secondary:hover {
+  background: rgba(123, 47, 247, 0.1) !important;
 }

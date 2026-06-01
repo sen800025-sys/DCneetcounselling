@@ -1175,14 +1175,14 @@
         <div class="pm-modal" style="max-width: 420px; text-align: center; border-radius: 24px; padding: 40px 30px; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(45, 11, 82, 0.95); box-shadow: 0 20px 50px rgba(0,0,0,0.6);">
           <div style="font-size: 50px; margin-bottom: 20px; filter: drop-shadow(0 0 12px rgba(244, 180, 0, 0.5));">🔒</div>
           <h2 style="color: #fff; font-size: 24px; font-weight: 800; margin-bottom: 12px;">Access Restricted</h2>
-          <p style="color: rgba(255, 255, 255, 0.7); font-size: 14px; line-height: 1.6; margin: 0 0 30px 0;">
+          <p class="pm-auth-desc" style="color: rgba(255, 255, 255, 0.7); font-size: 14px; line-height: 1.6; margin: 0 0 30px 0;">
             To design, organize, and download your personalized college preference list, please sign in or create an account first.
           </p>
-          <div style="display: flex; flex-direction: column; gap: 12px; width: 100%; align-items: center;">
-            <button class="pm-btn" style="background: #ffffff !important; color: #1e0b36 !important; border: none !important; width: 100%; max-width: 280px; height: 48px !important; border-radius: 12px !important; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center;" onclick="window.navigate('login')">
+          <div class="pm-auth-btn-container">
+            <button class="pm-auth-btn-primary" onclick="window.navigate('login')">
               Sign In / Register
             </button>
-            <button type="button" class="pm-btn" style="background: transparent !important; border: 1.5px solid #7B2FF7 !important; color: #ffffff !important; width: 100%; max-width: 280px; height: 48px !important; border-radius: 12px !important; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center;" onclick="window.navigate('home')">
+            <button type="button" class="pm-auth-btn-secondary" onclick="window.navigate('home')">
               Return to Home
             </button>
           </div>
