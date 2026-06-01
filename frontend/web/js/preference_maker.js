@@ -2303,10 +2303,10 @@
           valign: 'middle'
         },
         columnStyles: {
-          0: { cellWidth: 10, halign: 'center' },
+          0: { cellWidth: 15, halign: 'center' },
           1: { cellWidth: 70 },
-          2: { cellWidth: 30 },
-          3: { cellWidth: 30 },
+          2: { cellWidth: 27 },
+          3: { cellWidth: 28 },
           4: { cellWidth: 40 }
         },
         styles: {
