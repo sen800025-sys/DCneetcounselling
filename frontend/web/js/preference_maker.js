@@ -211,7 +211,7 @@
           full_name: window._authUser.user_metadata?.full_name || window._authUser.user_metadata?.name || 'Student',
           mobile: state.userMobile,
           product_name: "Premium Preference Maker",
-          amount: 1.00,
+          amount: 99.00,
           coupon: null,
           user_id: window._authUser.id,
           wallet_enabled: false,
@@ -308,34 +308,45 @@
   // Show premium upgrade popup modal
   function showUpgradeModal() {
     let popup = document.getElementById("pmUpgradeModal");
+    const isMobile = window.innerWidth <= 768;
     if (!popup) {
       popup = document.createElement("div");
       popup.id = "pmUpgradeModal";
-      popup.className = "pm-modal-overlay";
-      popup.style.display = "flex";
-      
-      // Inject helper button styles in document head if not loaded
-      if (!document.getElementById("pmUpgradeBtnStyles")) {
-        const style = document.createElement('style');
-        style.id = "pmUpgradeBtnStyles";
-        style.innerHTML = `
-          .pm-btn-yellow {
-            background: #FFC300 !important;
-            color: #1e0b36 !important;
-            border: none;
-            cursor: pointer;
-            font-weight: 700;
-            transition: all 0.2s ease;
-          }
-          .pm-btn-yellow:hover {
-            background: #e5b000 !important;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(255, 195, 0, 0.4);
-          }
-        `;
-        document.head.appendChild(style);
-      }
+      document.body.appendChild(popup);
+    }
+    
+    popup.className = isMobile ? "pm-paywall-overlay" : "pm-modal-overlay";
+    popup.style.display = "flex";
 
+    if (isMobile) {
+      popup.innerHTML = `
+        <div class="pm-paywall-modal">
+          <button class="pm-paywall-close-btn" onclick="document.getElementById('pmUpgradeModal').style.display='none'">&times;</button>
+          <div class="pm-paywall-header-icon">🔒</div>
+          <h2 class="pm-paywall-title">Unlock Unlimited Preferences</h2>
+          <p class="pm-paywall-subtitle">
+            Upgrade to Premium for ₹99 and create up to 3 complete preference lists with unlimited college additions, editing, and PDF export.
+          </p>
+          <div class="pm-paywall-benefits-card">
+            <div class="pm-paywall-benefit-item"><i class="fas fa-check-circle"></i> Create 3 Complete Preference Lists</div>
+            <div class="pm-paywall-benefit-item"><i class="fas fa-check-circle"></i> Unlimited College Additions</div>
+            <div class="pm-paywall-benefit-item"><i class="fas fa-check-circle"></i> Edit Lists Anytime</div>
+            <div class="pm-paywall-benefit-item"><i class="fas fa-check-circle"></i> Download PDF</div>
+            <div class="pm-paywall-benefit-item"><i class="fas fa-check-circle"></i> Save Lists Permanently</div>
+          </div>
+          <div class="pm-paywall-price-section">
+            <div class="pm-paywall-price">₹99 Only</div>
+            <div class="pm-paywall-price-subtext">One-time payment</div>
+          </div>
+          <button class="pm-paywall-btn-primary" onclick="document.getElementById('pmUpgradeModal').style.display='none'; window.pmInitiatePremiumUpgrade();">
+            Unlock Premium for ₹99
+          </button>
+          <button type="button" class="pm-paywall-btn-secondary" onclick="document.getElementById('pmUpgradeModal').style.display='none'">
+            Continue with Free Version
+          </button>
+        </div>
+      `;
+    } else {
       popup.innerHTML = `
         <div class="pm-modal" style="max-width: 440px; text-align: center; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(21, 0, 41, 0.98);">
           <div class="pm-modal-header" style="justify-content: center; position: relative;">
@@ -344,22 +355,19 @@
           </div>
           <div class="pm-modal-body" style="padding: 24px;">
             <p style="font-size: 14px; line-height: 1.6; color: var(--pm-text-secondary); margin: 0 0 24px 0;">
-              Upgrade to Premium for ₹1 and create up to 3 complete preference lists with unlimited college additions, editing, and PDF export.
+              Upgrade to Premium for ₹99 and create up to 3 complete preference lists with unlimited college additions, editing, and PDF export.
             </p>
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-              <button class="pm-btn pm-btn-yellow" style="width: 100%; height: 48px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer;" onclick="window.pmInitiatePremiumUpgrade()">
+            <div style="display: flex; flex-direction: column; gap: 12px; align-items: center;">
+              <button class="pm-btn pm-btn-yellow" style="background: #FFC300 !important; color: #1e0b36 !important; border: none !important; width: 100%; max-width: 280px; height: 48px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer;" onclick="window.pmInitiatePremiumUpgrade()">
                 Upgrade Now
               </button>
-              <button type="button" class="pm-btn pm-btn-outline" style="width: 100%; height: 48px; border-radius: 12px; font-size: 15px; cursor: pointer;" onclick="document.getElementById('pmUpgradeModal').style.display='none'">
+              <button type="button" class="pm-btn pm-btn-outline" style="background: transparent !important; border: 1.5px solid #7B2FF7 !important; color: #ffffff !important; width: 100%; max-width: 280px; height: 48px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer;" onclick="document.getElementById('pmUpgradeModal').style.display='none'">
                 Maybe Later
               </button>
             </div>
           </div>
         </div>
       `;
-      document.body.appendChild(popup);
-    } else {
-      popup.style.display = "flex";
     }
   }
 
@@ -636,52 +644,122 @@
   // Display premium styling popup when free/premium attempts limit is reached
   function showLimitReachedPopup() {
     let popup = document.getElementById("pmLimitReachedModal");
+    const isMobile = window.innerWidth <= 768;
     if (!popup) {
       popup = document.createElement("div");
       popup.id = "pmLimitReachedModal";
-      popup.className = "pm-modal-overlay";
-      popup.style.display = "flex";
       document.body.appendChild(popup);
     }
     
+    popup.className = isMobile ? "pm-paywall-overlay" : "pm-modal-overlay";
+    popup.style.display = "flex";
+    
     const isPremium = state.planType === 'premium' && state.paymentStatus === 'paid';
-    const titleText = isPremium ? "Premium Limit Reached" : "Free Attempts Used";
-    const bodyText = isPremium 
-      ? "You have used all 3 of your Premium preference list downloads. Upgrade again for ₹1 to get 3 additional downloads and lists with unlimited college additions."
-      : "You have used all 3 free preference list generations. Upgrade to Premium for ₹1 and create up to 3 complete preference lists with unlimited college additions, editing and PDF export.";
-
-    popup.innerHTML = `
-      <div class="pm-modal" style="max-width: 440px; text-align: center; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(21, 0, 41, 0.98);">
-        <div class="pm-modal-header" style="justify-content: center; position: relative;">
-          <h2 class="pm-modal-title" style="color: #FFC300; font-size: 20px;"><i class="fas fa-exclamation-triangle"></i> ${titleText}</h2>
-          <button class="pm-modal-close" style="position: absolute; right: 20px;" onclick="document.getElementById('pmLimitReachedModal').style.display='none'">&times;</button>
+    
+    if (isMobile) {
+      const titleText = isPremium ? "Premium Limit Reached" : "Unlock Unlimited Preference Lists";
+      const headerIcon = isPremium ? "⚠" : "🔒";
+      const subtitleText = isPremium 
+        ? "You have used all 3 of your Premium preference list downloads. Upgrade again for ₹99 to get 3 additional downloads."
+        : "You have used all 3 free attempts. Upgrade to Premium and continue creating personalized medical college preference lists.";
+        
+      popup.innerHTML = `
+        <div class="pm-paywall-modal">
+          <button class="pm-paywall-close-btn" onclick="document.getElementById('pmLimitReachedModal').style.display='none'">&times;</button>
+          <div class="pm-paywall-header-icon">${headerIcon}</div>
+          <h2 class="pm-paywall-title">${titleText}</h2>
+          <p class="pm-paywall-subtitle">${subtitleText}</p>
+          <div class="pm-paywall-benefits-card">
+            <div class="pm-paywall-benefit-item"><i class="fas fa-check-circle"></i> Create 3 Complete Preference Lists</div>
+            <div class="pm-paywall-benefit-item"><i class="fas fa-check-circle"></i> Unlimited College Additions</div>
+            <div class="pm-paywall-benefit-item"><i class="fas fa-check-circle"></i> Edit Lists Anytime</div>
+            <div class="pm-paywall-benefit-item"><i class="fas fa-check-circle"></i> Download PDF</div>
+            <div class="pm-paywall-benefit-item"><i class="fas fa-check-circle"></i> Save Lists Permanently</div>
+          </div>
+          <div class="pm-paywall-price-section">
+            <div class="pm-paywall-price">₹99 Only</div>
+            <div class="pm-paywall-price-subtext">One-time payment</div>
+          </div>
+          <button class="pm-paywall-btn-primary" onclick="document.getElementById('pmLimitReachedModal').style.display='none'; window.pmInitiatePremiumUpgrade();">
+            Unlock Premium for ₹99
+          </button>
+          <button type="button" class="pm-paywall-btn-secondary" onclick="document.getElementById('pmLimitReachedModal').style.display='none'">
+            Continue with Free Version
+          </button>
         </div>
-        <div class="pm-modal-body" style="padding: 24px;">
-          <p style="font-size: 14px; line-height: 1.6; color: var(--pm-text-secondary); margin: 0 0 24px 0;">
-            ${bodyText}
-          </p>
-          <div style="display: flex; flex-direction: column; gap: 12px;">
-            <button class="pm-btn pm-btn-yellow" style="width: 100%; height: 48px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer;" onclick="document.getElementById('pmLimitReachedModal').style.display='none'; window.pmInitiatePremiumUpgrade();">
-              Upgrade Now
-            </button>
-            <button type="button" class="pm-btn pm-btn-outline" style="width: 100%; height: 48px; border-radius: 12px; font-size: 15px; cursor: pointer;" onclick="document.getElementById('pmLimitReachedModal').style.display='none'">
-              Maybe Later
-            </button>
+      `;
+    } else {
+      const titleText = isPremium ? "Premium Limit Reached" : "Free Attempts Used";
+      const bodyText = isPremium 
+        ? "You have used all 3 of your Premium preference list downloads. Upgrade again for ₹99 to get 3 additional downloads and lists with unlimited college additions."
+        : "You have used all 3 free preference list generations. Upgrade to Premium for ₹99 and create up to 3 complete preference lists with unlimited college additions, editing and PDF export.";
+
+      popup.innerHTML = `
+        <div class="pm-modal" style="max-width: 440px; text-align: center; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(21, 0, 41, 0.98);">
+          <div class="pm-modal-header" style="justify-content: center; position: relative;">
+            <h2 class="pm-modal-title" style="color: #FFC300; font-size: 20px;"><i class="fas fa-exclamation-triangle"></i> ${titleText}</h2>
+            <button class="pm-modal-close" style="position: absolute; right: 20px;" onclick="document.getElementById('pmLimitReachedModal').style.display='none'">&times;</button>
+          </div>
+          <div class="pm-modal-body" style="padding: 24px;">
+            <p style="font-size: 14px; line-height: 1.6; color: var(--pm-text-secondary); margin: 0 0 24px 0;">
+              ${bodyText}
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 12px; align-items: center;">
+              <button class="pm-btn pm-btn-yellow" style="background: #FFC300 !important; color: #1e0b36 !important; border: none !important; width: 100%; max-width: 280px; height: 48px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer;" onclick="document.getElementById('pmLimitReachedModal').style.display='none'; window.pmInitiatePremiumUpgrade();">
+                Upgrade Now
+              </button>
+              <button type="button" class="pm-btn pm-btn-outline" style="background: transparent !important; border: 1.5px solid #7B2FF7 !important; color: #ffffff !important; width: 100%; max-width: 280px; height: 48px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer;" onclick="document.getElementById('pmLimitReachedModal').style.display='none'">
+                Maybe Later
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    `;
-    popup.style.display = "flex";
+      `;
+    }
   }
 
   // Display premium styling popup when free college limit is reached
   function showUnlockUnlimitedCollegesPopup() {
     let popup = document.getElementById("pmUnlockUnlimitedModal");
+    const isMobile = window.innerWidth <= 768;
     if (!popup) {
       popup = document.createElement("div");
       popup.id = "pmUnlockUnlimitedModal";
-      popup.className = "pm-modal-overlay";
-      popup.style.display = "flex";
+      document.body.appendChild(popup);
+    }
+    
+    popup.className = isMobile ? "pm-paywall-overlay" : "pm-modal-overlay";
+    popup.style.display = "flex";
+
+    if (isMobile) {
+      popup.innerHTML = `
+        <div class="pm-paywall-modal">
+          <button class="pm-paywall-close-btn" onclick="document.getElementById('pmUnlockUnlimitedModal').style.display='none'">&times;</button>
+          <div class="pm-paywall-header-icon">🔒</div>
+          <h2 class="pm-paywall-title">Unlock Unlimited Colleges</h2>
+          <p class="pm-paywall-subtitle">
+            Free users can add up to 10 colleges. Upgrade to Premium for ₹99 to add unlimited colleges and create up to 3 complete preference lists.
+          </p>
+          <div class="pm-paywall-benefits-card">
+            <div class="pm-paywall-benefit-item"><i class="fas fa-check-circle"></i> Create 3 Complete Preference Lists</div>
+            <div class="pm-paywall-benefit-item"><i class="fas fa-check-circle"></i> Unlimited College Additions</div>
+            <div class="pm-paywall-benefit-item"><i class="fas fa-check-circle"></i> Edit Lists Anytime</div>
+            <div class="pm-paywall-benefit-item"><i class="fas fa-check-circle"></i> Download PDF</div>
+            <div class="pm-paywall-benefit-item"><i class="fas fa-check-circle"></i> Save Lists Permanently</div>
+          </div>
+          <div class="pm-paywall-price-section">
+            <div class="pm-paywall-price">₹99 Only</div>
+            <div class="pm-paywall-price-subtext">One-time payment</div>
+          </div>
+          <button class="pm-paywall-btn-primary" onclick="document.getElementById('pmUnlockUnlimitedModal').style.display='none'; window.pmInitiatePremiumUpgrade();">
+            Unlock Premium for ₹99
+          </button>
+          <button type="button" class="pm-paywall-btn-secondary" onclick="document.getElementById('pmUnlockUnlimitedModal').style.display='none'">
+            Continue with Free Version
+          </button>
+        </div>
+      `;
+    } else {
       popup.innerHTML = `
         <div class="pm-modal" style="max-width: 440px; text-align: center; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(21, 0, 41, 0.98);">
           <div class="pm-modal-header" style="justify-content: center; position: relative;">
@@ -690,22 +768,19 @@
           </div>
           <div class="pm-modal-body" style="padding: 24px;">
             <p style="font-size: 14px; line-height: 1.6; color: var(--pm-text-secondary); margin: 0 0 24px 0;">
-              Free users can add up to 10 colleges. Upgrade to Premium for ₹1 to add unlimited colleges and create up to 3 complete preference lists.
+              Free users can add up to 10 colleges. Upgrade to Premium for ₹99 to add unlimited colleges and create up to 3 complete preference lists.
             </p>
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-              <button class="pm-btn pm-btn-yellow" style="width: 100%; height: 48px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer;" onclick="document.getElementById('pmUnlockUnlimitedModal').style.display='none'; window.pmInitiatePremiumUpgrade();">
+            <div style="display: flex; flex-direction: column; gap: 12px; align-items: center;">
+              <button class="pm-btn pm-btn-yellow" style="background: #FFC300 !important; color: #1e0b36 !important; border: none !important; width: 100%; max-width: 280px; height: 48px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer;" onclick="document.getElementById('pmUnlockUnlimitedModal').style.display='none'; window.pmInitiatePremiumUpgrade();">
                 Upgrade Now
               </button>
-              <button type="button" class="pm-btn pm-btn-outline" style="width: 100%; height: 48px; border-radius: 12px; font-size: 15px; cursor: pointer;" onclick="document.getElementById('pmUnlockUnlimitedModal').style.display='none'">
+              <button type="button" class="pm-btn pm-btn-outline" style="background: transparent !important; border: 1.5px solid #7B2FF7 !important; color: #ffffff !important; width: 100%; max-width: 280px; height: 48px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer;" onclick="document.getElementById('pmUnlockUnlimitedModal').style.display='none'">
                 Continue Free
               </button>
             </div>
           </div>
         </div>
       `;
-      document.body.appendChild(popup);
-    } else {
-      popup.style.display = "flex";
     }
   }
 
@@ -1100,11 +1175,11 @@
           <p style="color: rgba(255, 255, 255, 0.7); font-size: 14px; line-height: 1.6; margin: 0 0 30px 0;">
             To design, organize, and download your personalized college preference list, please sign in or create an account first.
           </p>
-          <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
-            <button class="pm-btn pm-btn-filled" style="width: 100%; height: 50px !important; flex: none !important; display: flex !important; align-items: center !important; justify-content: center !important; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer;" onclick="window.navigate('login')">
+          <div style="display: flex; flex-direction: column; gap: 12px; width: 100%; align-items: center;">
+            <button class="pm-btn" style="background: #ffffff !important; color: #1e0b36 !important; border: none !important; width: 100%; max-width: 280px; height: 48px !important; border-radius: 12px !important; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center;" onclick="window.navigate('login')">
               Sign In / Register
             </button>
-            <button class="pm-btn pm-btn-outline" style="width: 100%; height: 50px !important; flex: none !important; display: flex !important; align-items: center !important; justify-content: center !important; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer;" onclick="window.navigate('home')">
+            <button type="button" class="pm-btn" style="background: transparent !important; border: 1.5px solid #7B2FF7 !important; color: #ffffff !important; width: 100%; max-width: 280px; height: 48px !important; border-radius: 12px !important; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center;" onclick="window.navigate('home')">
               Return to Home
             </button>
           </div>
