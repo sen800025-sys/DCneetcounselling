@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "npx serve -l tcp://0.0.0.0:5500"
+    "dev": "npx serve -l 5500"
   }
 }

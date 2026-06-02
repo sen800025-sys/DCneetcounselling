@@ -2230,6 +2230,31 @@
       const pageWidth = doc.internal.pageSize.width;
       const pageHeight = doc.internal.pageSize.height;
 
+      // Load logo image and convert to PNG data URL for watermark
+      let logoDataUrl = null;
+      try {
+        logoDataUrl = await new Promise((resolve) => {
+          const img = new Image();
+          img.src = 'assets/logo.webp';
+          img.onload = () => {
+            try {
+              const canvas = document.createElement('canvas');
+              canvas.width = img.width;
+              canvas.height = img.height;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0);
+              resolve(canvas.toDataURL('image/png'));
+            } catch (err) {
+              console.error("[Preference Maker] Canvas draw error:", err);
+              resolve(null);
+            }
+          };
+          img.onerror = () => resolve(null);
+        });
+      } catch (e) {
+        console.error("[Preference Maker] Failed to load watermark logo image:", e);
+      }
+
       // Premium Color Palette
       const purplePrimary = [45, 11, 82]; // #2D0B52
       const purpleAccent = [123, 47, 247]; // #7B2FF7
@@ -2371,6 +2396,25 @@
         },
         margin: { left: 15, right: 15 },
         didDrawPage: function(data) {
+          // Draw watermark
+          if (logoDataUrl) {
+            try {
+              doc.saveGraphicsState();
+              const gState = new doc.GState({ opacity: 0.10 });
+              doc.setGState(gState);
+              
+              const wSize = 130; // 130mm width
+              const hSize = 130; // 130mm height
+              const xVal = (pageWidth - wSize) / 2;
+              const yVal = (pageHeight - hSize) / 2;
+              
+              doc.addImage(logoDataUrl, 'PNG', xVal, yVal, wSize, hSize);
+              doc.restoreGraphicsState();
+            } catch (err) {
+              console.error("[Preference Maker] Error drawing watermark logo:", err);
+            }
+          }
+
           doc.setFont("Helvetica", "normal");
           doc.setFontSize(8);
           doc.setTextColor(...textMuted);
