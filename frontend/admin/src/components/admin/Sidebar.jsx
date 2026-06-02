@@ -22,6 +22,7 @@ export default function Sidebar() {
   const menuItems = [
     { path: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { path: '/admin/orders',    label: 'Orders',    icon: ShoppingBag },
+    { path: '/admin/pm-users',  label: 'PM Users',  icon: GraduationCap },
     { path: '/admin/affiliates',label: 'Affiliates',icon: Users },
     { path: '/admin/coupons',   label: 'Coupons',   icon: Tag },
     { path: '/admin/news',      label: 'News Updates', icon: Bell },
