@@ -56,20 +56,19 @@ window.processReferralSignup = async function(user, email, fullName) {
                 if (insertedRef && insertedRef.id) {
                     const welcomeCode = 'WELCOME-' + Math.random().toString(36).substring(2, 6).toUpperCase();
                     const expiryDate = new Date();
-                    expiryDate.setDate(expiryDate.getDate() + 15);
+                    expiryDate.setDate(expiryDate.getDate() + 10);
                     
                     await window.supabaseClient.from('referral_coupons').insert({
                         code: welcomeCode,
                         user_id: user.id,
                         discount_percent: 10,
                         referral_id: insertedRef.id,
-                        referrer_name: referrerInfo?.full_name || referrerInfo?.name || 'Unknown',
-                        referrer_email: referrerInfo?.email || 'N/A',
-                        referred_user_name: fullName || 'New User',
-                        referred_user_email: email,
                         expires_at: expiryDate.toISOString()
                     });
                     console.log('[Referral] Coupon generated.');
+                    setTimeout(function() {
+                        alert("🎉 Congratulations! You have received a 10% OFF Welcome Coupon for registering via a referral link.\n\nYour Coupon Code is: " + welcomeCode + "\n\nYou can view it anytime in your dashboard under 'Refer & Earn'.");
+                    }, 1000);
                 }
                 
                 localStorage.removeItem('referral_code');
@@ -406,10 +405,10 @@ function bootApp() {
                                 await window.supabaseClient.from('users').update({ referred_by: refUser.id }).eq('id', session.user.id);
                                 
                                 // Check for existing referral AGAIN right before insert (final gate)
-                                const { data: existingRef } = await window.supabaseClient.from('referrals').select('id').eq('referred_user_id', session.user.id).maybeSingle();
-                                let referralId = existingRef ? existingRef.id : null;
+                                const { data: existingRefList } = await window.supabaseClient.from('referrals').select('id').eq('referred_user_id', session.user.id).limit(1);
+                                let referralId = existingRefList && existingRefList.length > 0 ? existingRefList[0].id : null;
                                 
-                                if (!existingRef) {
+                                if (!referralId) {
                                     const { data: newRef, error: insertErr } = await window.supabaseClient.from('referrals').insert({
                                         referrer_id: refUser.id,
                                         referred_user_id: session.user.id,
@@ -424,8 +423,8 @@ function bootApp() {
                                     if (insertErr) {
                                         console.warn('[Referral] Insert error (likely duplicate):', insertErr.message);
                                         // If insert failed due to duplicate, fetch existing
-                                        const { data: fallback } = await window.supabaseClient.from('referrals').select('id').eq('referred_user_id', session.user.id).maybeSingle();
-                                        if (fallback) referralId = fallback.id;
+                                        const { data: fallbackList } = await window.supabaseClient.from('referrals').select('id').eq('referred_user_id', session.user.id).limit(1);
+                                        if (fallbackList && fallbackList.length > 0) referralId = fallbackList[0].id;
                                     } else if (newRef) {
                                         referralId = newRef.id;
                                     }
@@ -438,20 +437,19 @@ function bootApp() {
                                     if (!existingCoupon) {
                                         const welcomeCode = 'WELCOME-' + Math.random().toString(36).substring(2, 6).toUpperCase();
                                         const expiryDate = new Date();
-                                        expiryDate.setDate(expiryDate.getDate() + 15);
+                                        expiryDate.setDate(expiryDate.getDate() + 10);
                                         
                                         await window.supabaseClient.from('referral_coupons').insert({
                                             code: welcomeCode,
                                             user_id: session.user.id,
                                             discount_percent: 10,
                                             referral_id: referralId,
-                                            referrer_name: refUser.full_name || refUser.name || 'Unknown',
-                                            referrer_email: refUser.email || 'N/A',
-                                            referred_user_name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || 'New User',
-                                            referred_user_email: session.user.email,
                                             expires_at: expiryDate.toISOString()
                                         });
                                         console.log('[Referral] Coupon generated.');
+                                        setTimeout(function() {
+                                            alert("🎉 Congratulations! You have received a 10% OFF Welcome Coupon for registering via a referral link.\n\nYour Coupon Code is: " + welcomeCode + "\n\nYou can view it anytime in your dashboard under 'Refer & Earn'.");
+                                        }, 1000);
                                     }
                                 }
                                 localStorage.removeItem('referral_code');

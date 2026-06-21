@@ -7227,7 +7227,7 @@
               <div class="rc-body">
                 <div class="rc-code-container">
                   <div class="rc-code" id="rc-code-display">WELCOME-X82K</div>
-                  <div class="rc-expiry" id="rc-expiry-display"><i class="fa-regular fa-clock"></i> Expires in 15 days</div>
+                  <div class="rc-expiry" id="rc-expiry-display"><i class="fa-regular fa-clock"></i> Expires in 10 days</div>
                 </div>
                 <div class="rc-discount">10% OFF</div>
               </div>
@@ -7531,50 +7531,40 @@
                 existingBadges.forEach(function(b) { b.remove(); });
             });
 
-            if (userData && userData.referred_by) {
-                // Step 3: Only for NEW users (no previous paid orders)
-                var { count: paidOrders } = await client
-                    .from('orders')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('user_id', userId)
-                    .eq('payment_status', 'paid');
-
-                if (!paidOrders || paidOrders === 0) {
-                    var { data: activeRewardCoupons } = await client
-                        .from('referral_coupons')
-                        .select('*')
-                        .eq('user_id', userId)
-                        .eq('is_used', false)
-                        .order('created_at', { ascending: false });
+            // Check if they have an active reward coupon
+            var { data: activeRewardCoupons } = await client
+                .from('referral_coupons')
+                .select('*')
+                .eq('user_id', userId)
+                .eq('is_used', false)
+                .order('created_at', { ascending: false });
+            
+            if (activeRewardCoupons && activeRewardCoupons.length > 0) {
+                var validCoupon = activeRewardCoupons.find(c => !c.expires_at || new Date(c.expires_at) > new Date());
+                if (validCoupon) {
+                    hasRewardCoupon = true;
+                    document.getElementById('rc-code-display').textContent = validCoupon.code;
                     
-                    if (activeRewardCoupons && activeRewardCoupons.length > 0) {
-                        var validCoupon = activeRewardCoupons.find(c => !c.expires_at || new Date(c.expires_at) > new Date());
-                        if (validCoupon) {
-                            hasRewardCoupon = true;
-                            document.getElementById('rc-code-display').textContent = validCoupon.code;
-                            
-                            var expiryHtml = validCoupon.expires_at 
-                                ? `<i class="fa-regular fa-clock"></i> Expires ${new Date(validCoupon.expires_at).toLocaleDateString()}` 
-                                : `<i class="fa-solid fa-infinity"></i> No Expiry`;
-                            document.getElementById('rc-expiry-display').innerHTML = expiryHtml;
-                            
-                            document.querySelector('.rc-btn-copy').setAttribute('onclick', `copyMyRewardCoupon('${validCoupon.code}')`);
-                            if (myRewardCouponSection) myRewardCouponSection.style.display = 'block';
-    
-                            // Notification Badge
-                            referEarnMenuLinks.forEach(function(link) {
-                                if (link.querySelector('.reward-badge')) return;
-    
-                                var badge = document.createElement('span');
-                                badge.className = 'reward-badge';
-                                badge.style.cssText = 'background: #ef4444; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; margin-left: 8px; font-weight: 700; vertical-align: middle; display: inline-block;';
-                                badge.textContent = '1 Reward';
-                                link.style.display = 'flex';
-                                link.style.alignItems = 'center';
-                                link.appendChild(badge);
-                            });
-                        }
-                    }
+                    var expiryHtml = validCoupon.expires_at 
+                        ? `<i class="fa-regular fa-clock"></i> Expires ${new Date(validCoupon.expires_at).toLocaleDateString()}` 
+                        : `<i class="fa-solid fa-infinity"></i> No Expiry`;
+                    document.getElementById('rc-expiry-display').innerHTML = expiryHtml;
+                    
+                    document.querySelector('.rc-btn-copy').setAttribute('onclick', `copyMyRewardCoupon('${validCoupon.code}')`);
+                    if (myRewardCouponSection) myRewardCouponSection.style.display = 'block';
+
+                    // Notification Badge
+                    referEarnMenuLinks.forEach(function(link) {
+                        if (link.querySelector('.reward-badge')) return;
+
+                        var badge = document.createElement('span');
+                        badge.className = 'reward-badge';
+                        badge.style.cssText = 'background: #ef4444; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; margin-left: 8px; font-weight: 700; vertical-align: middle; display: inline-block;';
+                        badge.textContent = '1 Reward';
+                        link.style.display = 'flex';
+                        link.style.alignItems = 'center';
+                        link.appendChild(badge);
+                    });
                 }
             }
 
@@ -7593,19 +7583,33 @@
 
             if (refErr) throw refErr;
 
-            // Count ALL referrals for the "Successful Referrals" stat (total people who joined via link)
-            var referralCount = referrals ? referrals.length : 0;
+            // Deduplicate referrals by referred_user_id (keep latest)
+            var deduplicatedReferrals = [];
+            var seenUserIds = {};
+            if (referrals) {
+                referrals.forEach(function(ref) {
+                    // Try to deduplicate by email or name if ID changes (e.g. user re-registered)
+                    var key = ref.referred_user_email || ref.referred_user_name || ref.referred_user_id;
+                    if (key && !seenUserIds[key]) {
+                        seenUserIds[key] = true;
+                        deduplicatedReferrals.push(ref);
+                    }
+                });
+            }
+
+            // Count UNIQUE referrals for the "Successful Referrals" stat
+            var referralCount = deduplicatedReferrals.length;
             var totalCashback = 0;
 
             if (document.getElementById('referral-count-val')) document.getElementById('referral-count-val').textContent = referralCount.toString();
 
-            // 7. Build referral history rows using data from the referrals table itself (no extra user lookup needed)
+            // 7. Build referral history rows using data from the referrals table itself
             var historyRows = [];
-            if (referrals && referrals.length > 0) {
-              // Try to fetch referred user names, but use fallback from referrals table if RLS blocks it
+            if (deduplicatedReferrals.length > 0) {
+              // Try to fetch referred user names
               var userMap = {};
               try {
-                var userIds = referrals.map(function(r) { return r.referred_user_id; });
+                var userIds = deduplicatedReferrals.map(function(r) { return r.referred_user_id; });
                 var { data: refUsers } = await client
                   .from('users')
                   .select('id, name, full_name, email')
@@ -7620,8 +7624,7 @@
                 console.warn('[Referral] Could not fetch user names, using fallback:', e);
               }
 
-              referrals.forEach(function(ref) {
-                // Use user lookup first, then fall back to referrals table columns
+              deduplicatedReferrals.forEach(function(ref) {
                 var displayName = userMap[ref.referred_user_id] || ref.referred_user_name || ref.referred_user_email || 'User';
                 var cashback = parseFloat(ref.cashback_amount) || 0;
                 totalCashback += cashback;
