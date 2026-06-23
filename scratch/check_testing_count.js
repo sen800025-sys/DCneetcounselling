@@ -1,17 +1,39 @@
 const { createClient } = require('@supabase/supabase-js');
+require('dotenv').config();
 
-const url = 'https://anqqmulbmeydetwpeudh.supabase.co';
-const key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFucXFtdWxibWV5ZGV0d3BldWRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzODY1MTMsImV4cCI6MjA5Mzk2MjUxM30.AbfUID7hy1gg88C_j0OUk09G0XEW8uEqvJzD17u96ZA';
+const url = process.env.SUPABASE_URL || 'https://rlqmdylbzapyepuwncwt.supabase.co';
+const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
 
 const supabase = createClient(url, key);
 
-async function check() {
-  const { data, error, count } = await supabase.from('college_preferences').select('*', { count: 'exact' });
+async function checkReferrals() {
+  const { data: referrals, error } = await supabase
+    .from('referrals')
+    .select('id, referrer_id, referred_user_id, status, cashback_given, cashback_amount, created_at')
+    .order('created_at', { ascending: false })
+    .limit(5);
+
   if (error) {
-    console.log('Testing DB check error:', error.message);
-  } else {
-    console.log(`Testing DB has ${count} records!`);
+    console.error("Error fetching referrals:", error);
+    return;
   }
+
+  console.log("Latest Referrals:");
+  console.table(referrals);
+
+  const { data: orders, error: oError } = await supabase
+    .from('orders')
+    .select('id, user_id, amount, amount_paid, payment_status, status, created_at')
+    .order('created_at', { ascending: false })
+    .limit(5);
+
+  if (oError) {
+    console.error("Error fetching orders:", oError);
+    return;
+  }
+
+  console.log("Latest Orders:");
+  console.table(orders);
 }
 
-check();
+checkReferrals();

@@ -48,7 +48,9 @@ export async function handlePostPaymentTasks(supabase: any, order: any, effectiv
             const { data: profile } = await supabase.from('users').select('referred_by').eq('id', effectiveUserId).single()
             if (profile?.referred_by) {
                 const referrerId = profile.referred_by
-                const { data: referral } = await supabase.from('referrals').select('*').eq('referrer_id', referrerId).eq('referred_user_id', effectiveUserId).maybeSingle()
+                const { data: referralList, error: refListErr } = await supabase.from('referrals').select('*').eq('referrer_id', referrerId).eq('referred_user_id', effectiveUserId).limit(1)
+                if (refListErr) console.error("[post-payment] Referral fetch error:", refListErr);
+                const referral = referralList && referralList.length > 0 ? referralList[0] : null;
                 
                 if (referral && !referral.cashback_given) {
                     const cashbackAmount = Math.round(parseFloat(order.amount) * 0.10 * 100) / 100
