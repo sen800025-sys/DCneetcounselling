@@ -446,7 +446,7 @@
                 // Fetch Wallet Balance
                 await fetchWalletBalance();
                 
-                // Calculate Pricing (handles automatic coupon application if exists in localStorage)
+                // Calculate Pricing
                 await recalculateTotal();
 
                 // Restore Refund Policy acceptance state
@@ -570,7 +570,7 @@
                 const { data: { session } } = await window.supabaseClient.auth.getSession();
                 const user = session?.user;
                 
-                let currentCoupon = couponCodeOverride || localStorage.getItem('coupon') || null;
+                let currentCoupon = couponCodeOverride || appliedCoupon;
                 console.log('[Pricing] Validating coupon:', currentCoupon, 'for user:', user?.id);
 
                 const response = await fetch(`${BACKEND_URL}/validate-coupon`, {
@@ -665,7 +665,7 @@
                 if (result && result.success && discountAmount > 0) {
                     msgEl.textContent = "Coupon applied successfully!";
                     msgEl.className = "message success";
-                    localStorage.setItem('coupon', codeInput);
+                    appliedCoupon = codeInput;
                 } else {
                     msgEl.textContent = (result && result.error) ? result.error : "Invalid coupon code.";
                     msgEl.className = "message error";
@@ -682,7 +682,7 @@
         }
 
         function resetDiscount() {
-            localStorage.removeItem('coupon');
+            appliedCoupon = null;
             document.getElementById('couponInput').value = '';
             document.getElementById('d_discount').textContent = '0';
             document.getElementById('discountRow').style.display = 'none';
@@ -748,7 +748,7 @@
                         mobile: paymentData.mobile_number,
                         product_name: paymentData.plan_name,
                         amount: originalPrice,
-                        coupon: localStorage.getItem("coupon"),
+                        coupon: appliedCoupon,
                         user_id: user?.id || null,
                         wallet_enabled: isWalletEnabled,
                         category: paymentData.category,
@@ -858,7 +858,7 @@
                         // Redirect to thank-you page
                         const productStr = encodeURIComponent(paymentData.plan_name || 'Counselling Plan');
                         const amountVal = order.final_amount || paymentData.plan_price || 0;
-                        const couponCode = localStorage.getItem("coupon") || "";
+                        const couponCode = appliedCoupon || "";
                         window.location.href = `/thank-you/?product=${productStr}&amount=${amountVal}&order_id=${response.razorpay_payment_id}&razorpay_payment_id=${response.razorpay_payment_id}&coupon=${couponCode}&tracked=1`;
                     },
                     "prefill": {
@@ -908,7 +908,7 @@
                 const data = await response.json();
                 if (data.success) {
                     const productStr = encodeURIComponent(paymentData.plan_name || 'Counselling Plan');
-                    window.location.href = `/thank-you/?product=${productStr}&amount=0&order_id=${orderId}&coupon=${localStorage.getItem("coupon") || ""}&wallet_only=1`;
+                    window.location.href = `/thank-you/?product=${productStr}&amount=0&order_id=${orderId}&coupon=${appliedCoupon || ""}&wallet_only=1`;
                 } else {
                     throw new Error(data.error || "Wallet verification failed");
                 }

@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1"
+import { handlePostPaymentTasks } from "../_shared/post_payment.ts"
 
 // HMAC-SHA256 verification for Razorpay webhook signature
 async function verifyWebhookSignature(secret: string, body: string, signature: string): Promise<boolean> {
@@ -66,7 +67,7 @@ serve(async (req) => {
       // Find the order by razorpay_order_id
       const { data: order, error: findErr } = await supabase
         .from('orders')
-        .select('id, payment_status')
+        .select('*')
         .eq('razorpay_order_id', razorpay_order_id)
         .maybeSingle()
 
@@ -96,8 +97,10 @@ serve(async (req) => {
         return new Response(JSON.stringify({ error: 'update_failed' }), { status: 500 })
       }
 
-      // counselling_bookings will be auto-synced by database trigger
-      console.log('[Webhook] ✅ Order updated to paid:', order.id)
+      // Run post payment tasks (Referrals, Coupons, Wallet, etc.)
+      await handlePostPaymentTasks(supabase, order, razorpay_payment_id)
+
+      console.log('[Webhook] ✅ Order updated to paid and tasks ran:', order.id)
       return new Response(JSON.stringify({ status: 'ok', order_id: order.id }), { status: 200 })
     }
 
