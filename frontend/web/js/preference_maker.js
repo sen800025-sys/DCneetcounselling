@@ -28,6 +28,7 @@
     filters: {
       search: "",
       state: "All",
+      course: "All",
       maxFees: ""
     },
     editingId: null,
@@ -71,6 +72,7 @@
 
   // Helper to format fees in Indian Rupees format (e.g. 1,628)
   function formatFees(val) {
+    if (!val || Number(val) === 0) return '-';
     return Number(val).toLocaleString('en-IN');
   }
 
@@ -1102,17 +1104,6 @@
 
   // Check if adding another college is allowed (free limit of 10 colleges, and attempts limits)
   function checkCollegeAdditionLimit() {
-    // If attempts limit is reached, lock everything
-    if (state.attemptsUsed >= state.maxAttempts) {
-      showLimitReachedPopup();
-      return false;
-    }
-
-    const isPremium = state.planType === 'premium' && state.paymentStatus === 'paid';
-    if (!isPremium && state.preferences.length >= 10) {
-      showUnlockUnlimitedCollegesPopup();
-      return false;
-    }
     return true;
   }
 
@@ -1239,6 +1230,15 @@
               <select id="pmStateFilter" class="pm-form-control">
                 <option value="All">All States</option>
                 ${statesList.map(st => `<option value="${st}" ${state.filters.state === st ? 'selected' : ''}>${st}</option>`).join('')}
+              </select>
+            </div>
+            <div class="pm-form-group">
+              <label for="pmCourseFilter">Filter Course</label>
+              <select id="pmCourseFilter" class="pm-form-control">
+                <option value="All" ${state.filters.course === 'All' ? 'selected' : ''}>All Courses</option>
+                <option value="MBBS" ${state.filters.course === 'MBBS' ? 'selected' : ''}>MBBS</option>
+                <option value="BDS" ${state.filters.course === 'BDS' ? 'selected' : ''}>BDS</option>
+                <option value="BAMS" ${state.filters.course === 'BAMS' ? 'selected' : ''}>BAMS</option>
               </select>
             </div>
             <div class="pm-form-group">
@@ -1431,6 +1431,14 @@
       if (stateFilter) {
         stateFilter.addEventListener("change", function(e) {
           state.filters.state = e.target.value;
+          window.renderPreferenceMakerTable();
+        });
+      }
+
+      const courseFilter = document.getElementById("pmCourseFilter");
+      if (courseFilter) {
+        courseFilter.addEventListener("change", function(e) {
+          state.filters.course = e.target.value;
           window.renderPreferenceMakerTable();
         });
       }
@@ -1727,29 +1735,33 @@
     const filteredPreferences = sourceList.filter(item => {
       const matchSearch = item.name.toLowerCase().includes(state.filters.search.toLowerCase());
       const matchState = state.filters.state === "All" || item.state === state.filters.state;
+      
+      let matchCourse = true;
+      if (state.filters.course && state.filters.course !== "All") {
+        const nameLower = item.name.toLowerCase();
+        if (state.filters.course === "BDS") {
+          matchCourse = nameLower.includes("dental") || nameLower.includes("bds") || nameLower.includes("dentistry") || nameLower.includes("d.c.") || nameLower.includes("dc,");
+        } else if (state.filters.course === "BAMS") {
+          matchCourse = nameLower.includes("ayurved") || nameLower.includes("bams") || nameLower.includes("ayurveda") || nameLower.includes("ayurvedic") || nameLower.includes("vaidyak") || nameLower.includes("tibbia") || nameLower.includes("unani");
+        } else if (state.filters.course === "MBBS") {
+          matchCourse = !nameLower.includes("dental") && !nameLower.includes("bds") && !nameLower.includes("dentistry") && !nameLower.includes("d.c.") && !nameLower.includes("dc,") && !nameLower.includes("ayurved") && !nameLower.includes("bams") && !nameLower.includes("ayurveda") && !nameLower.includes("ayurvedic") && !nameLower.includes("vaidyak") && !nameLower.includes("tibbia") && !nameLower.includes("unani");
+        }
+      }
+      
       const matchFees = !state.filters.maxFees || item.fees <= Number(state.filters.maxFees);
-      return matchSearch && matchState && matchFees;
+      return matchSearch && matchState && matchCourse && matchFees;
     });
 
     // Populate rows
     tableBody.innerHTML = filteredPreferences.length > 0 ? filteredPreferences.map((college, idx) => {
       const isSaved = state.preferences.some(p => String(p.id) === String(college.id));
       
-      const isPremiumUser = state.planType === 'premium' && state.paymentStatus === 'paid';
       let actionHtml = '';
       if (state.viewMode === 'all') {
         if (isSaved) {
           actionHtml = `
             <button type="button" class="pm-row-btn pm-btn-selected" style="cursor: default;" title="Added to Preferences">
               <i class="fas fa-check"></i>
-            </button>
-          `;
-        } else if ((state.attemptsUsed >= state.maxAttempts) || (!isPremiumUser && state.preferences.length >= 10)) {
-          const isAttemptsLimitReached = state.attemptsUsed >= state.maxAttempts;
-          const lockTitle = isAttemptsLimitReached ? "Add College (Locked - Limit Reached)" : "Add College (Locked - Free Limit Reached)";
-          actionHtml = `
-            <button type="button" class="pm-row-btn pm-add-row-btn pm-btn-locked" style="background: rgba(255, 195, 0, 0.1); border: 1px solid rgba(255, 195, 0, 0.3); color: #FFC300; cursor: pointer;" title="${lockTitle}">
-              <i class="fas fa-lock" style="color: #FFC300;"></i>
             </button>
           `;
         } else {
@@ -1801,14 +1813,6 @@
           mobileActionHtml = `
             <button type="button" class="pm-row-btn pm-btn-selected" style="cursor: default;" title="Added to Preferences">
               <i class="fas fa-check"></i>
-            </button>
-          `;
-        } else if ((state.attemptsUsed >= state.maxAttempts) || (!isPremiumUser && state.preferences.length >= 10)) {
-          const isAttemptsLimitReached = state.attemptsUsed >= state.maxAttempts;
-          const lockTitle = isAttemptsLimitReached ? "Add College (Locked - Limit Reached)" : "Add College (Locked - Free Limit Reached)";
-          mobileActionHtml = `
-            <button type="button" class="pm-row-btn pm-add-row-btn pm-btn-locked" style="background: rgba(255, 195, 0, 0.1); border: 1px solid rgba(255, 195, 0, 0.3); color: #FFC300; cursor: pointer;" title="${lockTitle}">
-              <i class="fas fa-lock" style="color: #FFC300;"></i>
             </button>
           `;
         } else {
@@ -1898,7 +1902,7 @@
               <!-- Second Row: State badge, Fee badge -->
               <div class="pm-card-second-row">
                 <span class="pm-card-state-badge ${getStateBadgeClass(college.state)}">${college.state}</span>
-                <span class="pm-card-fee-badge">₹${formatFees(college.fees)}</span>
+                <span class="pm-card-fee-badge">${(!college.fees || Number(college.fees) === 0) ? '-' : '₹' + formatFees(college.fees)}</span>
               </div>
 
               <!-- Third Row: Bond details container -->
@@ -1951,12 +1955,15 @@
     // Also reset filter UI values when switching views to ensure clean state
     state.filters.search = "";
     state.filters.state = "All";
+    state.filters.course = "All";
     state.filters.maxFees = "";
     const searchInput = document.getElementById("pmSearchInput");
     const stateFilter = document.getElementById("pmStateFilter");
+    const courseFilter = document.getElementById("pmCourseFilter");
     const feesFilter = document.getElementById("pmFeesFilter");
     if (searchInput) searchInput.value = "";
     if (stateFilter) stateFilter.value = "All";
+    if (courseFilter) courseFilter.value = "All";
     if (feesFilter) feesFilter.value = "";
 
     window.renderPreferenceMakerTable();
@@ -2247,10 +2254,7 @@
       await state.userDataPromise;
     }
 
-    if (state.attemptsUsed >= state.maxAttempts) {
-      showLimitReachedPopup();
-      return;
-    }
+    // Limits removed for free access
 
     if (!isDetailsFilled()) {
       state.pendingAction = { type: 'download-pdf' };
@@ -2720,7 +2724,7 @@
         String(index + 1),
         item.name,
         item.state,
-        item.fees === 0 ? 'N/A' : `Rs. ${Number(item.fees).toLocaleString('en-IN')}`,
+        item.fees === 0 ? '-' : `Rs. ${Number(item.fees).toLocaleString('en-IN')}`,
         item.bond || 'N/A'
       ]);
 

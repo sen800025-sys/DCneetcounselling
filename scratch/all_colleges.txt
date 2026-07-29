@@ -1,434 +1,446 @@
-1. ID: 2 | Name: AIIMS, New Delhi | State: Delhi | Fees: 1628
-2. ID: 3 | Name: Vardhman Mahavir Medical College and Safdarjung Hospital New Delhi | State: Delhi | Fees: 33000
-3. ID: 4 | Name: Maulana Azad Medical College, New Delhi | State: Delhi | Fees: 2745
-4. ID: 5 | Name: Atal Bihari Vajpayee Institute of Medical Sciences & Dr RML Hospital, New Delhi | State: Delhi | Fees: 4500
-5. ID: 6 | Name: IPMER Puducherry | State: Puducherry | Fees: 14920
-6. ID: 7 | Name: AIIMS, Jodhpur | State: Rajasthan | Fees: 4231
-7. ID: 8 | Name: University College of Medical Sciences, New Delhi | State: Delhi | Fees: 31340
-8. ID: 9 | Name: Lady Hardinge Medical College, New Delhi | State: Delhi | Fees: 1655
-9. ID: 11 | Name: AIIMS, Bhubaneswar | State: Odisha | Fees: 5856
-10. ID: 12 | Name: AIIMS, Rishikesh | State: Uttarakhand | Fees: 11450
-11. ID: 13 | Name: AIIMS, Nagpur | State: Maharashtra | Fees: 5856
-12. ID: 14 | Name: AIIMS, Raipur | State: Chhattisgarh | Fees: 5856
-13. ID: 15 | Name: AIIMS, Patna | State: Bihar | Fees: 5856
-14. ID: 16 | Name: Government Medical College and Hospital, Chandigarh | State: Chandigarh | Fees: 2479
-15. ID: 17 | Name: Dr B.S.A Medical College, Delhi | State: Delhi | Fees: 114500
-16. ID: 18 | Name: B.J Medical College, Ahmedabad | State: Gujarat | Fees: 25000
-17. ID: 19 | Name: S.M.S Medical College, Jaipur | State: Rajasthan | Fees: 125300
-18. ID: 20 | Name: Institute of Medical Sciences, BHU Varanasi | State: Uttar Pradesh | Fees: 33739
-19. ID: 21 | Name: Seth G.S Medical College, Mumbai | State: Maharashtra | Fees: 61000
-20. ID: 22 | Name: Government Medical College, Kozhikode | State: Kerala | Fees: 31715
-21. ID: 23 | Name: Madras Medical College, Chennai | State: Tamil Nadu | Fees: 23073
-22. ID: 24 | Name: Bangalore Medical College and Research Institute | State: Karnataka | Fees: 73000
-23. ID: 25 | Name: AIIMS Mangalagiri | State: Andhra Pradesh | Fees: 5856
-24. ID: 26 | Name: AIIMS Bathinda | State: Punjab | Fees: 5856
-25. ID: 27 | Name: AIIMS, Bibinagar, Hyderabad | State: Telangana | Fees: 5856
-26. ID: 28 | Name: AIIMS, Kalyani | State: West Bengal | Fees: 5856
-27. ID: 29 | Name: KGMU, Lucknow | State: Uttar Pradesh | Fees: 46600
-28. ID: 30 | Name: AIIMS, Gorakhpur | State: Uttar Pradesh | Fees: 5293
-29. ID: 31 | Name: AIIMS Bilaspur Chamyar Palasiyan, Himachal Pradesh | State: Himachal Pradesh | Fees: 5856
-30. ID: 32 | Name: NDMC Medical College, Delhi | State: Delhi | Fees: 105000
-31. ID: 33 | Name: ESIC Medical College and Hospital, Basaidarapur | State: Delhi | Fees: 100000
-32. ID: 34 | Name: B.J Government Medical College, Pune | State: Maharashtra | Fees: 62000
-33. ID: 35 | Name: AIIMS Rajkot | State: Gujarat | Fees: 75
-34. ID: 36 | Name: AIIMS Rai Bareli | State: Uttar Pradesh | Fees: 5856
-35. ID: 37 | Name: AIIMS Deoghar | State: Jharkhand | Fees: 5856
-36. ID: 38 | Name: AIIMS Guwahati | State: Assam | Fees: 5856
-37. ID: 39 | Name: AIIMS Jammu | State: Jammu & Kashmir | Fees: 1628
-38. ID: 40 | Name: Indira Gandhi Medical College, Shimla | State: Himachal Pradesh | Fees: 60000
-39. ID: 41 | Name: Gandhi Medical College, Musheerabad Secunderabad | State: Telangana | Fees: 2900
-40. ID: 42 | Name: Medical College, Kolkata | State: West Bengal | Fees: 6500
-41. ID: 43 | Name: RUHS College of Medical Sciences, Jaipur | State: Rajasthan | Fees: 125200
-42. ID: 44 | Name: Government Medical College, Thiruvananthapuram | State: Kerala | Fees: 31715
-43. ID: 45 | Name: Lokmanya Tilak Municipal Medical College, Mumbai | State: Maharashtra | Fees: 155900
-44. ID: 46 | Name: Government Medical College, Surat | State: Gujarat | Fees: 25000
-45. ID: 47 | Name: JIPMER Karaikal | State: Puducherry | Fees: 14920
-46. ID: 48 | Name: ESIC Medical College, Faridabad | State: Haryana | Fees: 100000
-47. ID: 49 | Name: Sardar Patel Medical College, Bikaner | State: Rajasthan | Fees: 125300
-48. ID: 50 | Name: Dr S.N Medical College, Jodhpur | State: Rajasthan | Fees: 125300
-49. ID: 51 | Name: Jawaharlal Nehru Medical College, AMU Aligarh | State: Uttar Pradesh | Fees: 60300
-50. ID: 52 | Name: Dr Ram Manohar Lohia Institute of Medical Sciences, Lucknow | State: Uttar Pradesh | Fees: 18000
-51. ID: 53 | Name: Grant Medical College & Sir J.J Hospital, Mumbai | State: Maharashtra | Fees: 162100
-52. ID: 54 | Name: KASTURBA Medical College & Research Kolkata | State: West Bengal | Fees: 6500
-53. ID: 55 | Name: Osmania Medical College, Hyderabad | State: Telangana | Fees: 12000
-54. ID: 56 | Name: ESIC Medical College & Hospital, Jaipur | State: Rajasthan | Fees: 100000
-55. ID: 57 | Name: ESIC Medical College, Hyderabad | State: Telangana | Fees: 100000
-56. ID: 58 | Name: Patna Medical College, Patna | State: Bihar | Fees: 27600
-57. ID: 59 | Name: Govt Institute of Medical Sciences, Greater Noida | State: Uttar Pradesh | Fees: 83600
-58. ID: 60 | Name: Stanley Medical College, Chennai | State: Tamil Nadu | Fees: 18073
-59. ID: 61 | Name: HIndhridaswastar Balashheb Thackrey Medical College and Dr R.N Cooper Municipal General Hospital, Maharashtra | State: Maharashtra | Fees: 161000
-60. ID: 62 | Name: R.N.T Medical College, Udaipur | State: Rajasthan | Fees: 178250
-61. ID: 63 | Name: Dr Rajendra Prasad Medical College, Tanda | State: Himachal Pradesh | Fees: 60000
-62. ID: 64 | Name: Medical College, Baroda | State: Gujarat | Fees: 25000
-63. ID: 65 | Name: AIIMS Madurai | State: Tamil Nadu | Fees: 5856
-64. ID: 67 | Name: S.C.B Medical College, Cuttack | State: Odisha | Fees: 38050
-65. ID: 68 | Name: Government Medical College, Patiala | State: Punjab | Fees: 192000
-66. ID: 69 | Name: Government Medical College, Srinagar | State: Jammu & Kashmir | Fees: 37479
-67. ID: 70 | Name: Andhra Medical College, Visakhapatnam | State: Andhra Pradesh | Fees: 10600
-68. ID: 71 | Name: Government Medical College, Kottayam | State: Kerala | Fees: 31570
-69. ID: 72 | Name: Topiwala National Medical College, Mumbai | State: Maharashtra | Fees: 132100
-70. ID: 73 | Name: Jawaharlal Lal Nehru Medical College, Ajmer | State: Rajasthan | Fees: 132625
-71. ID: 74 | Name: Government Medical College, Thrissur | State: Kerala | Fees: 31715
-72. ID: 75 | Name: Pt B.D Sharma PGIMS, Rohtak | State: Haryana | Fees: 9600
-73. ID: 76 | Name: Shri Atal Bihari Vajpayee Medical College & Research Institute, Bengaluru | State: Karnataka | Fees: 75470
-74. ID: 77 | Name: M.G.M Medical College, Indore | State: Madhya Pradesh | Fees: 118000
-75. ID: 78 | Name: Indira Gandhi Institute of Medical Sciences, Patna | State: Bihar | Fees: 21667
-76. ID: 79 | Name: Government Medical College, Kota | State: Rajasthan | Fees: 25350
-77. ID: 80 | Name: Rajendra Institute of Medical Sciences, Ranchi | State: Jharkhand | Fees: 17500
-78. ID: 81 | Name: LLRM Medical College, Meerut | State: Uttar Pradesh | Fees: 42000
-79. ID: 82 | Name: Government Medical College, Nagpur | State: Maharashtra | Fees: 173000
-80. ID: 83 | Name: Shri Kalyan Government Medical College, Sikar | State: Rajasthan | Fees: 124670
-81. ID: 84 | Name: S.N Medical College, Agra | State: Uttar Pradesh | Fees: 36000
-82. ID: 85 | Name: Government Kilpauk Medical College, Chennai | State: Tamil Nadu | Fees: 18073
-83. ID: 86 | Name: P.D.U Medical College, Rajkot | State: Gujarat | Fees: 25000
-84. ID: 87 | Name: M.P Shah Medical College, Jamnagar | State: Gujarat | Fees: 25000
-85. ID: 88 | Name: ESI-MC & PGIMSR, Bangalore | State: Karnataka | Fees: 100000
-86. ID: 89 | Name: Employees State Insurance Corporation Medical College, Alwar | State: Rajasthan | Fees: 100000
-87. ID: 90 | Name: G.S.V.M Medical College, Kanpur | State: Uttar Pradesh | Fees: 39600
-88. ID: 91 | Name: Kalpana Chawla Government Medical College, Karnal | State: Haryana | Fees: 80000
-89. ID: 92 | Name: Mysore Medical & Research Institute, Mysore | State: Karnataka | Fees: 72050
-90. ID: 93 | Name: Gandhi Medical College, Bhopal | State: Madhya Pradesh | Fees: 116000
-91. ID: 94 | Name: T.D Medical College, Alappuzha | State: Kerala | Fees: 31570
-92. ID: 95 | Name: Government Medical College, Bhiwani | State: Rajasthan | Fees: 154800
-93. ID: 96 | Name: Gajara Raja Medical College, Gwalior | State: Madhya Pradesh | Fees: 121000
-94. ID: 97 | Name: Government Dental Medical College, Dehradun | State: Uttarakhand | Fees: 17150
-95. ID: 98 | Name: Namo Medical Education & Research Institute, Government Medical College Silvassa | State: Dadra & Nagar Haveli | Fees: 60100
-96. ID: 99 | Name: Government Medical College, Amritsar | State: Punjab | Fees: 192000
-97. ID: 100 | Name: Medical College, Bhavnagar | State: Gujarat | Fees: 25000
-98. ID: 101 | Name: Haldiaar Medical College, Haldwar | State: Rajasthan | Fees: 131300
-99. ID: 102 | Name: SLBS Government Medical College, Mandi | State: Himachal Pradesh | Fees: 6000
-100. ID: 104 | Name: Motilal Nehru Medical College, Allahabad | State: Uttar Pradesh | Fees: 42000
-101. ID: 105 | Name: Government Medical College, Mumbai Maharashtra | State: Maharashtra | Fees: 151970
-102. ID: 106 | Name: Maharani Laxmi Bai Medical College, Jhansi | State: Uttar Pradesh | Fees: 42000
-103. ID: 107 | Name: Nalanda Medical College, Patna | State: Bihar | Fees: 40800
-104. ID: 108 | Name: Government Medical College, Pal | State: Rajasthan | Fees: 124970
-105. ID: 109 | Name: Nilratan Sircar Medical College, Kolkata | State: West Bengal | Fees: 9000
-106. ID: 110 | Name: Government Medical College, Jammu | State: Jammu & Kashmir | Fees: 26250
-107. ID: 111 | Name: Uttaranchal Forest Hospital Trust Medical College, Haldwani | State: Uttarakhand | Fees: 145000
-108. ID: 112 | Name: Government Medical College, Alwar | State: Rajasthan | Fees: 165000
-109. ID: 113 | Name: Coimbatore Medical College, Coimbatore | State: Tamil Nadu | Fees: 18073
-110. ID: 114 | Name: Government Medical College, Ernakulam | State: Kerala | Fees: 31815
-111. ID: 115 | Name: Uttar Pradesh University of Medical Sciences, Saifai, Etawah | State: Uttar Pradesh | Fees: 42000
-112. ID: 116 | Name: Government Medical College, Dausa | State: Rajasthan | Fees: 119280
-113. ID: 117 | Name: ESIC Medical College and Hospital, Indore | State: Madhya Pradesh | Fees: 100000
-114. ID: 118 | Name: B.R.D Medical College, Gorakhpur | State: Uttar Pradesh | Fees: 42000
-115. ID: 119 | Name: Government Medical College, Churu | State: Rajasthan | Fees: 172872
-116. ID: 120 | Name: Government Medical College, ESIC Kollam | State: Kerala | Fees: 32570
-117. ID: 121 | Name: BPS Government Medical College, Sonepat | State: Haryana | Fees: 80000
-118. ID: 122 | Name: Government Medical College, Kannur | State: Kerala | Fees: 29395
-119. ID: 123 | Name: Netaji Subhash Chandra Bose Medical College, Jabalpur | State: Madhya Pradesh | Fees: 114000
-120. ID: 124 | Name: Madurai Medical College, Madurai | State: Tamil Nadu | Fees: 18073
-121. ID: 125 | Name: Rajiv Gandhi Medical College, Thane | State: Maharashtra | Fees: 152100
-122. ID: 126 | Name: S.P Medical College, Bharatpur | State: Rajasthan | Fees: 124970
-123. ID: 127 | Name: S.H.U Malhar Mahmood Hasan Medical College, Saharanpur | State: Uttar Pradesh | Fees: 32000
-124. ID: 128 | Name: Darbhanga Medical College, Laheriasarai | State: Bihar | Fees: 40800
-125. ID: 129 | Name: Dr B.R Ambedkar State Institute of Medical Sciences | State: Punjab | Fees: 192000
-126. ID: 130 | Name: Guwahati Medical College, Guwahati | State: Assam | Fees: 23900
-127. ID: 131 | Name: Dr Radhakrishnan Government Medical College, Hamirpur | State: Himachal Pradesh | Fees: 6000
-128. ID: 132 | Name: ESIC Medical College & Hospital, Andheri | State: Maharashtra | Fees: 100000
-129. ID: 133 | Name: Government Medical College, Chittorgarh | State: Rajasthan | Fees: 66990
-130. ID: 134 | Name: ESIC Medical College & Hospital, Ludhiana | State: Punjab | Fees: 125000
-131. ID: 135 | Name: ESIC Medical College, Noida | State: Uttar Pradesh | Fees: 100000
-132. ID: 137 | Name: Maharaja K.C Gajapati Medical College, Brahmapur | State: Odisha | Fees: 41450
-133. ID: 138 | Name: Guntur Medical College, Guntur | State: Andhra Pradesh | Fees: 10000
-134. ID: 184 | Name: Government Medical College, Tirunelveli | State: Tamil Nadu | Fees: 18453
-135. ID: 185 | Name: Government Medical College, Omandurar | State: Tamil Nadu | Fees: 18073
-136. ID: 186 | Name: Goa Medical College, Panaji | State: Goa | Fees: 63700
-137. ID: 187 | Name: SKIMS Medical College, Bemina, Srinagar | State: Jammu & Kashmir | Fees: 26100
-138. ID: 188 | Name: Indira Gandhi Government Medical College, Nagpur | State: Maharashtra | Fees: 152100
-139. ID: 189 | Name: Dr Y.S Parmar Government Medical College, Nahan | State: Himachal Pradesh | Fees: 60000
-140. ID: 190 | Name: Government Medical College, Kannauj | State: Uttar Pradesh | Fees: 36000
-141. ID: 191 | Name: Government Medical College of Ulleger, Sriganganagar | State: Rajasthan | Fees: 66990
-142. ID: 192 | Name: Government Medical College and ESIC Hospital, Coimbatore | State: Tamil Nadu | Fees: 18073
-143. ID: 193 | Name: Kanyakumari Government Medical College, Asaripallam | State: Tamil Nadu | Fees: 18073
-144. ID: 194 | Name: Government Mohan Kumaramangalam Medical College, Salem | State: Tamil Nadu | Fees: 18073
-145. ID: 195 | Name: Government Medical College, Konni | State: Kerala | Fees: 31765
-146. ID: 196 | Name: Kalyan Singh Government Medical College, Bulandshahr | State: Uttar Pradesh | Fees: 40800
-147. ID: 197 | Name: ESIC Medical College and Hospital, Varanasi | State: Uttar Pradesh | Fees: 100000
-148. ID: 198 | Name: Government Medical College, Aurangabad | State: Maharashtra | Fees: 165740
-149. ID: 199 | Name: Calcutta National Medical College, Kolkata | State: West Bengal | Fees: 6500
-150. ID: 200 | Name: Theni Government Medical College, Theni | State: Tamil Nadu | Fees: 18073
-151. ID: 201 | Name: Government Medical College, Palakkad | State: Kerala | Fees: 28950
-152. ID: 202 | Name: Government Medical College, Barmer Rajasthan | State: Rajasthan | Fees: 122630
-153. ID: 203 | Name: Thanjavur Medical College, Thanjavur | State: Tamil Nadu | Fees: 18653
-154. ID: 204 | Name: Government Medical College, Baramati | State: Maharashtra | Fees: 166100
-155. ID: 205 | Name: Government Medical College, Ratlam | State: Madhya Pradesh | Fees: 116350
-156. ID: 206 | Name: Shri Krishna Medical College, Muzaffarpur | State: Bihar | Fees: 40800
-157. ID: 207 | Name: R.G Kar Medical College, Kolkata | State: West Bengal | Fees: 6500
-158. ID: 208 | Name: V.S.S Medical College, Burla | State: Odisha | Fees: 38100
-159. ID: 209 | Name: ESIC Medical College, Gulbarga | State: Karnataka | Fees: 100000
-160. ID: 210 | Name: K.A.P Viswanatham Government Medical College, Tiruchirappalli | State: Tamil Nadu | Fees: 18073
-161. ID: 211 | Name: Guru Gobind Singh Medical College, Faridkot | State: Punjab | Fees: 192000
-162. ID: 212 | Name: ESIC Medical College & Hospital, Bihta | State: Bihar | Fees: 100000
-163. ID: 213 | Name: Government Medical College, Idukki | State: Kerala | Fees: 32115
-164. ID: 214 | Name: Sri Lalitha Bharati Ayurveda Government Medical College, Chennai | State: Haryana | Fees: 80000
-165. ID: 215 | Name: Karnataka Institute of Medical Sciences, Hubli | State: Karnataka | Fees: 69290
-166. ID: 216 | Name: Government Medical College, Wayanad | State: Kerala | Fees: 31715
-167. ID: 217 | Name: S.S Medical College, Rewa | State: Madhya Pradesh | Fees: 119120
-168. ID: 218 | Name: Government Medical College, Kathua | State: Jammu & Kashmir | Fees: 26250
-169. ID: 219 | Name: Government Medical College, Sirohi Rajasthan | State: Rajasthan | Fees: 122630
-170. ID: 220 | Name: Government Medical College, Dungarpur | State: Rajasthan | Fees: 165000
-171. ID: 221 | Name: Vardhman Institute of Medical Sciences, Nalanda | State: Bihar | Fees: 40800
-172. ID: 222 | Name: Government Medical College, Tirupur | State: Tamil Nadu | Fees: 18073
-173. ID: 223 | Name: Chengalpattu Medical College, Chengalpattu | State: Tamil Nadu | Fees: 18073
-174. ID: 224 | Name: ESIC Medical College and PGIMSR, Chennai | State: Tamil Nadu | Fees: 100000
-175. ID: 225 | Name: SHKM GMC, Nalhar Mewat, Haryana | State: Haryana | Fees: 80000
-176. ID: 226 | Name: Jawaharlal Nehru Medical College, Bhagalpur | State: Bihar | Fees: 40800
-177. ID: 227 | Name: Rama Durgavati Medical College, Banda | State: Uttar Pradesh | Fees: 40800
-178. ID: 228 | Name: Pt Jawahar Lal Nehru Government Medical College, Chamba | State: Himachal Pradesh | Fees: 60000
-179. ID: 229 | Name: Government Medical College, Jhunjhunu Rajasthan | State: Rajasthan | Fees: 122630
-180. ID: 230 | Name: Government Medical College, Haridwar | State: Uttarakhand | Fees: 17150
-181. ID: 231 | Name: Atal Bihari Vajpayee Government Medical College, Vidisha | State: Madhya Pradesh | Fees: 132600
-182. ID: 232 | Name: Government Vellore Medical College, Vellore | State: Tamil Nadu | Fees: 15473
-183. ID: 233 | Name: MRA Medical College, Ambedkar Nagar UP | State: Uttar Pradesh | Fees: 36000
-184. ID: 234 | Name: Government Medical College, Nashik | State: Maharashtra | Fees: 152100
-185. ID: 235 | Name: Pt J.N.M Medical College, Raipur | State: Chhattisgarh | Fees: 5000
-186. ID: 236 | Name: Government Medical College, Bundi | State: Rajasthan | Fees: 119280
-187. ID: 237 | Name: Government Medical College, Dholpur | State: Rajasthan | Fees: 125246
-188. ID: 238 | Name: Pt Neki Ram Sharma Government Medical College, Bhiwani | State: Haryana | Fees: 80000
-189. ID: 239 | Name: Government Medical College, Hanumangarh | State: Rajasthan | Fees: 66990
-190. ID: 241 | Name: Government Dharampuri Medical College, Dharampuri | State: Tamil Nadu | Fees: 18073
-191. ID: 242 | Name: M.G.M Medical College, Jamshedpur | State: Jharkhand | Fees: 9130
-192. ID: 243 | Name: Belgaum Institute of Medical Sciences, Belgaum | State: Karnataka | Fees: 76180
-193. ID: 244 | Name: Government College, Nagar Bikaner Road, Nagaur | State: Rajasthan | Fees: 70340
-194. ID: 245 | Name: Anugrah Narayan Magadh Medical College, Gaya | State: Bihar | Fees: 40800
-195. ID: 246 | Name: Bundelkhand Medical College, Sagar | State: Madhya Pradesh | Fees: 114000
-196. ID: 247 | Name: Mandya Institute of Medical Sciences, Mandya | State: Karnataka | Fees: 71000
-197. ID: 248 | Name: Government College, Badau | State: Uttar Pradesh | Fees: 36000
-198. ID: 249 | Name: Veer Chandra Singh Garhwali Government Institute of Medical Science & Research | State: Uttarakhand | Fees: 145000
-199. ID: 250 | Name: Government Medical College, Faizabad | State: Uttar Pradesh | Fees: 36000
-200. ID: 251 | Name: Autonomous State Medical College, Etah | State: Uttar Pradesh | Fees: 36000
-201. ID: 252 | Name: ESIC PGIMSR, Joka, Kolkata, WB | State: West Bengal | Fees: 100000
-202. ID: 253 | Name: Government Medical College, Sawai Madhopur | State: Rajasthan | Fees: 119280
-203. ID: 254 | Name: GMC, Azamgarh, UP | State: Uttar Pradesh | Fees: 40800
-204. ID: 255 | Name: Government Medical College, Thiruvallur | State: Tamil Nadu | Fees: 20003
-205. ID: 256 | Name: Rajkiya Medical College, Jalun | State: Uttar Pradesh | Fees: 40800
-206. ID: 257 | Name: Thoothukudi Medical College, Thoothukudi | State: Tamil Nadu | Fees: 18073
-207. ID: 258 | Name: Government Medical College, Firozabad | State: Uttar Pradesh | Fees: 40800
-208. ID: 259 | Name: Government Villupuram | State: Tamil Nadu | Fees: 18073
-209. ID: 260 | Name: Government Medical College, Karur | State: Tamil Nadu | Fees: 18073
-210. ID: 261 | Name: Surendranath Medical College & Hospital, Kolkata | State: West Bengal | Fees: 6500
-211. ID: 262 | Name: NEIGRIHMS, Shillong | State: Meghalaya | Fees: 47600
-212. ID: 263 | Name: Government Medical College, Nigris | State: Tamil Nadu | Fees: 18073
-213. ID: 264 | Name: Government Medical College, Mahaja Government Medical College, Kolhapur | State: Maharashtra | Fees: 166100
-214. ID: 265 | Name: Sri Jagannath Medical College & Hospital, Puri | State: Odisha | Fees: 37950
-215. ID: 266 | Name: Government Medical College, Koriwara | State: Rajasthan | Fees: 119280
-216. ID: 267 | Name: Maharishi Chyawan Medical College, Koriwara | State: Haryana | Fees: 80000
-217. ID: 268 | Name: MGM Institute of Medical Sciences, Sewagram Wardha | State: Maharashtra | Fees: 46140
-218. ID: 269 | Name: Chhattisgarh Institute of Medical Sciences, Bilaspur | State: Chhattisgarh | Fees: 50000
-219. ID: 270 | Name: Government Medical College, Kasaragod Kerala | State: Kerala | Fees: 31715
-220. ID: 271 | Name: Government College Shivpuri | State: Madhya Pradesh | Fees: 130000
-221. ID: 272 | Name: Maharshi Devraha Baba Autonomous State Medical College, Deoria | State: Uttar Pradesh | Fees: 36000
-222. ID: 273 | Name: Government Medical College, Banswara | State: Rajasthan | Fees: 119280
-223. ID: 274 | Name: Government Medical College, Tonk | State: Rajasthan | Fees: 125246
-224. ID: 275 | Name: Sundarlal Patwa Government Medical College, Mandsaur | State: Madhya Pradesh | Fees: 114000
-225. ID: 276 | Name: Government Medical College, Baran | State: Rajasthan | Fees: 168000
-226. ID: 277 | Name: Government Medical College, Virudhunagar | State: Tamil Nadu | Fees: 18073
-227. ID: 278 | Name: Virendra Kumar Saklecha Government Medical College, Neemuch | State: Madhya Pradesh | Fees: 114000
-228. ID: 279 | Name: Government Medical College, Bettiah | State: Bihar | Fees: 40800
-229. ID: 280 | Name: Indira Gandhi Medical College & RI, Puducherry | State: Puducherry | Fees: 143700
-230. ID: 281 | Name: Government Medical College, Jaisalmer | State: Rajasthan | Fees: 125246
-231. ID: 282 | Name: Government Medical College, Purnea | State: Bihar | Fees: 40800
-232. ID: 284 | Name: Government Medical College, Datia | State: Madhya Pradesh | Fees: 140000
-233. ID: 285 | Name: Government Medical College, Khandwa | State: Madhya Pradesh | Fees: 100000
-234. ID: 286 | Name: Siddhartha Medical College, Vijayawada | State: Andhra Pradesh | Fees: 25600
-235. ID: 287 | Name: Dr V.R Shahyamapayam Memorial Medical College, Solapur | State: Maharashtra | Fees: 169150
-236. ID: 288 | Name: Shahid Nirmal Mahto Medical College & Hospital, Dhanbad | State: Jharkhand | Fees: 85000
-237. ID: 289 | Name: GMERS Medical College, Navsari | State: Gujarat | Fees: 75000
-238. ID: 290 | Name: Soban Singh Jeena Government Institute of Medical Science & Research, Almora | State: Uttarakhand | Fees: 173000
-239. ID: 291 | Name: Government Medical College, Chhindwara | State: Madhya Pradesh | Fees: 114000
-240. ID: 292 | Name: Government Medical College and Hospital, Balasore | State: Odisha | Fees: 55450
-241. ID: 293 | Name: Mahatma Vidur Autonomous State Medical College, Bijnor | State: Uttar Pradesh | Fees: 39600
-242. ID: 294 | Name: Autonomous State Medical College, Fatehpur | State: Uttar Pradesh | Fees: 40800
-243. ID: 295 | Name: Government Medical College, Bastar | State: Uttar Pradesh | Fees: 36000
-244. ID: 296 | Name: Shimoga Institute of Medical Sciences, Shimoga | State: Karnataka | Fees: 85400
-245. ID: 297 | Name: Dr S.C Government Medical College, Nanded | State: Maharashtra | Fees: 157570
-246. ID: 298 | Name: Government Pudukkottai Medical College Hospital, Pudukkottai | State: Tamil Nadu | Fees: 18073
-247. ID: 299 | Name: Burdwan Medical College, Burdwan | State: West Bengal | Fees: 9000
-248. ID: 300 | Name: Autonomous State Medical College, Shahjahanpur | State: Uttar Pradesh | Fees: 36000
-249. ID: 301 | Name: Autonomous State Medical College, Lalitpur | State: Uttar Pradesh | Fees: 40800
-250. ID: 302 | Name: Government Medical College, Miraj | State: Maharashtra | Fees: 166100
-251. ID: 303 | Name: Kakatiya Medical College, Warangal | State: Telangana | Fees: 9200
-252. ID: 304 | Name: Government Medical College, Sheopur | State: Madhya Pradesh | Fees: 114000
-253. ID: 305 | Name: Government Medical College, Dingal | State: Tamil Nadu | Fees: 18073
-254. ID: 306 | Name: Hassan Institute of Medical Sciences, Hassan | State: Karnataka | Fees: 75000
-255. ID: 307 | Name: Kurnool Medical College, Kurnool | State: Andhra Pradesh | Fees: 25600
-256. ID: 308 | Name: Thiruvannamalai Medical College, Thiruvannamalai | State: Tamil Nadu | Fees: 18073
-257. ID: 309 | Name: Government Medical College, Satna | State: Madhya Pradesh | Fees: 114000
-258. ID: 310 | Name: ESIC Medical College & Hospital, Beltola, Guwahati | State: Assam | Fees: 100000
-259. ID: 311 | Name: Government Medical College, Namakkal | State: Tamil Nadu | Fees: 18073
-260. ID: 312 | Name: Autonomous State Medical College, Siddharthnagar | State: Uttar Pradesh | Fees: 36000
-261. ID: 313 | Name: North Bengal Medical College, Darjeeling | State: West Bengal | Fees: 6500
-262. ID: 314 | Name: Sri Venkateswara Medical College, Tirupati | State: Andhra Pradesh | Fees: 10600
-263. ID: 315 | Name: Autonomous State Medical College, Pratapgarh | State: Uttar Pradesh | Fees: 36000
-264. ID: 316 | Name: Government Medical College, Shahdol | State: Madhya Pradesh | Fees: 122000
-265. ID: 317 | Name: Government Sivgangai Medical College, Sivagangai | State: Tamil Nadu | Fees: 18073
-266. ID: 318 | Name: Government Medical College & Hospital, Jalgaon | State: Maharashtra | Fees: 152100
-267. ID: 319 | Name: Government Medical College, Udhampur | State: Jammu & Kashmir | Fees: 27060
-268. ID: 320 | Name: Autonomous State Medical College, Kanpur Dehat | State: Uttar Pradesh | Fees: 40800
-269. ID: 321 | Name: University College of Medical Sciences, Jammu | State: Uttar Pradesh | Fees: 36000
-270. ID: 322 | Name: Government Medical College, Akola | State: Maharashtra | Fees: 169900
-271. ID: 323 | Name: Rajiv Gandhi Medical College, Amalapuram University | State: Tamil Nadu | Fees: 18100
-272. ID: 324 | Name: Autonomous State Medical College, Pilibhit | State: Uttar Pradesh | Fees: 40800
-273. ID: 325 | Name: Autonomous State Medical College, Sonbhadra | State: Uttar Pradesh | Fees: 40800
-274. ID: 326 | Name: GTMC, Thiruvarur | State: Tamil Nadu | Fees: 18073
-275. ID: 327 | Name: Government Medical College, Krishnagiri | State: Tamil Nadu | Fees: 18073
-276. ID: 328 | Name: Government Medical College, Ariyalur | State: Tamil Nadu | Fees: 19823
-277. ID: 330 | Name: Autonomous State Medical College, Mirzapur | State: Uttar Pradesh | Fees: 24000
-278. ID: 331 | Name: Government Medical College, Soni Madhya Pradesh | State: Madhya Pradesh | Fees: 114000
-279. ID: 332 | Name: Government Medical College, Rajnandgaon | State: Chhattisgarh | Fees: 50000
-280. ID: 333 | Name: Bharat Government Medical College & Hospital, West Bengal | State: West Bengal | Fees: 6644
-281. ID: 334 | Name: Autonomous State Medical College, Ghazipur | State: Uttar Pradesh | Fees: 36000
-282. ID: 335 | Name: Autonomous State Medical College, Amethi | State: Uttar Pradesh | Fees: 36000
-283. ID: 336 | Name: Government Medical College, Ambarnath | State: Maharashtra | Fees: 170756
-284. ID: 337 | Name: Autonomous State Medical College, Sultanpur | State: Uttar Pradesh | Fees: 36000
-285. ID: 338 | Name: Gulbarga Institute of Medical Sciences, Gulbarga | State: Karnataka | Fees: 82950
-286. ID: 339 | Name: College of Medicine and JNM Hospital, Kalyani | State: West Bengal | Fees: 8500
-287. ID: 340 | Name: Jawaharlal Nehru Medical College and Hospital, Madhopur | State: Bihar | Fees: 40800
-288. ID: 341 | Name: ACSR Government Medical College, Nellore | State: Andhra Pradesh | Fees: 25600
-289. ID: 342 | Name: Kodagu Institute of Medical Sciences, Kodagu | State: Karnataka | Fees: 82650
-290. ID: 343 | Name: Autonomous State Medical College, Lakhimpur Kheri | State: Uttar Pradesh | Fees: 36000
-291. ID: 344 | Name: Rangaraya Medical College, Kakinada | State: Andhra Pradesh | Fees: 25600
-292. ID: 345 | Name: Shri Bhausaheb Hire Government Medical College, Dhule | State: Maharashtra | Fees: 165760
-293. ID: 346 | Name: Autonomous State Medical College, Kaushambi | State: Uttar Pradesh | Fees: 36000
-294. ID: 347 | Name: Government Medical College, Kallakurichi | State: Tamil Nadu | Fees: 18073
-295. ID: 348 | Name: Autonomous State Medical College, Gonda | State: Uttar Pradesh | Fees: 40800
-296. ID: 349 | Name: Sheikh Bhikhari Medical College & Hospital, Hazaribagh | State: Jharkhand | Fees: 3180
-297. ID: 350 | Name: Government Medical College, Ramanathapuram | State: Tamil Nadu | Fees: 18073
-298. ID: 351 | Name: Autonomous State Medical College, Kushinagar Uttar Pradesh | State: Uttar Pradesh | Fees: 40800
-299. ID: 352 | Name: Government Medical College, Latur | State: Maharashtra | Fees: 163630
-300. ID: 353 | Name: Government Medical College and General Hospital, Satara | State: Maharashtra | Fees: 171100
-301. ID: 354 | Name: Bankura Sammilani Medical College, Bankura | State: West Bengal | Fees: 9166
-302. ID: 355 | Name: Government Medical College, Singrauli | State: Madhya Pradesh | Fees: 114000
-303. ID: 356 | Name: Baba Kinaram Autonomous State Medical College, Chandauli | State: Uttar Pradesh | Fees: 40800
-304. ID: 357 | Name: Vijayanagar Institute of Medical Sciences, Bellary | State: Karnataka | Fees: 70160
-305. ID: 359 | Name: Government Medical College, Nagapattinam | State: Tamil Nadu | Fees: 18073
-306. ID: 360 | Name: SH VSANTR RAO NAIK Government Medical College, Yavatmal | State: Maharashtra | Fees: 165600
-307. ID: 361 | Name: Karwar Institute of Medical Sciences, Karwar | State: Karnataka | Fees: 55000
-308. ID: 362 | Name: Pt Raghunath Murmu Medical College, Baripada | State: Odisha | Fees: 51950
-309. ID: 363 | Name: Government Medical College, Mahbubnagar | State: Telangana | Fees: 41000
-310. ID: 364 | Name: Assam Medical College, Dibrugarh | State: Assam | Fees: 24000
-311. ID: 365 | Name: Government Medical College and District General Hospital, Ratnagiri | State: Maharashtra | Fees: 166100
-312. ID: 366 | Name: Bhima Bhoi Medical College and Hospital, Balangir | State: Odisha | Fees: 41450
-313. ID: 367 | Name: Government Medical College, Mahabubnagar | State: Telangana | Fees: 64000
-314. ID: 368 | Name: Swami Ramanand Teerth Rural Medical College, Ambajogai | State: Maharashtra | Fees: 171350
-315. ID: 369 | Name: C Institute of Medical Sciences, Chamrajnagar | State: Karnataka | Fees: 82000
-316. ID: 370 | Name: Government Medical College, Amravati | State: Maharashtra | Fees: 169900
-317. ID: 371 | Name: Lt L.A.M Government Medical College, Raigarh | State: Chhattisgarh | Fees: 50000
-318. ID: 372 | Name: Government Medical College, Gondia | State: Maharashtra | Fees: 166800
-319. ID: 373 | Name: Government Medical College, Rajouri | State: Jammu & Kashmir | Fees: 26250
-320. ID: 374 | Name: Government Medical College, Anantnag | State: Jammu & Kashmir | Fees: 34215
-321. ID: 375 | Name: Rajiv Gandhi Institute of Medical Sciences, Adilabad | State: Telangana | Fees: 29000
-322. ID: 376 | Name: Diamond Harbour Government Medical College | State: West Bengal | Fees: 6730
-323. ID: 377 | Name: Government Medical College, Nandurbar | State: Maharashtra | Fees: 164730
-324. ID: 378 | Name: Phulo Jhano Medical College, Dumka | State: Jharkhand | Fees: 20100
-325. ID: 379 | Name: Chikkaballapura Institute of Medical Sciences, Karnataka | State: Karnataka | Fees: 85000
-326. ID: 380 | Name: SVIMS Sri Padmavathi Medical College for Women, Tirupati | State: Andhra Pradesh | Fees: 95800
-327. ID: 381 | Name: Midnapore Medical College, Midnapur | State: West Bengal | Fees: 11144
-328. ID: 382 | Name: Rajiv Gandhi Institute of Medical Sciences, Kadapa | State: Andhra Pradesh | Fees: 10600
-329. ID: 383 | Name: Government Medical College & Hospital, Diba Rajad | State: Maharashtra | Fees: 170746
-330. ID: 384 | Name: Government Medical College, Doda | State: Jammu & Kashmir | Fees: 26250
-331. ID: 385 | Name: Medinirai Medical College (previously known as Palamu Medical College), Jharkhand | State: Jharkhand | Fees: 39200
-332. ID: 386 | Name: Bidar Institute of Medical Sciences, Bidar | State: Karnataka | Fees: 71750
-333. ID: 387 | Name: Rajmata Shrimati Devendra Kumari Singhdeo Government Medical College, Ambikapur Surguja | State: Chhattisgarh | Fees: 53500
-334. ID: 388 | Name: Government Medical College, Suryapet | State: Telangana | Fees: 29000
-335. ID: 389 | Name: Regional Institute of Medical Sciences, Imphal | State: Manipur | Fees: 26000
-336. ID: 390 | Name: Chandulal Chandrakar Memorial Government Medical College, Durg | State: Chhattisgarh | Fees: 30000
-337. ID: 391 | Name: Government Medical College, Nizamabad | State: Telangana | Fees: 41000
-338. ID: 392 | Name: GMERS Medical College, Morbi | State: Gujarat | Fees: 375000
-339. ID: 393 | Name: Government Medical College, Anantapuram | State: Andhra Pradesh | Fees: 25600
-340. ID: 394 | Name: Chikkamagaluru Institute of Medical Sciences | State: Karnataka | Fees: 83000
-341. ID: 395 | Name: GMERS Medical College, Porbandar | State: Gujarat | Fees: 375000
-342. ID: 396 | Name: Lt B.R.K Government Medical College, Jagdalpur | State: Chhattisgarh | Fees: 50000
-343. ID: 397 | Name: Government Medical College, Siddipet | State: Telangana | Fees: 41000
-344. ID: 398 | Name: Government Medical College, Quthbullapur | State: Telangana | Fees: 64000
-345. ID: 399 | Name: Government Medical College, Nagolda | State: Telangana | Fees: 12000
-346. ID: 400 | Name: Gadag Institute of Medical Sciences | State: Karnataka | Fees: 97750
-347. ID: 401 | Name: Deben Mahata Government Medical College & Hospital | State: West Bengal | Fees: 6520
-348. ID: 402 | Name: Raichur Institute of Medical Sciences, Raichur | State: Karnataka | Fees: 80000
-349. ID: 403 | Name: Government Medical College & Hospital, Jajpur | State: West Bengal | Fees: 11144
-350. ID: 404 | Name: Murshidabad Medical Hospital, Murshidabad | State: West Bengal | Fees: 6520
-351. ID: 405 | Name: Government Medical College, Parbhani | State: Maharashtra | Fees: 152100
-352. ID: 406 | Name: MALDA Medical College, Malda | State: West Bengal | Fees: 6500
-353. ID: 407 | Name: Government Medical College, Osmanabad | State: Maharashtra | Fees: 167650
-354. ID: 408 | Name: Government Medical College, Sindhudurg | State: Maharashtra | Fees: 166100
-355. ID: 409 | Name: RIMS, Ongole | State: Andhra Pradesh | Fees: 27600
-356. ID: 410 | Name: Government Medical College, Buldhana | State: Maharashtra | Fees: 171316
-357. ID: 411 | Name: Pratila Chandra Sen Government Medical College & Hospital, Arambagh | State: West Bengal | Fees: 6500
-358. ID: 412 | Name: Sarat Chandra Chattopadhyay Government Medical College & Hospital, Uluberia | State: West Bengal | Fees: 6644
-359. ID: 413 | Name: Government Medical College, Mahasamund Chhattisgarh | State: Chhattisgarh | Fees: 49500
-360. ID: 414 | Name: Government Medical College and Hospital, Jagdalpur Odisha | State: Odisha | Fees: 41450
-361. ID: 415 | Name: Government Medical College, Sundargarh | State: Odisha | Fees: 37950
-362. ID: 416 | Name: Kalinga Government Medical College | State: West Bengal | Fees: 6392
-363. ID: 417 | Name: RIMS Srikakulam | State: Andhra Pradesh | Fees: 25600
-364. ID: 418 | Name: Koppal Institute of Medical Sciences | State: Karnataka | Fees: 80650
-365. ID: 419 | Name: Jorhat Medical College and Hospital, Jorhat | State: Assam | Fees: 23900
-366. ID: 420 | Name: Tamralipto Government Medical College & Hospital, West Bengal | State: West Bengal | Fees: 6644
-367. ID: 421 | Name: Government Medical College, Sangareddy | State: Telangana | Fees: 64000
-368. ID: 422 | Name: Pragjyotishpur Medical College | State: Assam | Fees: 32400
-369. ID: 423 | Name: Government Medical College and Hospital, Koraput | State: Odisha | Fees: 37950
-370. ID: 424 | Name: Silchar Medical College, Silcher | State: Assam | Fees: 17900
-371. ID: 425 | Name: Government Medical College, Baramulla | State: Jammu & Kashmir | Fees: 37636
-372. ID: 426 | Name: Government Medical College, Banda | State: Maharashtra | Fees: 151450
-373. ID: 427 | Name: Haveri Institute of Medical Sciences, Karnataka | State: Karnataka | Fees: 86000
-374. ID: 428 | Name: Rampurhat Government Medical College, Rampurhat | State: West Bengal | Fees: 6520
-375. ID: 429 | Name: Government Medical College, Khammam | State: Telangana | Fees: 41000
-376. ID: 430 | Name: Government Medical College, Ramagundam | State: Telangana | Fees: 64000
-377. ID: 431 | Name: Government Medical College, Gadchiroli | State: Maharashtra | Fees: 178740
-378. ID: 432 | Name: Maharaja Jitendra Narayan Medical College and Hospital, Coochbehar | State: West Bengal | Fees: 6500
-379. ID: 433 | Name: Government Medical College, Kanker | State: Chhattisgarh | Fees: 50000
-380. ID: 434 | Name: Government Medical College, Jajpur | State: Maharashtra | Fees: 169837
-381. ID: 435 | Name: Government Medical College, Nagarkurnool | State: Telangana | Fees: 29000
-382. ID: 436 | Name: Jhargam Government Medical College and Hospital, West Bengal | State: West Bengal | Fees: 8144
-383. ID: 437 | Name: Yadgiri Institute of Medical Sciences, Yadgiri | State: Karnataka | Fees: 79100
-384. ID: 438 | Name: Government Medical College, Korba (C.G.) | State: Chhattisgarh | Fees: 50000
-385. ID: 439 | Name: Government Medical College, Mahababad | State: Telangana | Fees: 41000
-386. ID: 440 | Name: Shaeed Laxman Nayak Medical College and Hospital, Koraput | State: Odisha | Fees: 51950
-387. ID: 441 | Name: Government Medical College, Handwara | State: Jammu & Kashmir | Fees: 34215
-388. ID: 442 | Name: Government Medical College, Washim | State: Maharashtra | Fees: 169536
-389. ID: 443 | Name: Chitradurga Medical College and Research Institute | State: Karnataka | Fees: 75570
-390. ID: 444 | Name: Government Medical College, Hingoli | State: Maharashtra | Fees: 157100
-391. ID: 445 | Name: GMC, Rajamahendravaram | State: Andhra Pradesh | Fees: 15000
-392. ID: 446 | Name: GMERS Medical College, Panchmahal Godhra | State: Gujarat | Fees: 375000
-393. ID: 447 | Name: Government Medical College, Eluru | State: Andhra Pradesh | Fees: 26500
-394. ID: 448 | Name: Fakhruddin Ali Ahmed Medical College, Barpeta | State: Assam | Fees: 23900
-395. ID: 449 | Name: Government Medical College, Nandyal | State: Andhra Pradesh | Fees: 15000
-396. ID: 450 | Name: Tezpur Medical College, Tezpur | State: Assam | Fees: 24900
-397. ID: 451 | Name: Government Medical College, Yadadri | State: Telangana | Fees: 41000
-398. ID: 452 | Name: Government Medical College, Jagital | State: Telangana | Fees: 64000
-399. ID: 453 | Name: Government Medical College, Karimnagar Telangana | State: Telangana | Fees: 41000
-400. ID: 454 | Name: Government Medical College, Wanaparthy | State: Telangana | Fees: 64000
-401. ID: 456 | Name: Fakir Mohan Pradhan Medical College & Hospital, Jajpur Odisha | State: Odisha | Fees: 36900
-402. ID: 457 | Name: Shillong Medical College, Meghalaya | State: Meghalaya | Fees: 30000
-403. ID: 458 | Name: Government Medical College, Rajanna Sircilla | State: Telangana | Fees: 41000
-404. ID: 459 | Name: Andaman and Nicobar Islands Institute of Medical Sciences | State: Andaman & Nicobar Islands | Fees: 79100
-405. ID: 460 | Name: GMERS Medical College, Rajpipla | State: Gujarat | Fees: 375000
-406. ID: 461 | Name: GMC Lingasugur | State: Telangana | Fees: 41000
-407. ID: 462 | Name: Shaheed Rodo Majhi Medical College & Hospital, Bhawanipatna | State: Odisha | Fees: 41450
-408. ID: 463 | Name: Government Medical College, Narsampet | State: Telangana | Fees: 41000
-409. ID: 464 | Name: Government Medical College, College Machilipatnam | State: Andhra Pradesh | Fees: 30000
-410. ID: 465 | Name: Government Medical College, Mancherial | State: Telangana | Fees: 64000
-411. ID: 466 | Name: Government Medical College, Jorhat | State: Telangana | Fees: 64000
-412. ID: 467 | Name: Agartala Government Medical College, Agartala | State: Tripura | Fees: 115500
-413. ID: 468 | Name: Government Medical College, Narayanpet Telangana | State: Telangana | Fees: 64000
-414. ID: 469 | Name: Government Medical College, Vizianagaram | State: Andhra Pradesh | Fees: 15000
-415. ID: 470 | Name: Government Medical College, Thalassery Village, Padern | State: Andhra Pradesh | Fees: 15000
-416. ID: 471 | Name: Government Medical College, Bhadradri Kothagudem | State: Telangana | Fees: 41000
-417. ID: 472 | Name: Government Medical College, Eedlak | State: Telangana | Fees: 76000
-418. ID: 473 | Name: Government Medical College, North Lakhimpur Assam | State: Assam | Fees: 24900
-419. ID: 474 | Name: Dhubri Medical College, Assam | State: Assam | Fees: 24900
-420. ID: 476 | Name: Government Medical College & Hospital, Khulna | State: Odisha | Fees: 36900
-421. ID: 477 | Name: Government Medical College, Kodangal | State: Telangana | Fees: 47200
-422. ID: 478 | Name: Government Medical College, Mulugu Telangana | State: Telangana | Fees: 41000
-423. ID: 479 | Name: Government Medical College, Kumuram Bheem Asifabad | State: Telangana | Fees: 41000
-424. ID: 480 | Name: Diphu Medical College & Hospital, Assam | State: Assam | Fees: 30000
-425. ID: 481 | Name: Government Medical College, Jayashankar Bhupalpally | State: Telangana | Fees: 41000
-426. ID: 482 | Name: Government Medical College, Churachandpur | State: Manipur | Fees: 4500
-427. ID: 483 | Name: Kokrajhar Medical College | State: Assam | Fees: 24900
-428. ID: 484 | Name: Tomo Riba Institute Health and Medical Sciences, Naharlagun | State: Arunachal Pradesh | Fees: 77100
-429. ID: 485 | Name: Naharlagun Medical College & Hospital, Naharlagun | State: Assam | Fees: 2500
-430. ID: 486 | Name: JNIMS, Imphal | State: Manipur | Fees: 45700
-431. ID: 487 | Name: Nagaon Medical College | State: Assam | Fees: 23900
-432. ID: 488 | Name: Tinsukia Medical College & Hospital, Tinsukia | State: Assam | Fees: 24000
-433. ID: 489 | Name: Zoram Medical College, Falkawn | State: Mizoram | Fees: 96850
-434. ID: 490 | Name: Nagaland Institute of Medical Sciences and Research Phriebage, Kohima | State: Nagaland | Fees: 161500
+1. ID: 1 | Name: AIIMS, New Delhi | State: Delhi | Fees: 1628
+2. ID: 2 | Name: Vardhman Mahavir Medical College & Safdarjung Hospital (VMMC) | State: Delhi | Fees: 53500
+3. ID: 3 | Name: Maulana Azad Medical College, New Delhi | State: Delhi | Fees: 2745
+4. ID: 4 | Name: Atal Bihari Vajpayee Institute of Medical Sciences & Dr. RML Hospital | State: Delhi | Fees: 54500
+5. ID: 5 | Name: JIPMER Puducherry | State: Puducherry | Fees: 14920
+6. ID: 6 | Name: AIIMS Jodhpur | State: Rajasthan | Fees: 4231
+7. ID: 7 | Name: University College of Medical Sciences, New Delhi | State: Delhi | Fees: 31340
+8. ID: 8 | Name: Lady Hardinge Medical College, New Delhi | State: Delhi | Fees: 1655
+9. ID: 9 | Name: AIIMS Bhopal | State: Madhya Pradesh | Fees: 5856
+10. ID: 10 | Name: AIIMS Bhubaneswar | State: Odisha | Fees: 5856
+11. ID: 11 | Name: AIIMS Rishikesh | State: Uttarakhand | Fees: 11450
+12. ID: 12 | Name: AIIMS Nagpur | State: Maharashtra | Fees: 5856
+13. ID: 13 | Name: AIIMS Raipur | State: Chhattisgarh | Fees: 5856
+14. ID: 14 | Name: AIIMS Patna | State: Bihar | Fees: 5856
+15. ID: 15 | Name: Government Medical College & Hospital, Chandigarh | State: Chandigarh | Fees: 24979
+16. ID: 16 | Name: Dr. B.S.A. Medical College, Delhi | State: Delhi | Fees: 114500
+17. ID: 17 | Name: B.J. Medical College, Ahmedabad | State: Gujarat | Fees: 25000
+18. ID: 18 | Name: SMS Medical College, Jaipur | State: Rajasthan | Fees: 125300
+19. ID: 19 | Name: Institute of Medical Sciences, BHU, Varanasi | State: Uttar Pradesh | Fees: 33739
+20. ID: 20 | Name: Seth G.S. Medical College, Mumbai | State: Maharashtra | Fees: 161000
+21. ID: 21 | Name: Government Medical College, Kozhikode | State: Kerala | Fees: 31715
+22. ID: 22 | Name: Madras Medical College, Chennai | State: Tamil Nadu | Fees: 23073
+23. ID: 23 | Name: Bangalore Medical College & Research Institute | State: Karnataka | Fees: 75300
+24. ID: 24 | Name: AIIMS Mangalagiri | State: Andhra Pradesh | Fees: 5856
+25. ID: 25 | Name: AIIMS Bathinda | State: Punjab | Fees: 5856
+26. ID: 26 | Name: AIIMS Bibinagar, Hyderabad | State: Telangana | Fees: 5856
+27. ID: 27 | Name: AIIMS Kalyani | State: West Bengal | Fees: 5856
+28. ID: 28 | Name: King George's Medical University (KGMU), Lucknow | State: Uttar Pradesh | Fees: 46600
+29. ID: 29 | Name: AIIMS Gorakhpur | State: Uttar Pradesh | Fees: 5293
+30. ID: 30 | Name: AIIMS Bilaspur | State: Himachal Pradesh | Fees: 5856
+31. ID: 31 | Name: NDMC Medical College, Delhi | State: Delhi | Fees: 105500
+32. ID: 32 | Name: ESIC Medical College & Hospital, Basaidarapur | State: Delhi | Fees: 100000
+33. ID: 33 | Name: B.J. Government Medical College, Pune | State: Maharashtra | Fees: 162100
+34. ID: 34 | Name: AIIMS Rajkot | State: Gujarat | Fees: 75
+35. ID: 35 | Name: AIIMS Rai Bareli | State: Uttar Pradesh | Fees: 5856
+36. ID: 36 | Name: AIIMS Deoghar | State: Jharkhand | Fees: 5856
+37. ID: 37 | Name: AIIMS Guwahati | State: Assam | Fees: 5856
+38. ID: 38 | Name: AIIMS Jammu | State: Jammu & Kashmir | Fees: 1628
+39. ID: 39 | Name: Indira Gandhi Medical College, Shimla | State: Himachal Pradesh | Fees: 60000
+40. ID: 40 | Name: Gandhi Medical College, Secunderabad | State: Telangana | Fees: 29000
+41. ID: 41 | Name: Medical College, Kolkata | State: West Bengal | Fees: 6500
+42. ID: 42 | Name: RUHS College of Medical Sciences, Jaipur | State: Rajasthan | Fees: 125200
+43. ID: 43 | Name: Government Medical College, Thiruvananthapuram | State: Kerala | Fees: 31715
+44. ID: 44 | Name: Lokmanya Tilak Municipal Medical College, Mumbai | State: Maharashtra | Fees: 155900
+45. ID: 45 | Name: Government Medical College, Surat | State: Gujarat | Fees: 25000
+46. ID: 46 | Name: JIPMER Karaikal | State: Puducherry | Fees: 14920
+47. ID: 47 | Name: ESIC Medical College, Faridabad | State: Haryana | Fees: 100000
+48. ID: 48 | Name: Sardar Patel Medical College, Bikaner | State: Rajasthan | Fees: 125300
+49. ID: 49 | Name: Dr. S.N. Medical College, Jodhpur | State: Rajasthan | Fees: 125300
+50. ID: 50 | Name: Jawaharlal Nehru Medical College, AMU Aligarh | State: Uttar Pradesh | Fees: 60300
+51. ID: 51 | Name: Dr. Ram Manohar Lohia Institute of Medical Sciences, Lucknow | State: Uttar Pradesh | Fees: 18000
+52. ID: 52 | Name: Grant Medical College & Sir J.J. Hospital, Mumbai | State: Maharashtra | Fees: 162100
+53. ID: 53 | Name: Institute of Post Graduate Medical Education & Research, Kolkata | State: West Bengal | Fees: 6500
+54. ID: 54 | Name: Osmania Medical College, Hyderabad | State: Telangana | Fees: 12000
+55. ID: 55 | Name: ESIC Medical College & Hospital, Jaipur | State: Rajasthan | Fees: 100000
+56. ID: 56 | Name: ESIC Medical College, Hyderabad | State: Telangana | Fees: 100000
+57. ID: 57 | Name: Patna Medical College, Patna | State: Bihar | Fees: 27600
+58. ID: 58 | Name: Government Institute of Medical Sciences, Greater Noida | State: Uttar Pradesh | Fees: 83600
+59. ID: 59 | Name: Stanley Medical College, Chennai | State: Tamil Nadu | Fees: 18073
+60. ID: 60 | Name: HBT Medical College & Dr. R.N. Cooper Hospital, Mumbai | State: Maharashtra | Fees: 161000
+61. ID: 61 | Name: R.N.T. Medical College, Udaipur | State: Rajasthan | Fees: 178250
+62. ID: 62 | Name: Dr. Rajendra Prasad Government Medical College, Tanda | State: Himachal Pradesh | Fees: 60000
+63. ID: 63 | Name: Medical College, Baroda | State: Gujarat | Fees: 25000
+64. ID: 64 | Name: AIIMS Madurai | State: Tamil Nadu | Fees: 5856
+65. ID: 65 | Name: ESIC Medical College & Hospital, Noida | State: Uttar Pradesh | Fees: 125000
+66. ID: 66 | Name: SCB Medical College, Cuttack | State: Odisha | Fees: 38050
+67. ID: 67 | Name: Government Medical College, Patiala | State: Punjab | Fees: 192000
+68. ID: 68 | Name: Government Medical College, Srinagar | State: Jammu & Kashmir | Fees: 37479
+69. ID: 69 | Name: Andhra Medical College, Visakhapatnam | State: Andhra Pradesh | Fees: 10600
+70. ID: 70 | Name: Government Medical College, Kottayam | State: Kerala | Fees: 31570
+71. ID: 71 | Name: Topiwala National Medical College, Mumbai | State: Maharashtra | Fees: 152100
+72. ID: 72 | Name: Jawaharlal Nehru Medical College, Ajmer | State: Rajasthan | Fees: 125265
+73. ID: 73 | Name: Government Medical College, Thrissur | State: Kerala | Fees: 31715
+74. ID: 74 | Name: Pt. B.D. Sharma PGIMS, Rohtak | State: Haryana | Fees: 80000
+75. ID: 75 | Name: Shri Atal Bihari Vajpayee Medical College & Research Institute, Bengaluru | State: Karnataka | Fees: 75470
+76. ID: 76 | Name: MGM Medical College, Indore | State: Madhya Pradesh | Fees: 118000
+77. ID: 77 | Name: Indira Gandhi Institute of Medical Sciences, Patna | State: Bihar | Fees: 121667
+78. ID: 78 | Name: Government Medical College, Kota | State: Rajasthan | Fees: 125300
+79. ID: 79 | Name: Rajendra Institute of Medical Sciences, Ranchi | State: Jharkhand | Fees: 17500
+80. ID: 80 | Name: LLRM Medical College, Meerut | State: Uttar Pradesh | Fees: 42000
+81. ID: 81 | Name: Government Medical College, Nagpur | State: Maharashtra | Fees: 173000
+82. ID: 82 | Name: Shri Kalyan Government Medical College, Sikar | State: Rajasthan | Fees: 124670
+83. ID: 83 | Name: S.N. Medical College, Agra | State: Uttar Pradesh | Fees: 36000
+84. ID: 84 | Name: Government Kilpauk Medical College, Chennai | State: Tamil Nadu | Fees: 18073
+85. ID: 85 | Name: Pt. D.D.U. Medical College, Rajkot | State: Gujarat | Fees: 25000
+86. ID: 86 | Name: M.P. Shah Medical College, Jamnagar | State: Gujarat | Fees: 25000
+87. ID: 87 | Name: ESI-MC & PGIMSR, Bangalore | State: Karnataka | Fees: 100000
+88. ID: 88 | Name: ESIC Medical College, Alwar | State: Rajasthan | Fees: 100000
+89. ID: 89 | Name: GSVM Medical College, Kanpur | State: Uttar Pradesh | Fees: 39600
+90. ID: 90 | Name: Kalpana Chawla Government Medical College, Karnal | State: Haryana | Fees: 80000
+91. ID: 91 | Name: Mysore Medical College & Research Institute | State: Karnataka | Fees: 72050
+92. ID: 92 | Name: Gandhi Medical College, Bhopal | State: Madhya Pradesh | Fees: 116000
+93. ID: 93 | Name: T.D. Medical College, Alappuzha | State: Kerala | Fees: 31570
+94. ID: 94 | Name: Government Medical College, Bhilwara | State: Rajasthan | Fees: 154800
+95. ID: 95 | Name: Gajra Raja Medical College, Gwalior | State: Madhya Pradesh | Fees: 121000
+96. ID: 96 | Name: Government Doon Medical College, Dehradun | State: Uttarakhand | Fees: 171500
+97. ID: 97 | Name: NAMO Medical Education & Research Institute, Silvassa | State: Dadra & Nagar Haveli | Fees: 60100
+98. ID: 98 | Name: Government Medical College, Amritsar | State: Punjab | Fees: 192000
+99. ID: 99 | Name: Medical College, Bhavnagar | State: Gujarat | Fees: 25000
+100. ID: 100 | Name: Jhalawar Medical College, Jhalawar | State: Rajasthan | Fees: 131300
+101. ID: 101 | Name: SLBS Government Medical College, Mandi | State: Himachal Pradesh | Fees: 60000
+102. ID: 102 | Name: Government Medical College, Manjeri | State: Kerala | Fees: 34715
+103. ID: 103 | Name: Moti Lal Nehru Medical College, Prayagraj (Allahabad) | State: Uttar Pradesh | Fees: 42000
+104. ID: 104 | Name: Government Medical College, Mumbai | State: Maharashtra | Fees: 151970
+105. ID: 105 | Name: Maharani Laxmi Bai Medical College, Jhansi | State: Uttar Pradesh | Fees: 42000
+106. ID: 106 | Name: Nalanda Medical College, Patna | State: Bihar | Fees: 40800
+107. ID: 107 | Name: Government Medical College, Pali | State: Rajasthan | Fees: 124970
+108. ID: 108 | Name: Nil Ratan Sircar Medical College, Kolkata | State: West Bengal | Fees: 9000
+109. ID: 109 | Name: Government Medical College, Jammu | State: Jammu & Kashmir | Fees: 26250
+110. ID: 110 | Name: Government Medical College, Haldwani | State: Uttarakhand | Fees: 145000
+111. ID: 111 | Name: Government Medical College, Alwar | State: Rajasthan | Fees: 165000
+112. ID: 112 | Name: Coimbatore Medical College, Coimbatore | State: Tamil Nadu | Fees: 18073
+113. ID: 113 | Name: Government Medical College, Ernakulam | State: Kerala | Fees: 31815
+114. ID: 114 | Name: Uttar Pradesh University of Medical Sciences, Saifai | State: Uttar Pradesh | Fees: 42000
+115. ID: 115 | Name: Government Medical College, Dausa | State: Rajasthan | Fees: 119280
+116. ID: 116 | Name: ESIC Medical College & Hospital, Indore | State: Madhya Pradesh | Fees: 100000
+117. ID: 117 | Name: BRD Medical College, Gorakhpur | State: Uttar Pradesh | Fees: 42000
+118. ID: 118 | Name: Government Medical College, Churu | State: Rajasthan | Fees: 172872
+119. ID: 119 | Name: Government Medical College, Kollam (ESIC) | State: Kerala | Fees: 32570
+120. ID: 120 | Name: BPS Government Medical College, Sonepat | State: Haryana | Fees: 80000
+121. ID: 121 | Name: Government Medical College, Kannur | State: Kerala | Fees: 29395
+122. ID: 122 | Name: Netaji Subhash Chandra Bose Medical College, Jabalpur | State: Madhya Pradesh | Fees: 114000
+123. ID: 123 | Name: Madurai Medical College, Madurai | State: Tamil Nadu | Fees: 18073
+124. ID: 124 | Name: Rajiv Gandhi Medical College, Thane | State: Maharashtra | Fees: 152100
+125. ID: 125 | Name: SJP Medical College, Bharatpur | State: Rajasthan | Fees: 124970
+126. ID: 126 | Name: Maulana Mahmood Hasan Medical College, Saharanpur | State: Uttar Pradesh | Fees: 32000
+127. ID: 127 | Name: Darbhanga Medical College, Laheriasarai | State: Bihar | Fees: 40800
+128. ID: 128 | Name: Dr. B.R. Ambedkar State Institute of Medical Sciences | State: Punjab | Fees: 192000
+129. ID: 129 | Name: Guwahati Medical College, Guwahati | State: Assam | Fees: 23900
+130. ID: 130 | Name: Dr. Radhakrishnan Government Medical College, Hamirpur | State: Himachal Pradesh | Fees: 60000
+131. ID: 131 | Name: ESIC Medical College & Hospital, Andheri | State: Maharashtra | Fees: 100000
+132. ID: 132 | Name: Government Medical College, Chittorgarh | State: Rajasthan | Fees: 66990
+133. ID: 133 | Name: ESIC Medical College & Hospital, Ludhiana | State: Punjab | Fees: 125000
+134. ID: 134 | Name: ESIC Medical College, Naroda, Ahmedabad | State: Gujarat | Fees: 100000
+135. ID: 135 | Name: Maharaja K.C. Gajapati Medical College, Berhampur | State: Odisha | Fees: 41450
+136. ID: 136 | Name: Guntur Medical College, Guntur | State: Andhra Pradesh | Fees: 10000
+137. ID: 137 | Name: Government Medical College, Tirunelveli | State: Tamil Nadu | Fees: 18453
+138. ID: 138 | Name: Government Medical College, Omandurar | State: Tamil Nadu | Fees: 18073
+139. ID: 139 | Name: Goa Medical College, Panaji | State: Goa | Fees: 163700
+140. ID: 140 | Name: SKIMS Medical College, Bemina, Srinagar | State: Jammu & Kashmir | Fees: 26100
+141. ID: 141 | Name: Indira Gandhi Government Medical College, Nagpur | State: Maharashtra | Fees: 152100
+142. ID: 142 | Name: Dr. Y.S. Parmar Government Medical College, Nahan | State: Himachal Pradesh | Fees: 60000
+143. ID: 143 | Name: Government Medical College, Kannauj | State: Uttar Pradesh | Fees: 36000
+144. ID: 144 | Name: Government Medical College, Sri Ganganagar | State: Rajasthan | Fees: 66990
+145. ID: 145 | Name: Government Medical College & ESIC Hospital, Coimbatore | State: Tamil Nadu | Fees: 18073
+146. ID: 146 | Name: Kanyakumari Government Medical College, Asaripallam | State: Tamil Nadu | Fees: 18073
+147. ID: 147 | Name: Government Mohan Kumaramangalam Medical College, Salem | State: Tamil Nadu | Fees: 18073
+148. ID: 148 | Name: Government Medical College, Konni | State: Kerala | Fees: 31765
+149. ID: 149 | Name: Kalyan Singh Government Medical College, Bulandshahr | State: Uttar Pradesh | Fees: 40800
+150. ID: 150 | Name: ESIC Medical College & Hospital, Varanasi | State: Uttar Pradesh | Fees: 100000
+151. ID: 151 | Name: Government Medical College, Aurangabad | State: Maharashtra | Fees: 165740
+152. ID: 152 | Name: Calcutta National Medical College, Kolkata | State: West Bengal | Fees: 6500
+153. ID: 153 | Name: Theni Government Medical College, Theni | State: Tamil Nadu | Fees: 18073
+154. ID: 154 | Name: Government Medical College, Palakkad | State: Kerala | Fees: 28950
+155. ID: 155 | Name: Government Medical College, Barmer | State: Rajasthan | Fees: 122630
+156. ID: 156 | Name: Thanjavur Medical College, Thanjavur | State: Tamil Nadu | Fees: 18653
+157. ID: 157 | Name: Government Medical College, Baramati | State: Maharashtra | Fees: 166100
+158. ID: 158 | Name: Government Medical College, Ratlam | State: Madhya Pradesh | Fees: 116350
+159. ID: 159 | Name: Sri Krishna Medical College, Muzaffarpur | State: Bihar | Fees: 40800
+160. ID: 160 | Name: R.G. Kar Medical College, Kolkata | State: West Bengal | Fees: 6500
+161. ID: 161 | Name: VSS Medical College, Burla | State: Odisha | Fees: 38100
+162. ID: 162 | Name: ESIC Medical College, Gulbarga | State: Karnataka | Fees: 100000
+163. ID: 163 | Name: K.A.P. Viswanatham Government Medical College, Tiruchirappalli | State: Tamil Nadu | Fees: 18073
+164. ID: 164 | Name: Guru Gobind Singh Medical College, Faridkot | State: Punjab | Fees: 192000
+165. ID: 165 | Name: ESIC Medical College & Hospital, Bihta | State: Bihar | Fees: 100000
+166. ID: 166 | Name: Government Medical College, Idukki | State: Kerala | Fees: 32115
+167. ID: 167 | Name: Shri Atal Bihari Vajpayee Government Medical College, Faridabad | State: Haryana | Fees: 80000
+168. ID: 168 | Name: Karnataka Institute of Medical Sciences, Hubli | State: Karnataka | Fees: 69290
+169. ID: 169 | Name: Government Medical College, Wayanad | State: Kerala | Fees: 31715
+170. ID: 170 | Name: S.S. Medical College, Rewa | State: Madhya Pradesh | Fees: 119120
+171. ID: 171 | Name: Government Medical College, Kathua | State: Jammu & Kashmir | Fees: 26250
+172. ID: 172 | Name: Government Medical College, Sirohi | State: Rajasthan | Fees: 122630
+173. ID: 173 | Name: Government Medical College, Dungarpur | State: Rajasthan | Fees: 165000
+174. ID: 174 | Name: Vardhman Institute of Medical Sciences, Nalanda | State: Bihar | Fees: 40800
+175. ID: 175 | Name: Government Medical College, Tiruppur | State: Tamil Nadu | Fees: 18073
+176. ID: 176 | Name: Chengalpattu Medical College, Chengalpattu | State: Tamil Nadu | Fees: 18073
+177. ID: 177 | Name: ESIC Medical College & PGIMSR, Chennai | State: Tamil Nadu | Fees: 100000
+178. ID: 178 | Name: SHKM Government Medical College, Nalhar, Mewat | State: Haryana | Fees: 80000
+179. ID: 179 | Name: Jawaharlal Nehru Medical College, Bhagalpur | State: Bihar | Fees: 40800
+180. ID: 180 | Name: Rani Durgavati Medical College, Banda | State: Uttar Pradesh | Fees: 40800
+181. ID: 181 | Name: Pt. Jawahar Lal Nehru Government Medical College, Chamba | State: Himachal Pradesh | Fees: 60000
+182. ID: 182 | Name: Government Medical College, Jhunjhunu | State: Rajasthan | Fees: 122630
+183. ID: 183 | Name: Government Medical College, Haridwar | State: Uttarakhand | Fees: 171500
+184. ID: 184 | Name: Atal Bihari Vajpayee Government Medical College, Vidisha | State: Madhya Pradesh | Fees: 132600
+185. ID: 185 | Name: Government Vellore Medical College, Vellore | State: Tamil Nadu | Fees: 15473
+186. ID: 186 | Name: MRA Medical College, Ambedkar Nagar | State: Uttar Pradesh | Fees: 36000
+187. ID: 187 | Name: Government Medical College, Nashik | State: Maharashtra | Fees: 152100
+188. ID: 188 | Name: Pt. J.N.M. Medical College, Raipur | State: Chhattisgarh | Fees: 50000
+189. ID: 189 | Name: Government Medical College, Bundi | State: Rajasthan | Fees: 119280
+190. ID: 190 | Name: Government Medical College, Dholpur | State: Rajasthan | Fees: 125246
+191. ID: 191 | Name: Pt. Neki Ram Sharma Government Medical College, Bhiwani | State: Haryana | Fees: 80000
+192. ID: 192 | Name: Government Medical College, Hanumangarh | State: Rajasthan | Fees: 66990
+193. ID: 193 | Name: IRT Perundurai Medical College, Perundurai | State: Tamil Nadu | Fees: 24023
+194. ID: 194 | Name: Government Dharmapuri Medical College, Dharmapuri | State: Tamil Nadu | Fees: 18073
+195. ID: 195 | Name: MGM Medical College, Jamshedpur | State: Jharkhand | Fees: 9130
+196. ID: 196 | Name: Belgaum Institute of Medical Sciences, Belagavi | State: Karnataka | Fees: 76180
+197. ID: 197 | Name: Government Medical College, Nagaur | State: Rajasthan | Fees: 70340
+198. ID: 198 | Name: Anugrah Narayan Magadh Medical College, Gaya | State: Bihar | Fees: 40800
+199. ID: 199 | Name: Bundelkhand Medical College, Sagar | State: Madhya Pradesh | Fees: 114000
+200. ID: 200 | Name: Mandya Institute of Medical Sciences, Mandya | State: Karnataka | Fees: 71000
+201. ID: 201 | Name: Government Medical College, Badaun | State: Uttar Pradesh | Fees: 36000
+202. ID: 202 | Name: Veer Chandra Singh Garhwali Government Institute of Medical Science & Research | State: Uttarakhand | Fees: 145000
+203. ID: 203 | Name: Government Medical College, Faizabad (Ayodhya) | State: Uttar Pradesh | Fees: 36000
+204. ID: 204 | Name: Autonomous State Medical College, Etah | State: Uttar Pradesh | Fees: 36000
+205. ID: 205 | Name: ESIC PGIMSR, Joka, Kolkata | State: West Bengal | Fees: 100000
+206. ID: 206 | Name: Government Medical College, Sawai Madhopur | State: Rajasthan | Fees: 119280
+207. ID: 207 | Name: Government Medical College, Azamgarh | State: Uttar Pradesh | Fees: 40800
+208. ID: 208 | Name: Government Medical College, Thiruvallur | State: Tamil Nadu | Fees: 20003
+209. ID: 209 | Name: Rajkiya Medical College, Jalaun | State: Uttar Pradesh | Fees: 40800
+210. ID: 210 | Name: Thoothukudi Medical College, Thoothukudi | State: Tamil Nadu | Fees: 18073
+211. ID: 211 | Name: Government Medical College, Firozabad | State: Uttar Pradesh | Fees: 40800
+212. ID: 212 | Name: Government Villupuram Medical College, Villupuram | State: Tamil Nadu | Fees: 18073
+213. ID: 213 | Name: Government Medical College, Karur | State: Tamil Nadu | Fees: 18083
+214. ID: 214 | Name: Sagar Dutta Medical College & Hospital, Kolkata | State: West Bengal | Fees: 6600
+215. ID: 215 | Name: NEIGRIHMS, Shillong | State: Meghalaya | Fees: 47600
+216. ID: 216 | Name: Government Medical College, Nilgiris | State: Tamil Nadu | Fees: 18073
+217. ID: 217 | Name: Rajarshee Chhatrapati Shahu Maharaj Government Medical College, Kolhapur | State: Maharashtra | Fees: 166100
+218. ID: 218 | Name: Sri Jagannath Medical College & Hospital, Puri | State: Odisha | Fees: 37950
+219. ID: 219 | Name: Government Medical College, Karauli | State: Rajasthan | Fees: 119280
+220. ID: 220 | Name: Maharishi Chyawan Medical College, Koriawas | State: Haryana | Fees: 80000
+221. ID: 221 | Name: MG Institute of Medical Sciences, Sevagram, Wardha | State: Maharashtra | Fees: 461410
+222. ID: 222 | Name: Chhattisgarh Institute of Medical Sciences, Bilaspur | State: Chhattisgarh | Fees: 50000
+223. ID: 223 | Name: Government Medical College, Kasaragod | State: Kerala | Fees: 31715
+224. ID: 224 | Name: Government Medical College, Shivpuri | State: Madhya Pradesh | Fees: 130000
+225. ID: 225 | Name: Maharshi Devraha Baba Autonomous State Medical College, Deoria | State: Uttar Pradesh | Fees: 36000
+226. ID: 226 | Name: Government Medical College, Banswara | State: Rajasthan | Fees: 119280
+227. ID: 227 | Name: Government Medical College, Tonk | State: Rajasthan | Fees: 125246
+228. ID: 228 | Name: Sundarlal Patwa Government Medical College, Mandsaur | State: Madhya Pradesh | Fees: 114000
+229. ID: 229 | Name: Government Medical College, Baran | State: Rajasthan | Fees: 168000
+230. ID: 230 | Name: Government Medical College, Virudhunagar | State: Tamil Nadu | Fees: 18073
+231. ID: 231 | Name: Virendra Kumar Sakhlecha Government Medical College, Neemuch | State: Madhya Pradesh | Fees: 114000
+232. ID: 232 | Name: Government Medical College, Bettiah | State: Bihar | Fees: 40800
+233. ID: 233 | Name: Indira Gandhi Medical College & Research Institute, Puducherry | State: Puducherry | Fees: 143700
+234. ID: 234 | Name: Government Medical College, Jaisalmer | State: Rajasthan | Fees: 125246
+235. ID: 235 | Name: Government Medical College, Purnea | State: Bihar | Fees: 40800
+236. ID: 236 | Name: Government Medical College, Shahjahanpur | State: Uttar Pradesh | Fees: 40800
+237. ID: 237 | Name: Government Medical College, Datia | State: Madhya Pradesh | Fees: 140000
+238. ID: 238 | Name: Government Medical College, Khandwa | State: Madhya Pradesh | Fees: 100000
+239. ID: 239 | Name: Siddhartha Medical College, Vijayawada | State: Andhra Pradesh | Fees: 25600
+240. ID: 240 | Name: Dr. Vaishampayan Memorial Medical College, Solapur | State: Maharashtra | Fees: 169150
+241. ID: 241 | Name: Shaheed Nirmal Mahto Medical College & Hospital, Dhanbad | State: Jharkhand | Fees: 8500
+242. ID: 242 | Name: GMERS Medical College, Navsari | State: Gujarat | Fees: 375000
+243. ID: 243 | Name: Soban Singh Jeena Government Institute of Medical Science & Research, Almora | State: Uttarakhand | Fees: 173000
+244. ID: 244 | Name: Government Medical College, Bahraich | State: Uttar Pradesh | Fees: 36000
+245. ID: 245 | Name: Chhindwara Institute of Medical Sciences | State: Madhya Pradesh | Fees: 114000
+246. ID: 246 | Name: Government Medical College & Hospital, Balasore | State: Odisha | Fees: 55450
+247. ID: 247 | Name: Mahatma Vidur Autonomous State Medical College, Bijnor | State: Uttar Pradesh | Fees: 39600
+248. ID: 248 | Name: Autonomous State Medical College, Fatehpur | State: Uttar Pradesh | Fees: 40800
+249. ID: 249 | Name: Government Medical College, Basti | State: Uttar Pradesh | Fees: 36000
+250. ID: 250 | Name: Shimoga Institute of Medical Sciences, Shivamogga | State: Karnataka | Fees: 85400
+251. ID: 251 | Name: Dr. Shankarrao Chavan Government Medical College, Nanded | State: Maharashtra | Fees: 157500
+252. ID: 252 | Name: Government Pudukkottai Medical College Hospital | State: Tamil Nadu | Fees: 18073
+253. ID: 253 | Name: Burdwan Medical College, Burdwan | State: West Bengal | Fees: 9000
+254. ID: 254 | Name: Autonomous State Medical College, Hardoi | State: Uttar Pradesh | Fees: 36000
+255. ID: 255 | Name: Autonomous State Medical College, Lalitpur | State: Uttar Pradesh | Fees: 40800
+256. ID: 256 | Name: Government Medical College, Miraj | State: Maharashtra | Fees: 166100
+257. ID: 257 | Name: Kakatiya Medical College, Warangal | State: Telangana | Fees: 52000
+258. ID: 258 | Name: Government Medical College, Sheopur | State: Madhya Pradesh | Fees: 114000
+259. ID: 259 | Name: Government Medical College, Dindigul | State: Tamil Nadu | Fees: 18073
+260. ID: 260 | Name: Hassan Institute of Medical Sciences, Hassan | State: Karnataka | Fees: 75000
+261. ID: 261 | Name: Kurnool Medical College, Kurnool | State: Andhra Pradesh | Fees: 25600
+262. ID: 262 | Name: Thiruvannamalai Medical College, Thiruvannamalai | State: Tamil Nadu | Fees: 18073
+263. ID: 263 | Name: Government Medical College, Satna | State: Madhya Pradesh | Fees: 114000
+264. ID: 264 | Name: ESIC Medical College & Hospital, Beltola, Guwahati | State: Assam | Fees: 100000
+265. ID: 265 | Name: Government Medical College, Namakkal | State: Tamil Nadu | Fees: 18073
+266. ID: 266 | Name: Autonomous State Medical College, Siddharthnagar | State: Uttar Pradesh | Fees: 36000
+267. ID: 267 | Name: North Bengal Medical College, Darjeeling | State: West Bengal | Fees: 6500
+268. ID: 268 | Name: Sri Venkateswara Medical College, Tirupati | State: Andhra Pradesh | Fees: 10600
+269. ID: 269 | Name: Autonomous State Medical College, Pratapgarh | State: Uttar Pradesh | Fees: 36000
+270. ID: 270 | Name: Government Medical College, Shahdol | State: Madhya Pradesh | Fees: 122000
+271. ID: 271 | Name: Government Sivagangai Medical College, Sivagangai | State: Tamil Nadu | Fees: 18073
+272. ID: 272 | Name: Government Medical College & Hospital, Jalgaon | State: Maharashtra | Fees: 152100
+273. ID: 273 | Name: Government Medical College, Udhampur | State: Jammu & Kashmir | Fees: 27060
+274. ID: 274 | Name: Autonomous State Medical College, Kanpur Dehat | State: Uttar Pradesh | Fees: 40800
+275. ID: 275 | Name: Autonomous State Medical College, Jaunpur | State: Uttar Pradesh | Fees: 36000
+276. ID: 276 | Name: Government Medical College, Akola | State: Maharashtra | Fees: 169900
+277. ID: 277 | Name: Rajah Muthiah Medical College, Annamalai University | State: Tamil Nadu | Fees: 18100
+278. ID: 278 | Name: Autonomous State Medical College, Pilibhit | State: Uttar Pradesh | Fees: 40800
+279. ID: 279 | Name: Autonomous State Medical College, Auraiya | State: Uttar Pradesh | Fees: 40800
+280. ID: 280 | Name: Government Thiruvarur Medical College, Thiruvarur | State: Tamil Nadu | Fees: 18073
+281. ID: 281 | Name: Government Medical College, Krishnagiri | State: Tamil Nadu | Fees: 18073
+282. ID: 282 | Name: Government Medical College, Ariyalur | State: Tamil Nadu | Fees: 19823
+283. ID: 283 | Name: Government Medical College & Hospital, Chandrapur | State: Maharashtra | Fees: 157100
+284. ID: 284 | Name: Autonomous State Medical College, Mirzapur | State: Uttar Pradesh | Fees: 24000
+285. ID: 285 | Name: Government Medical College, Seoni | State: Madhya Pradesh | Fees: 114000
+286. ID: 286 | Name: Government Medical College, Rajnandgaon | State: Chhattisgarh | Fees: 50000
+287. ID: 287 | Name: Barasat Government Medical College & Hospital | State: West Bengal | Fees: 6644
+288. ID: 288 | Name: Autonomous State Medical College, Ghazipur | State: Uttar Pradesh | Fees: 36000
+289. ID: 289 | Name: Autonomous State Medical College, Amethi | State: Uttar Pradesh | Fees: 36000
+290. ID: 290 | Name: Government Medical College, Ambernath | State: Maharashtra | Fees: 170756
+291. ID: 291 | Name: Autonomous State Medical College, Sultanpur | State: Uttar Pradesh | Fees: 36000
+292. ID: 292 | Name: Gulbarga Institute of Medical Sciences, Gulbarga | State: Karnataka | Fees: 82950
+293. ID: 293 | Name: College of Medicine & JNM Hospital, Kalyani | State: West Bengal | Fees: 8500
+294. ID: 294 | Name: Jannayak Karpoori Thakur Medical College & Hospital, Madhepura | State: Bihar | Fees: 40800
+295. ID: 295 | Name: ACSR Government Medical College, Nellore | State: Andhra Pradesh | Fees: 25600
+296. ID: 296 | Name: Kodagu Institute of Medical Sciences, Kodagu | State: Karnataka | Fees: 82650
+297. ID: 297 | Name: Autonomous State Medical College, Lakhimpur Kheri | State: Uttar Pradesh | Fees: 36000
+298. ID: 298 | Name: Rangaraya Medical College, Kakinada | State: Andhra Pradesh | Fees: 25600
+299. ID: 299 | Name: Shri Bhausaheb Hire Government Medical College, Dhule | State: Maharashtra | Fees: 165760
+300. ID: 300 | Name: Autonomous State Medical College, Kaushambi | State: Uttar Pradesh | Fees: 36000
+301. ID: 301 | Name: Government Medical College, Kallakurichi | State: Tamil Nadu | Fees: 18073
+302. ID: 302 | Name: Autonomous State Medical College, Gonda | State: Uttar Pradesh | Fees: 40800
+303. ID: 303 | Name: Sheikh Bhikhari Medical College & Hospital, Hazaribagh | State: Jharkhand | Fees: 3180
+304. ID: 304 | Name: Government Medical College, Ramanathapuram | State: Tamil Nadu | Fees: 18073
+305. ID: 305 | Name: Autonomous State Medical College, Kushinagar | State: Uttar Pradesh | Fees: 40800
+306. ID: 306 | Name: Government Medical College, Latur | State: Maharashtra | Fees: 163630
+307. ID: 307 | Name: Government Medical College & General Hospital, Satara | State: Maharashtra | Fees: 171100
+308. ID: 308 | Name: Bankura Sammilani Medical College, Bankura | State: West Bengal | Fees: 9166
+309. ID: 309 | Name: Government Medical College, Singrauli | State: Madhya Pradesh | Fees: 114000
+310. ID: 310 | Name: Baba Kinaram Autonomous State Medical College, Chandauli | State: Uttar Pradesh | Fees: 40800
+311. ID: 311 | Name: Vijayanagar Institute of Medical Sciences, Ballari | State: Karnataka | Fees: 70160
+312. ID: 312 | Name: Autonomous State Medical College, Sonbhadra | State: Uttar Pradesh | Fees: 40800
+313. ID: 313 | Name: Government Medical College, Nagapattinam | State: Tamil Nadu | Fees: 18073
+314. ID: 314 | Name: Shri Vasantrao Naik Government Medical College, Yavatmal | State: Maharashtra | Fees: 165600
+315. ID: 315 | Name: Karwar Institute of Medical Sciences, Karwar | State: Karnataka | Fees: 55000
+316. ID: 316 | Name: Pt. Raghunath Murmu Medical College, Baripada | State: Odisha | Fees: 51950
+317. ID: 317 | Name: Government Medical College, Maheshwaram | State: Telangana | Fees: 41000
+318. ID: 318 | Name: Assam Medical College, Dibrugarh | State: Assam | Fees: 24000
+319. ID: 319 | Name: Government Medical College & District General Hospital, Ratnagiri | State: Maharashtra | Fees: 166100
+320. ID: 320 | Name: Bhima Bhoi Medical College & Hospital, Balangir | State: Odisha | Fees: 41450
+321. ID: 321 | Name: Government Medical College, Mahabubnagar | State: Telangana | Fees: 64000
+322. ID: 322 | Name: Swami Ramanand Teerth Rural Medical College, Ambajogai | State: Maharashtra | Fees: 171350
+323. ID: 323 | Name: Chamarajanagar Institute of Medical Sciences | State: Karnataka | Fees: 82000
+324. ID: 324 | Name: Government Medical College, Amravati | State: Maharashtra | Fees: 169900
+325. ID: 325 | Name: Lt. L.A.M. Government Medical College, Raigarh | State: Chhattisgarh | Fees: 50000
+326. ID: 326 | Name: Government Medical College, Gondia | State: Maharashtra | Fees: 166800
+327. ID: 327 | Name: Government Medical College, Rajouri | State: Jammu & Kashmir | Fees: 26250
+328. ID: 328 | Name: Government Medical College, Anantnag | State: Jammu & Kashmir | Fees: 34215
+329. ID: 329 | Name: Rajiv Gandhi Institute of Medical Sciences, Adilabad | State: Telangana | Fees: 29000
+330. ID: 330 | Name: Diamond Harbour Government Medical College | State: West Bengal | Fees: 6730
+331. ID: 331 | Name: Government Medical College, Nandurbar | State: Maharashtra | Fees: 164730
+332. ID: 332 | Name: Phulo Jhano Medical College, Dumka | State: Jharkhand | Fees: 20100
+333. ID: 333 | Name: Chikkaballapura Institute of Medical Sciences | State: Karnataka | Fees: 85000
+334. ID: 334 | Name: SVIMS Sri Padmavathi Medical College for Women, Tirupati | State: Andhra Pradesh | Fees: 95800
+335. ID: 335 | Name: Midnapore Medical College, Midnapore | State: West Bengal | Fees: 11144
+336. ID: 336 | Name: Rajiv Gandhi Institute of Medical Sciences, Kadapa | State: Andhra Pradesh | Fees: 10600
+337. ID: 337 | Name: Government Medical College & Hospital, Alibag-Raigad | State: Maharashtra | Fees: 170746
+338. ID: 338 | Name: Government Medical College, Doda | State: Jammu & Kashmir | Fees: 26250
+339. ID: 339 | Name: Medinirai Medical College (Palamu Medical College), Palamu | State: Jharkhand | Fees: 39200
+340. ID: 340 | Name: Bidar Institute of Medical Sciences, Bidar | State: Karnataka | Fees: 71750
+341. ID: 341 | Name: Rajmata Shrimati Devendra Kumari Singhdeo Government Medical College, Ambikapur | State: Chhattisgarh | Fees: 53500
+342. ID: 342 | Name: Government Medical College, Suryapet | State: Telangana | Fees: 29000
+343. ID: 343 | Name: Regional Institute of Medical Sciences (RIMS), Imphal | State: Manipur | Fees: 26000
+344. ID: 344 | Name: Chandulal Chandrakar Memorial Government Medical College, Durg | State: Chhattisgarh | Fees: 50000
+345. ID: 345 | Name: Government Medical College, Nizamabad | State: Telangana | Fees: 41000
+346. ID: 346 | Name: GMERS Medical College, Morbi | State: Gujarat | Fees: 375000
+347. ID: 347 | Name: Government Medical College, Ananthapuram | State: Andhra Pradesh | Fees: 25600
+348. ID: 348 | Name: Chikkamagaluru Institute of Medical Sciences | State: Karnataka | Fees: 83000
+349. ID: 349 | Name: GMERS Medical College, Porbandar | State: Gujarat | Fees: 375000
+350. ID: 350 | Name: Lt. B.R.K. Government Medical College, Jagdalpur | State: Chhattisgarh | Fees: 50000
+351. ID: 351 | Name: Government Medical College, Siddipet | State: Telangana | Fees: 41000
+352. ID: 352 | Name: Government Medical College, Quthbullapur | State: Telangana | Fees: 64000
+353. ID: 353 | Name: Government Medical College, Nalgonda | State: Telangana | Fees: 12000
+354. ID: 354 | Name: Gadag Institute of Medical Sciences | State: Karnataka | Fees: 97750
+355. ID: 355 | Name: Deben Mahata Government Medical College & Hospital | State: West Bengal | Fees: 6520
+356. ID: 356 | Name: Raichur Institute of Medical Sciences, Raichur | State: Karnataka | Fees: 80000
+357. ID: 357 | Name: Government Medical College & Hospital, Jalpaiguri | State: West Bengal | Fees: 11144
+358. ID: 358 | Name: Murshidabad Medical College & Hospital | State: West Bengal | Fees: 6520
+359. ID: 359 | Name: Government Medical College, Parbhani | State: Maharashtra | Fees: 152100
+360. ID: 360 | Name: Malda Medical College, Malda | State: West Bengal | Fees: 6500
+361. ID: 361 | Name: Government Medical College, Osmanabad | State: Maharashtra | Fees: 167650
+362. ID: 362 | Name: Government Medical College, Sindhudurg | State: Maharashtra | Fees: 166100
+363. ID: 363 | Name: RIMS, Ongole | State: Andhra Pradesh | Fees: 27600
+364. ID: 364 | Name: Government Medical College, Buldhana | State: Maharashtra | Fees: 171316
+365. ID: 365 | Name: Prafulla Chandra Sen Government Medical College & Hospital, Arambagh | State: West Bengal | Fees: 6500
+366. ID: 366 | Name: Sarat Chandra Chattopadhyay Government Medical College & Hospital, Uluberia | State: West Bengal | Fees: 6644
+367. ID: 367 | Name: Government Medical College, Mahasamund | State: Chhattisgarh | Fees: 49500
+368. ID: 368 | Name: Jajati Keshari Medical College & Hospital, Jajpur | State: Odisha | Fees: 41450
+369. ID: 369 | Name: Government Medical College, Sundargarh | State: Odisha | Fees: 37950
+370. ID: 370 | Name: Raiganj Government Medical College | State: West Bengal | Fees: 6592
+371. ID: 371 | Name: RIMS, Srikakulam | State: Andhra Pradesh | Fees: 25600
+372. ID: 372 | Name: Koppal Institute of Medical Sciences | State: Karnataka | Fees: 80650
+373. ID: 373 | Name: Jorhat Medical College & Hospital, Jorhat | State: Assam | Fees: 23900
+374. ID: 374 | Name: Tamralipto Government Medical College & Hospital | State: West Bengal | Fees: 6644
+375. ID: 375 | Name: Government Medical College, Sangareddy | State: Telangana | Fees: 64000
+376. ID: 376 | Name: Pragjyotishpur Medical College | State: Assam | Fees: 32400
+377. ID: 377 | Name: Government Medical College & Hospital, Keonjhar | State: Odisha | Fees: 37950
+378. ID: 378 | Name: Silchar Medical College, Silchar | State: Assam | Fees: 17900
+379. ID: 379 | Name: Government Medical College, Baramulla | State: Jammu & Kashmir | Fees: 37636
+380. ID: 380 | Name: Government Medical College, Bhandara | State: Maharashtra | Fees: 151480
+381. ID: 381 | Name: Haveri Institute of Medical Sciences | State: Karnataka | Fees: 86000
+382. ID: 382 | Name: Rampurhat Government Medical College | State: West Bengal | Fees: 6520
+383. ID: 383 | Name: Government Medical College, Khammam | State: Telangana | Fees: 41000
+384. ID: 384 | Name: Government Medical College, Ramagundam | State: Telangana | Fees: 64000
+385. ID: 385 | Name: Government Medical College, Gadchiroli | State: Maharashtra | Fees: 178740
+386. ID: 386 | Name: Maharaja Jitendra Narayan Medical College & Hospital, Cooch Behar | State: West Bengal | Fees: 6500
+387. ID: 387 | Name: Government Medical College, Kanker | State: Chhattisgarh | Fees: 50000
+388. ID: 388 | Name: Government Medical College, Jalna | State: Maharashtra | Fees: 169837
+389. ID: 389 | Name: Government Medical College, Nagarkurnool | State: Telangana | Fees: 29000
+390. ID: 390 | Name: Jhargram Government Medical College & Hospital | State: West Bengal | Fees: 8144
+391. ID: 391 | Name: Yadgiri Institute of Medical Sciences | State: Karnataka | Fees: 79100
+392. ID: 392 | Name: Government Medical College, Korba | State: Chhattisgarh | Fees: 50000
+393. ID: 393 | Name: Government Medical College, Mahabubabad | State: Telangana | Fees: 41000
+394. ID: 394 | Name: Saheed Laxman Nayak Medical College & Hospital, Koraput | State: Odisha | Fees: 51950
+395. ID: 395 | Name: Government Medical College, Handwara | State: Jammu & Kashmir | Fees: 34215
+396. ID: 396 | Name: Government Medical College, Washim | State: Maharashtra | Fees: 169636
+397. ID: 397 | Name: Chitradurga Medical College & Research Institute | State: Karnataka | Fees: 75570
+398. ID: 398 | Name: Government Medical College, Hingoli | State: Maharashtra | Fees: 157100
+399. ID: 399 | Name: Government Medical College, Rajamahendravaram | State: Andhra Pradesh | Fees: 15000
+400. ID: 400 | Name: GMERS Medical College, Panchmahal Godhra | State: Gujarat | Fees: 375000
+401. ID: 401 | Name: Government Medical College, Eluru | State: Andhra Pradesh | Fees: 26500
+402. ID: 402 | Name: Fakhruddin Ali Ahmed Medical College, Barpeta | State: Assam | Fees: 23900
+403. ID: 403 | Name: Government Medical College, Nandyal | State: Andhra Pradesh | Fees: 15000
+404. ID: 404 | Name: Tezpur Medical College, Tezpur | State: Assam | Fees: 24900
+405. ID: 405 | Name: Government Medical College, Yadadri | State: Telangana | Fees: 41000
+406. ID: 406 | Name: Government Medical College, Jagtial | State: Telangana | Fees: 64000
+407. ID: 407 | Name: Government Medical College, Karimnagar | State: Telangana | Fees: 41000
+408. ID: 408 | Name: Government Medical College, Wanaparthy | State: Telangana | Fees: 64000
+409. ID: 409 | Name: Government Medical College, Kamareddy | State: Telangana | Fees: 41000
+410. ID: 410 | Name: Pabitra Mohan Pradhan Medical College & Hospital, Talcher | State: Odisha | Fees: 36900
+411. ID: 411 | Name: Shillong Medical College, Meghalaya | State: Meghalaya | Fees: 30000
+412. ID: 412 | Name: Government Medical College, Rajanna Sircilla | State: Telangana | Fees: 41000
+413. ID: 413 | Name: Andaman & Nicobar Islands Institute of Medical Sciences (ANIIMS) | State: Andaman & Nicobar Islands | Fees: 79100
+414. ID: 414 | Name: GMERS Medical College, Rajpipla | State: Gujarat | Fees: 375000
+415. ID: 415 | Name: Government Medical College, Jangaon | State: Telangana | Fees: 41000
+416. ID: 416 | Name: Saheed Rendo Majhi Medical College & Hospital, Bhawanipatna | State: Odisha | Fees: 41450
+417. ID: 417 | Name: Government Medical College, Narsampet | State: Telangana | Fees: 41000
+418. ID: 418 | Name: Government Medical College, Machilipatnam | State: Andhra Pradesh | Fees: 30000
+419. ID: 419 | Name: Government Medical College, Mancherial | State: Telangana | Fees: 64000
+420. ID: 420 | Name: Government Medical College, Jogulamba Gadwal | State: Telangana | Fees: 64000
+421. ID: 421 | Name: Agartala Government Medical College, Agartala | State: Tripura | Fees: 115500
+422. ID: 422 | Name: Government Medical College, Narayanpet | State: Telangana | Fees: 64000
+423. ID: 423 | Name: Government Medical College, Vizianagaram | State: Andhra Pradesh | Fees: 15000
+424. ID: 424 | Name: Government Medical College, Paderu | State: Andhra Pradesh | Fees: 15000
+425. ID: 425 | Name: Government Medical College, Bhadradri Kothagudem | State: Telangana | Fees: 41000
+426. ID: 426 | Name: Government Medical College, Medak | State: Telangana | Fees: 76000
+427. ID: 427 | Name: Government Medical College, Vikarabad | State: Telangana | Fees: 41000
+428. ID: 428 | Name: Lakhimpur Medical College, North Lakhimpur | State: Assam | Fees: 24900
+429. ID: 429 | Name: Dhubri Medical College | State: Assam | Fees: 24900
+430. ID: 430 | Name: Government Medical College, Nirmal | State: Telangana | Fees: 59200
+431. ID: 431 | Name: Government Medical College & Hospital, Phulbani | State: Odisha | Fees: 36900
+432. ID: 432 | Name: Government Medical College, Kodangal | State: Telangana | Fees: 47200
+433. ID: 433 | Name: Government Medical College, Mulugu | State: Telangana | Fees: 41000
+434. ID: 434 | Name: Government Medical College, Kumuram Bheem Asifabad | State: Telangana | Fees: 41000
+435. ID: 435 | Name: Diphu Medical College & Hospital | State: Assam | Fees: 30000
+436. ID: 436 | Name: Government Medical College, Jayashankar Bhupalpally | State: Telangana | Fees: 41000
+437. ID: 437 | Name: Government Medical College, Churachandpur | State: Manipur | Fees: 45700
+438. ID: 438 | Name: Kokrajhar Medical College | State: Assam | Fees: 24900
+439. ID: 439 | Name: Tomo Riba Institute of Health & Medical Sciences, Naharlagun | State: Arunachal Pradesh | Fees: 77100
+440. ID: 440 | Name: Nalbari Medical College & Hospital, Dakhingaon, Nalbari | State: Assam | Fees: 25000
+441. ID: 441 | Name: JLN Institute of Medical Sciences (JLN IMS), Imphal | State: Manipur | Fees: 45700
+442. ID: 442 | Name: Nagaon Medical College | State: Assam | Fees: 23900
+443. ID: 443 | Name: Tinsukia Medical College & Hospital, Tinsukia | State: Assam | Fees: 24000
+444. ID: 444 | Name: Zoram Medical College, Falkawn | State: Mizoram | Fees: 96850
+445. ID: 445 | Name: Nagaland Institute of Medical Science & Research, Kohima | State: Nagaland | Fees: 161500
+446. ID: 446 | Name: Antigravity Institute of Advanced AI & Medicine | State: DeepMind | Fees: 1

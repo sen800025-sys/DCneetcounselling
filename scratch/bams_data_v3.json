@@ -1,0 +1,632 @@
+[
+  {
+    "id": 1,
+    "college_name": "National Institute of Ayurveda, Deemed to be University",
+    "state": "Rajasthan",
+    "fees_per_year": 54863,
+    "bond_details": "No"
+  },
+  {
+    "id": 2,
+    "college_name": "Faculty of Ayurveda, IMS BHU",
+    "state": "Uttar Pradesh",
+    "fees_per_year": 33464,
+    "bond_details": "UR: ₹3,00,000; SC/ST: ₹75,000"
+  },
+  {
+    "id": 3,
+    "college_name": "Ayurvedic and Unani Tibbia College (Ayurveda), Karol Bagh",
+    "state": "Delhi",
+    "fees_per_year": 3365,
+    "bond_details": "No"
+  },
+  {
+    "id": 4,
+    "college_name": "Institute of Teaching and Research in Ayurveda",
+    "state": "Gujarat",
+    "fees_per_year": 3252,
+    "bond_details": "No"
+  },
+  {
+    "id": 5,
+    "college_name": "All India Institute of Ayurveda, North Goa",
+    "state": "Goa",
+    "fees_per_year": 41400,
+    "bond_details": "₹5,00,000"
+  },
+  {
+    "id": 6,
+    "college_name": "National Institute of Ayurveda, Deemed University, Panchkula",
+    "state": "Haryana",
+    "fees_per_year": null,
+    "bond_details": "No"
+  },
+  {
+    "id": 7,
+    "college_name": "Ch. Brahm Prakash Ayurved Charak Sansthan, Najafgarh",
+    "state": "Delhi",
+    "fees_per_year": 150150,
+    "bond_details": "No"
+  },
+  {
+    "id": 8,
+    "college_name": "Govt. Ayurveda Medical College, Lucknow",
+    "state": "Uttar Pradesh",
+    "fees_per_year": 26000,
+    "bond_details": "No"
+  },
+  {
+    "id": 9,
+    "college_name": "MMM Govt. Ayurved Mahavidyalaya, Udaipur",
+    "state": "Rajasthan",
+    "fees_per_year": 8813,
+    "bond_details": "No"
+  },
+  {
+    "id": 10,
+    "college_name": "State Model Institute of Ayurved Sciences, Kolavada, Gandhinagar",
+    "state": "Gujarat",
+    "fees_per_year": 6000,
+    "bond_details": "No"
+  },
+  {
+    "id": 11,
+    "college_name": "Govt. Akhandanand Ayurveda Medical College, Ahmedabad",
+    "state": "Gujarat",
+    "fees_per_year": 6000,
+    "bond_details": "No"
+  },
+  {
+    "id": 12,
+    "college_name": "R.A. Podar Ayurved Medical College, Mumbai",
+    "state": "Maharashtra",
+    "fees_per_year": 93350,
+    "bond_details": "₹3,00,000"
+  },
+  {
+    "id": 13,
+    "college_name": "Rajiv Gandhi Govt. PG Ayurvedic College, Paprola",
+    "state": "Himachal Pradesh",
+    "fees_per_year": 54850,
+    "bond_details": "No"
+  },
+  {
+    "id": 14,
+    "college_name": "Rishikul Govt. PG Ayurvedic College, Haridwar",
+    "state": "Uttarakhand",
+    "fees_per_year": 100000,
+    "bond_details": "No"
+  },
+  {
+    "id": 15,
+    "college_name": "Pt. Khushilal Sharma Govt. Ayurved College, Bhopal",
+    "state": "Madhya Pradesh",
+    "fees_per_year": 104785,
+    "bond_details": "₹2,00,000"
+  },
+  {
+    "id": 16,
+    "college_name": "J.B. Roy State Ayurved Medical College & Hospital, Kolkata",
+    "state": "West Bengal",
+    "fees_per_year": 3100,
+    "bond_details": "₹1,00,000"
+  },
+  {
+    "id": 17,
+    "college_name": "Faculty of Ayurveda, Uttarakhand Ayurved University, Dehradun",
+    "state": "Uttarakhand",
+    "fees_per_year": 85000,
+    "bond_details": "No"
+  },
+  {
+    "id": 18,
+    "college_name": "SLBSS Govt. Ayurvedic College & Hospital, Handia, Prayagraj",
+    "state": "Uttar Pradesh",
+    "fees_per_year": null,
+    "bond_details": "Yes Available"
+  },
+  {
+    "id": 19,
+    "college_name": "Govt. Ayurved Medical College, Patiala",
+    "state": "Punjab",
+    "fees_per_year": 85125,
+    "bond_details": "Yes Available"
+  },
+  {
+    "id": 20,
+    "college_name": "North Eastern Institute of Ayurveda & Homoeopathy, Shillong",
+    "state": "Meghalaya",
+    "fees_per_year": 42100,
+    "bond_details": "₹3,00,000"
+  },
+  {
+    "id": 21,
+    "college_name": "Govt. Ayurveda College, Nanded",
+    "state": "Maharashtra",
+    "fees_per_year": 65400,
+    "bond_details": "₹3,00,000"
+  },
+  {
+    "id": 22,
+    "college_name": "Tilak Ayurved Mahavidyalaya, Pune",
+    "state": "Maharashtra",
+    "fees_per_year": 114030,
+    "bond_details": "No"
+  },
+  {
+    "id": 23,
+    "college_name": "Shri Narayan Prasad Awasthy Govt. Ayurved College, Raipur",
+    "state": "Chhattisgarh",
+    "fees_per_year": 26000,
+    "bond_details": "2× Total Tuition Fees"
+  },
+  {
+    "id": 24,
+    "college_name": "Bundelkhand Govt. Ayurvedic College & Hospital, Jhansi",
+    "state": "Uttar Pradesh",
+    "fees_per_year": 21000,
+    "bond_details": "No"
+  },
+  {
+    "id": 25,
+    "college_name": "Shri Krishna Govt. Ayurvedic College & Hospital, Kurukshetra",
+    "state": "Haryana",
+    "fees_per_year": 15482,
+    "bond_details": "No"
+  },
+  {
+    "id": 26,
+    "college_name": "Govt. Ayurveda College, Vadodara",
+    "state": "Gujarat",
+    "fees_per_year": 4000,
+    "bond_details": "No"
+  },
+  {
+    "id": 27,
+    "college_name": "Govt. Ayurved Medical College, Bangalore",
+    "state": "Karnataka",
+    "fees_per_year": 35000,
+    "bond_details": "No"
+  },
+  {
+    "id": 28,
+    "college_name": "Vaidyaratnam P. S. Varier Ayurveda College, Kottakkal",
+    "state": "Kerala",
+    "fees_per_year": 24855,
+    "bond_details": "No"
+  },
+  {
+    "id": 29,
+    "college_name": "Gopabandhu Ayurveda Mahavidyalaya, Puri",
+    "state": "Odisha",
+    "fees_per_year": 10780,
+    "bond_details": "No"
+  },
+  {
+    "id": 30,
+    "college_name": "Govt. Dhanwantri Ayurveda College, Ujjain",
+    "state": "Madhya Pradesh",
+    "fees_per_year": 109535,
+    "bond_details": "₹2,00,000"
+  },
+  {
+    "id": 31,
+    "college_name": "Govt. Ayurveda Medical College, Junagadh",
+    "state": "Gujarat",
+    "fees_per_year": 4000,
+    "bond_details": "No"
+  },
+  {
+    "id": 32,
+    "college_name": "Govt. Ayurveda Mahavidyalaya, Nagpur",
+    "state": "Maharashtra",
+    "fees_per_year": 55500,
+    "bond_details": "Yes Available"
+  },
+  {
+    "id": 33,
+    "college_name": "Shri Ayurved Mahavidyalaya, Nagpur",
+    "state": "Maharashtra",
+    "fees_per_year": 81500,
+    "bond_details": "No"
+  },
+  {
+    "id": 34,
+    "college_name": "Govt. Seth J.P. Ayurveda Medical College, Bhavnagar",
+    "state": "Gujarat",
+    "fees_per_year": 6000,
+    "bond_details": "No"
+  },
+  {
+    "id": 35,
+    "college_name": "Govt. Ayurveda Mahavidyalaya, Jaipur",
+    "state": "Rajasthan",
+    "fees_per_year": 8813,
+    "bond_details": "No"
+  },
+  {
+    "id": 36,
+    "college_name": "Lalit Hari State P.G. Ayurvedic College & Hospital, Pilibhit",
+    "state": "Uttar Pradesh",
+    "fees_per_year": 21000,
+    "bond_details": "No"
+  },
+  {
+    "id": 37,
+    "college_name": "S.R.M. Govt. Ayurvedic College & Hospital, Bareilly",
+    "state": "Uttar Pradesh",
+    "fees_per_year": 22000,
+    "bond_details": "No"
+  },
+  {
+    "id": 38,
+    "college_name": "Govt. Ayurved Medical College, Haridwar",
+    "state": "Uttarakhand",
+    "fees_per_year": 85000,
+    "bond_details": "No"
+  },
+  {
+    "id": 39,
+    "college_name": "Govt. Ayurvedic College & Hospital, Patna",
+    "state": "Bihar",
+    "fees_per_year": 28900,
+    "bond_details": "No"
+  },
+  {
+    "id": 40,
+    "college_name": "Baba Khetanath Govt. Ayurvedic College & Hospital, Mahendragarh",
+    "state": "Haryana",
+    "fees_per_year": 15482,
+    "bond_details": "₹5,00,000 + Total Tuition Fees"
+  },
+  {
+    "id": 41,
+    "college_name": "Shri Maru Singh Memorial Institute of Ayurved, Sonipat",
+    "state": "Haryana",
+    "fees_per_year": 67500,
+    "bond_details": "₹6,35,000"
+  },
+  {
+    "id": 42,
+    "college_name": "Govt. Ayurved College & Hospital, Gwalior",
+    "state": "Madhya Pradesh",
+    "fees_per_year": 64275,
+    "bond_details": "₹2,00,000"
+  },
+  {
+    "id": 43,
+    "college_name": "North Eastern Institute of Ayurveda and Folk Medicine Research, Pasighat",
+    "state": "Arunachal Pradesh",
+    "fees_per_year": 42100,
+    "bond_details": "No"
+  },
+  {
+    "id": 44,
+    "college_name": "Govt. Autonomous Ashtang Ayurved College, Indore",
+    "state": "Madhya Pradesh",
+    "fees_per_year": 82735,
+    "bond_details": "₹2,00,000"
+  },
+  {
+    "id": 45,
+    "college_name": "Govt. Ayurveda Medical College & Hospital, Mysore",
+    "state": "Karnataka",
+    "fees_per_year": 25000,
+    "bond_details": "No"
+  },
+  {
+    "id": 46,
+    "college_name": "Ashtang Ayurved Mahavidyalaya, Pune",
+    "state": "Maharashtra",
+    "fees_per_year": 60850,
+    "bond_details": "No"
+  },
+  {
+    "id": 47,
+    "college_name": "Ayurvidya Prasarak Mandal's Ayurved Mahavidyalaya, Sion, Mumbai",
+    "state": "Maharashtra",
+    "fees_per_year": 60230,
+    "bond_details": "₹10,00,000"
+  },
+  {
+    "id": 48,
+    "college_name": "Govt. Ayurveda College & Hospital, Bilaspur",
+    "state": "Chhattisgarh",
+    "fees_per_year": 26000,
+    "bond_details": "Yes Available"
+  },
+  {
+    "id": 49,
+    "college_name": "Govt. Ayurveda Medical College, Osmanabad",
+    "state": "Maharashtra",
+    "fees_per_year": 72400,
+    "bond_details": "Yes Available"
+  },
+  {
+    "id": 50,
+    "college_name": "Govt. Ayurveda College, Thiruvananthapuram",
+    "state": "Kerala",
+    "fees_per_year": 29260,
+    "bond_details": "₹10,00,000"
+  },
+  {
+    "id": 51,
+    "college_name": "Swami Kalyandev Government Ayurved College, Muzaffarnagar",
+    "state": "Uttar Pradesh",
+    "fees_per_year": 19000,
+    "bond_details": "No"
+  },
+  {
+    "id": 52,
+    "college_name": "Govt. Ayurved Mahavidyalaya, Kota",
+    "state": "Rajasthan",
+    "fees_per_year": 8813,
+    "bond_details": "No"
+  },
+  {
+    "id": 53,
+    "college_name": "Government Ayurved College & Hospital, Banda",
+    "state": "Uttar Pradesh",
+    "fees_per_year": 21000,
+    "bond_details": "No"
+  },
+  {
+    "id": 54,
+    "college_name": "Government Ayurved Mahavidyalaya, Sikar",
+    "state": "Rajasthan",
+    "fees_per_year": 8813,
+    "bond_details": "No"
+  },
+  {
+    "id": 55,
+    "college_name": "University College of Ayurved, Dr. S.R., Jodhpur",
+    "state": "Rajasthan",
+    "fees_per_year": 90000,
+    "bond_details": "Submit Total Tuition Fees"
+  },
+  {
+    "id": 56,
+    "college_name": "Govt. Ayurveda Mahavidyalaya, Bikaner",
+    "state": "Rajasthan",
+    "fees_per_year": 8813,
+    "bond_details": "No"
+  },
+  {
+    "id": 57,
+    "college_name": "Govt. Ayurved Mahavidyalaya Evum Chikitsalaya, Bharatpur",
+    "state": "Rajasthan",
+    "fees_per_year": 8813,
+    "bond_details": "No"
+  },
+  {
+    "id": 58,
+    "college_name": "Govt. Ayurveda Mahavidyalaya, Ajmer",
+    "state": "Rajasthan",
+    "fees_per_year": 8813,
+    "bond_details": "No"
+  },
+  {
+    "id": 59,
+    "college_name": "Anantha Laxmi Govt. Ayurved College, Warangal",
+    "state": "Telangana",
+    "fees_per_year": 15000,
+    "bond_details": "₹1,00,000"
+  },
+  {
+    "id": 60,
+    "college_name": "Govt. Ayurved College, Jalukbari, Guwahati",
+    "state": "Assam",
+    "fees_per_year": 2800,
+    "bond_details": "₹20,00,000"
+  },
+  {
+    "id": 61,
+    "college_name": "Sri Venkateswara Ayurvedic College, Tirupati",
+    "state": "Andhra Pradesh",
+    "fees_per_year": 4712,
+    "bond_details": "No"
+  },
+  {
+    "id": 62,
+    "college_name": "Government Ayurved College, Rewa",
+    "state": "Madhya Pradesh",
+    "fees_per_year": 107225,
+    "bond_details": "₹2,00,000"
+  },
+  {
+    "id": 63,
+    "college_name": "Govt. Ayurveda College & Hospital, Baramati, Pune",
+    "state": "Maharashtra",
+    "fees_per_year": 65400,
+    "bond_details": "No"
+  },
+  {
+    "id": 64,
+    "college_name": "Dr. B.R.K.R. Govt. Ayurveda College, Hyderabad",
+    "state": "Telangana",
+    "fees_per_year": 18982,
+    "bond_details": "₹1,00,000"
+  },
+  {
+    "id": 65,
+    "college_name": "Govt. Ayurved College, Jabalpur",
+    "state": "Madhya Pradesh",
+    "fees_per_year": 93150,
+    "bond_details": "₹2,00,000"
+  },
+  {
+    "id": 66,
+    "college_name": "Dr. N.R. Sastry Govt. Ayurvedic College, Vijayawada",
+    "state": "Andhra Pradesh",
+    "fees_per_year": 12457,
+    "bond_details": "No"
+  },
+  {
+    "id": 67,
+    "college_name": "KATS Ayurved Medical College, Ganjam",
+    "state": "Odisha",
+    "fees_per_year": 13421,
+    "bond_details": "No"
+  },
+  {
+    "id": 68,
+    "college_name": "Pt. Shivnath Shastri Govt. Autonomous Ayurved College, Burhanpur",
+    "state": "Madhya Pradesh",
+    "fees_per_year": 103436,
+    "bond_details": "₹2,00,000"
+  },
+  {
+    "id": 69,
+    "college_name": "Govt. Ayurveda College, Kannur",
+    "state": "Kerala",
+    "fees_per_year": 17515,
+    "bond_details": "₹10,00,000"
+  },
+  {
+    "id": 70,
+    "college_name": "Government Ayurved College, Bolangir",
+    "state": "Odisha",
+    "fees_per_year": 10600,
+    "bond_details": "No"
+  },
+  {
+    "id": 71,
+    "college_name": "Taranath Govt. Ayurved College, Bellary",
+    "state": "Karnataka",
+    "fees_per_year": 25000,
+    "bond_details": "No"
+  },
+  {
+    "id": 72,
+    "college_name": "Govt. Ayurveda Medical College and Teaching Hospital, Shimoga",
+    "state": "Karnataka",
+    "fees_per_year": 35000,
+    "bond_details": "No"
+  },
+  {
+    "id": 73,
+    "college_name": "Ayurved Mahavidyalaya and Hospital, Old Hubli",
+    "state": "Karnataka",
+    "fees_per_year": 60000,
+    "bond_details": "No"
+  },
+  {
+    "id": 74,
+    "college_name": "Rajiv Gandhi Ayurveda Medical College, Mahe",
+    "state": "Puducherry",
+    "fees_per_year": 74000,
+    "bond_details": "₹2,50,000"
+  },
+  {
+    "id": 75,
+    "college_name": "Government Ayurved College and Hospital, Jalgaon",
+    "state": "Maharashtra",
+    "fees_per_year": 58500,
+    "bond_details": "No"
+  },
+  {
+    "id": 76,
+    "college_name": "Govt. Ayurveda College, Ernakulam",
+    "state": "Kerala",
+    "fees_per_year": 17660,
+    "bond_details": "₹10,00,000"
+  },
+  {
+    "id": 77,
+    "college_name": "Ayurved Seva Sangh Ayurved Mahavidyalaya, Nashik",
+    "state": "Maharashtra",
+    "fees_per_year": 59817,
+    "bond_details": "No"
+  },
+  {
+    "id": 78,
+    "college_name": "Shri Gangadhar Shastri Gune Ayurved Mahavidyalaya, Ahmednagar",
+    "state": "Maharashtra",
+    "fees_per_year": 72800,
+    "bond_details": "No"
+  },
+  {
+    "id": 79,
+    "college_name": "Govt. Ayurveda Medical College and Hospital, Nagercoil",
+    "state": "Tamil Nadu",
+    "fees_per_year": 11750,
+    "bond_details": "Submit Total Tuition Fees"
+  },
+  {
+    "id": 80,
+    "college_name": "Vaidyaratnam Ayurved College, Thrissur",
+    "state": "Kerala",
+    "fees_per_year": 28535,
+    "bond_details": "No"
+  },
+  {
+    "id": 81,
+    "college_name": "JSVV Samsthe's DGM Ayurvedic Medical College and Hospital, Gadag",
+    "state": "Karnataka",
+    "fees_per_year": 45500,
+    "bond_details": "Yes Available"
+  },
+  {
+    "id": 82,
+    "college_name": "Govt. Ayurvedic Medical College, Akhnoor",
+    "state": "Jammu & Kashmir",
+    "fees_per_year": 27060,
+    "bond_details": "No"
+  },
+  {
+    "id": 83,
+    "college_name": "Vasant Dada Patil Ayurved Medical College, Sangli",
+    "state": "Maharashtra",
+    "fees_per_year": 85000,
+    "bond_details": "Not Mentioned"
+  },
+  {
+    "id": 84,
+    "college_name": "Vidarbha Ayurved Mahavidyalaya, Amravati",
+    "state": "Maharashtra",
+    "fees_per_year": 119200,
+    "bond_details": "Yes"
+  },
+  {
+    "id": 85,
+    "college_name": "Seth Chandanmal Mutha Aryangla Vaidyak Mahavidyalaya, Satara",
+    "state": "Maharashtra",
+    "fees_per_year": 107000,
+    "bond_details": "No"
+  },
+  {
+    "id": 86,
+    "college_name": "Dayabhai Maoji Majithiya Ayurved Mahavidyalaya, Yavatmal",
+    "state": "Maharashtra",
+    "fees_per_year": 112200,
+    "bond_details": "No"
+  },
+  {
+    "id": 87,
+    "college_name": "Karamvir Vyankatrao Tanaji Randhir Ayurved College, Boradi, Dhule",
+    "state": "Maharashtra",
+    "fees_per_year": 90000,
+    "bond_details": "No"
+  },
+  {
+    "id": 88,
+    "college_name": "RJVS Bhaisaheb Sawant Ayurved Mahavidyalaya, Sawantwadi",
+    "state": "Maharashtra",
+    "fees_per_year": 110000,
+    "bond_details": "₹3,00,000"
+  },
+  {
+    "id": 89,
+    "college_name": "Shri Gurudeo Ayurved Mahavidyalaya, Amravati",
+    "state": "Maharashtra",
+    "fees_per_year": 110600,
+    "bond_details": "No"
+  },
+  {
+    "id": 90,
+    "college_name": "Radhakisan Toshniwal Ayurved Mahavidyalaya, Akola",
+    "state": "Maharashtra",
+    "fees_per_year": 111770,
+    "bond_details": "No"
+  }
+]
