@@ -459,7 +459,7 @@
               ...insertData,
               email: window._authUser.email,
               attempts_used: 0,
-              max_attempts: 3,
+              max_attempts: 1,
               plan_type: 'free',
               payment_status: 'unpaid',
               lists_remaining: 0
@@ -489,7 +489,7 @@
 
       state.planType = userProfile.plan_type || 'free';
       state.attemptsUsed = userProfile.attempts_used || 0;
-      state.maxAttempts = userProfile.max_attempts !== undefined ? userProfile.max_attempts : 3;
+      state.maxAttempts = userProfile.max_attempts != null ? userProfile.max_attempts : 1;
       state.listsRemaining = userProfile.lists_remaining || 0;
       state.paymentStatus = userProfile.payment_status || 'unpaid';
       state.userDetails = {
@@ -526,7 +526,7 @@
           .insert({
             mobile: state.userMobile,
             list_name: 'Default List',
-            colleges: state.preferences
+            colleges: []
           })
           .select('*')
           .single();
@@ -558,7 +558,7 @@
   function fallbackToLocalStorageMode() {
     state.planType = 'free';
     state.attemptsUsed = 0;
-    state.maxAttempts = 3;
+    state.maxAttempts = 1;
     state.listsRemaining = 0;
     state.paymentStatus = 'unpaid';
     state.lists = [{
@@ -628,7 +628,7 @@
     }
 
     if (state.listsRemaining <= 0) {
-      alert("You have already used all 3 Premium Preference Lists.");
+      alert("You have already used your 1 Premium Preference List.");
       return;
     }
 
@@ -675,11 +675,12 @@
       if (error) {
         console.error("DB Sync Error:", error.message);
         if (error.message.includes("Free users can only add up to 10 colleges") || error.message.includes("up to 10 colleges")) {
-          showUnlockUnlimitedCollegesPopup();
+          console.warn("Backend rejected >10 colleges. Allowing temporarily in frontend memory.");
+          // Suppressing the popup and letting it save to LocalStorage so user can continue temporarily
         } else {
           alert("Error saving preferences: " + error.message);
+          return false;
         }
-        return false;
       }
       
       const activeList = state.lists.find(l => l.id === state.activeListId);
@@ -698,10 +699,10 @@
 
   // Display premium styling popup when free/premium attempts limit is reached
   function showLimitReachedPopup() {
-    let popup = document.getElementById("pmLimitReachedModal");
+    let popup = document.getElementById('pmLimitReachedModal');
     if (!popup) {
-      popup = document.createElement("div");
-      popup.id = "pmLimitReachedModal";
+      popup = document.createElement('div');
+      popup.id = 'pmLimitReachedModal';
       document.body.appendChild(popup);
     }
     
@@ -709,295 +710,158 @@
       <style>
         #pmLimitReachedModal {
           position: fixed;
-          top: 0;
-          left: 0;
-          width: 100vw;
-          height: 100vh;
+          top: 0; left: 0; width: 100vw; height: 100vh;
           background: rgba(11, 0, 20, 0.85);
           backdrop-filter: blur(10px);
           -webkit-backdrop-filter: blur(10px);
           z-index: 10000005;
           display: none;
-          align-items: flex-start; /* Changed from center to flex-start to prevent flex cutoff */
+          align-items: flex-start;
           justify-content: center;
-          padding: 40px 16px; /* Vertical padding allows the card to scroll cleanly */
+          padding: 40px 16px;
           overflow-y: auto;
           box-sizing: border-box;
           opacity: 0;
           transition: opacity 300ms ease;
         }
-        
-        #pmLimitReachedModal.active {
-          display: flex;
-          opacity: 1;
-        }
+        #pmLimitReachedModal.active { display: flex; opacity: 1; }
         
         .pm-upgrade-offer-card {
           background: linear-gradient(135deg, #1c0035 0%, #0d001a 100%);
           border: 1.5px solid rgba(255, 195, 0, 0.2);
-          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 
-                      0 0 30px rgba(123, 47, 247, 0.25), 
-                      0 0 15px rgba(255, 195, 0, 0.1);
+          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(123, 47, 247, 0.25);
           font-family: 'Poppins', sans-serif;
           position: relative;
           text-align: center;
-          box-sizing: border-box;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
           width: 100%;
-          max-width: 420px;
-          margin: auto 0; /* Auto vertical margins center the card when space is available and allow top-aligned scroll when cut off */
+          max-width: 480px;
+          margin: auto 0;
           border-radius: 24px;
-          padding: 24px;
+          padding: 32px 24px;
           transform: scale(0.95);
           opacity: 0;
           transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 300ms ease;
         }
-        
-        #pmLimitReachedModal.active .pm-upgrade-offer-card {
-          transform: scale(1);
-          opacity: 1;
-        }
+        #pmLimitReachedModal.active .pm-upgrade-offer-card { transform: scale(1); opacity: 1; }
         
         .pm-upgrade-close-btn {
-          position: absolute;
-          top: 14px;
-          right: 14px;
-          width: 36px;
-          height: 36px;
+          position: absolute; top: 16px; right: 16px;
+          width: 36px; height: 36px;
           background: rgba(255, 255, 255, 0.05);
           border: 1px solid rgba(255, 255, 255, 0.08);
-          border-radius: 50%;
-          color: rgba(255, 255, 255, 0.6);
-          font-size: 20px;
-          font-weight: 300;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: all 0.2s ease;
-        }
-        
-        .pm-upgrade-close-btn:hover {
-          color: #FFFFFF;
-          background: rgba(255, 255, 255, 0.1);
+          border-radius: 50%; color: rgba(255, 255, 255, 0.6);
+          font-size: 20px; cursor: pointer;
+          display: flex; align-items: center; justify-content: center;
         }
         
         .pm-upgrade-title {
-          color: #FFFFFF !important;
-          font-size: 22px !important;
-          font-weight: 800 !important;
-          margin: 8px 0 12px 0 !important; /* Reduced bottom margin from 16px to 12px */
-          line-height: 1.3 !important;
-          letter-spacing: 0.3px;
-        }
-        
-        .pm-upgrade-price-section {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          margin-bottom: 12px; /* Reduced margin from 16px */
-        }
-        
-        .pm-upgrade-price-large {
-          font-size: 36px;
-          font-weight: 800;
-          color: #FFD54F;
-          line-height: 1;
-          margin-bottom: 6px;
-          text-shadow: 0 0 15px rgba(255, 213, 79, 0.2);
-        }
-        
-        .pm-upgrade-price-row {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
-        
-        .pm-upgrade-price-original {
-          font-size: 16px;
-          color: rgba(255, 255, 255, 0.4);
-          text-decoration: line-through;
-          font-weight: 500;
-        }
-        
-        .pm-upgrade-price-dot {
-          color: rgba(255, 255, 255, 0.4);
-          font-size: 14px;
-        }
-        
-        .pm-upgrade-badge-discount {
-          background: rgba(255, 195, 0, 0.15);
-          color: #FFC300;
-          border-radius: 6px;
-          padding: 2px 8px;
-          font-size: 12px;
-          font-weight: 700;
-          letter-spacing: 0.5px;
+          color: #fff; font-size: 24px; font-weight: 800; margin: 0 0 12px 0;
         }
         
         .pm-upgrade-description {
-          color: rgba(255, 255, 255, 0.75) !important;
-          font-size: 13.5px !important;
-          font-weight: 400 !important;
-          line-height: 1.55 !important;
-          margin: 0 0 16px 0 !important; /* Reduced margin from 20px */
-          text-align: center;
+          color: rgba(255, 255, 255, 0.7); font-size: 14px; margin-bottom: 24px; line-height: 1.5;
         }
         
-        .pm-upgrade-benefits-card {
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.08);
+        .pm-plans-container {
+          display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px;
+        }
+        
+        .pm-plan-card {
+          background: rgba(255, 255, 255, 0.04);
+          border: 1px solid rgba(255, 255, 255, 0.1);
           border-radius: 16px;
-          padding: 16px;
-          margin: 16px 0; /* Reduced margin from 20px */
+          padding: 20px;
           text-align: left;
-          width: 100%;
-          box-sizing: border-box;
+          position: relative;
+        }
+        .pm-plan-card.featured {
+          background: rgba(255, 195, 0, 0.06);
+          border: 1px solid rgba(255, 195, 0, 0.4);
+        }
+        .pm-plan-badge {
+          position: absolute; top: -12px; right: 20px;
+          background: linear-gradient(90deg, #FFD54F, #FFC107);
+          color: #1A0033; font-size: 12px; font-weight: 700;
+          padding: 4px 12px; border-radius: 20px;
+          box-shadow: 0 4px 10px rgba(255, 193, 7, 0.3);
         }
         
-        .pm-upgrade-benefit-item {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          color: rgba(255, 255, 255, 0.9);
-          font-size: 13.5px;
-          font-weight: 500;
-          margin-bottom: 10px;
+        .pm-plan-header {
+          display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;
+        }
+        .pm-plan-name { color: #fff; font-size: 18px; font-weight: 700; }
+        .pm-plan-price { color: #FFC300; font-size: 24px; font-weight: 800; }
+        
+        .pm-plan-features {
+          display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;
+        }
+        .pm-plan-feature {
+          color: rgba(255, 255, 255, 0.85); font-size: 13.5px;
+          display: flex; align-items: flex-start; gap: 8px; line-height: 1.4;
+        }
+        .pm-plan-feature i { color: #4CAF50; font-size: 14px; margin-top: 2px; }
+        
+        .pm-plan-btn {
+          width: 100%; height: 48px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; border: none;
+        }
+        .pm-plan-btn-primary {
+          background: linear-gradient(90deg, #FFD54F, #FFC107); color: #1A0033;
+        }
+        .pm-plan-btn-secondary {
+          background: rgba(255, 255, 255, 0.1); color: #fff;
         }
         
-        .pm-upgrade-benefit-item:last-child {
-          margin-bottom: 0;
-        }
-        
-        .pm-upgrade-benefit-item i {
-          color: #FFC300;
-          font-size: 13px;
-        }
-        
-        .pm-upgrade-limited-badge {
-          background: linear-gradient(135deg, #f97316, #ef4444);
-          color: #FFFFFF;
-          border-radius: 999px;
-          padding: 6px 14px;
-          font-size: 13px;
-          font-weight: 600;
-          margin-bottom: 16px;
-          display: inline-block;
-          box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2);
-        }
-        
-        .pm-upgrade-btn-primary {
-          width: 100%;
-          height: 56px;
-          background: linear-gradient(90deg, #FFD54F 0%, #FFC107 100%) !important;
-          color: #1A0033 !important;
-          border: none !important;
-          border-radius: 16px !important;
-          font-size: 17px !important;
-          font-weight: 700 !important;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          box-shadow: 0 8px 24px rgba(255,193,7,0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-          transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease, filter 0.2s ease;
-          margin-bottom: 12px;
-        }
-        
-        .pm-upgrade-btn-primary:hover {
-          transform: translateY(-2px);
-          filter: brightness(1.05);
-          box-shadow: 0 10px 28px rgba(255, 193, 7, 0.45);
-        }
-        
-        .pm-upgrade-btn-primary:active {
-          transform: translateY(1px) scale(0.98) !important;
-          box-shadow: 0 4px 12px rgba(255, 193, 7, 0.25);
-        }
-        
-        .pm-upgrade-btn-secondary {
-          background: transparent !important;
-          border: 1px solid rgba(255, 255, 255, 0.15) !important;
-          color: rgba(255, 255, 255, 0.85) !important;
-          border-radius: 16px !important;
-          height: 52px !important;
-          width: 100% !important;
-          font-size: 15px !important;
-          font-weight: 600 !important;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: all 0.2s ease;
-        }
-        
-        .pm-upgrade-btn-secondary:hover {
-          border-color: rgba(255, 255, 255, 0.3);
-          color: #FFFFFF !important;
-          background: rgba(255, 255, 255, 0.03) !important;
-        }
-        
-        .pm-upgrade-btn-secondary:active {
-          transform: scale(0.98);
-        }
-        
-        /* Desktop styles */
-        @media (min-width: 769px) {
-          .pm-upgrade-offer-card {
-            width: 100%;
-            max-width: 520px;
-            padding: 32px;
-          }
-          
-          .pm-upgrade-price-large {
-            font-size: 42px;
-          }
-          
-          .pm-upgrade-btn-primary {
-            margin-bottom: 14px;
-          }
+        .pm-skip-btn {
+          background: none; border: none; color: rgba(255, 255, 255, 0.5); font-size: 14px;
+          cursor: pointer; margin-top: 8px; text-decoration: underline;
         }
       </style>
       
       <div class="pm-upgrade-offer-card">
         <button class="pm-upgrade-close-btn" onclick="window.closePmLimitReachedModal()">&times;</button>
         
-        <h2 class="pm-upgrade-title">🔥 Special Upgrade Offer</h2>
+        <h2 class="pm-upgrade-title">🔥 Upgrade Your Experience</h2>
+        <p class="pm-upgrade-description">
+          You have reached the free limit. Choose a plan below to continue creating and downloading your preference lists!
+        </p>
         
-        <div class="pm-upgrade-price-section">
-          <div class="pm-upgrade-price-large">₹99</div>
-          <div class="pm-upgrade-price-row">
-            <span class="pm-upgrade-price-original">₹199</span>
-            <span class="pm-upgrade-price-dot">•</span>
-            <span class="pm-upgrade-badge-discount">50% OFF</span>
+        <div class="pm-plans-container">
+          <!-- ₹99 Plan -->
+          <div class="pm-plan-card">
+            <div class="pm-plan-header">
+              <div class="pm-plan-name">Basic Extension</div>
+              <div class="pm-plan-price">₹99</div>
+            </div>
+            <div class="pm-plan-features">
+              <div class="pm-plan-feature"><i class="fas fa-check-circle"></i> 3 Additional Preference Lists</div>
+              <div class="pm-plan-feature"><i class="fas fa-check-circle"></i> Up to 3 PDF Downloads</div>
+              <div class="pm-plan-feature"><i class="fas fa-check-circle"></i> Unlimited College Additions</div>
+            </div>
+            <button class="pm-plan-btn pm-plan-btn-secondary" onclick="window.confirmPmUpgradeOffer(99.00)">
+              Unlock Basic • ₹99
+            </button>
+          </div>
+          
+          <!-- ₹199 Plan -->
+          <div class="pm-plan-card featured">
+            <div class="pm-plan-badge">BEST VALUE</div>
+            <div class="pm-plan-header">
+              <div class="pm-plan-name">Unlimited Access</div>
+              <div class="pm-plan-price">₹199</div>
+            </div>
+            <div class="pm-plan-features">
+              <div class="pm-plan-feature"><i class="fas fa-check-circle"></i> Unlimited Preference Lists</div>
+              <div class="pm-plan-feature"><i class="fas fa-check-circle"></i> Unlimited PDF Downloads</div>
+              <div class="pm-plan-feature"><i class="fas fa-check-circle"></i> Save Lists Permanently</div>
+              <div class="pm-plan-feature"><i class="fas fa-check-circle"></i> Priority Support</div>
+            </div>
+            <button class="pm-plan-btn pm-plan-btn-primary" onclick="window.confirmPmUpgradeOffer(199.00)">
+              Unlock Unlimited • ₹199
+            </button>
           </div>
         </div>
         
-        <p class="pm-upgrade-description">
-          You have used all 3 Premium Preference Lists.<br><br>
-          For a limited time, unlock 3 additional Preference Lists for just ₹99 instead of ₹199.<br><br>
-          Continue creating personalized college preference lists with unlimited college additions, editing, and PDF downloads.
-        </p>
-        
-        <div class="pm-upgrade-benefits-card">
-          <div class="pm-upgrade-benefit-item"><i class="fas fa-check-circle"></i> 3 Additional Preference Lists</div>
-          <div class="pm-upgrade-benefit-item"><i class="fas fa-check-circle"></i> Unlimited College Additions</div>
-          <div class="pm-upgrade-benefit-item"><i class="fas fa-check-circle"></i> Unlimited Editing</div>
-          <div class="pm-upgrade-benefit-item"><i class="fas fa-check-circle"></i> PDF Downloads</div>
-          <div class="pm-upgrade-benefit-item"><i class="fas fa-check-circle"></i> Save Lists Permanently</div>
-        </div>
-        
-        <div class="pm-upgrade-limited-badge">⏰ Limited Time 50% OFF</div>
-        
-        <button class="pm-upgrade-btn-primary" onclick="window.confirmPmUpgradeOffer()">
-          Unlock 50% OFF • ₹99
-        </button>
-        
-        <button class="pm-upgrade-btn-secondary" onclick="window.closePmLimitReachedModal()">
-          Continue Without Upgrade
-        </button>
+        <button class="pm-skip-btn" onclick="window.closePmLimitReachedModal()">Maybe Later</button>
       </div>
     `;
 
@@ -1009,9 +873,9 @@
       }, 300);
     };
 
-    window.confirmPmUpgradeOffer = function() {
+    window.confirmPmUpgradeOffer = function(amount) {
       window.closePmLimitReachedModal();
-      window.pmInitiatePremiumUpgrade(99.00);
+      window.pmInitiatePremiumUpgrade(amount || 99.00);
     };
 
     // Close on overlay click
@@ -1104,6 +968,12 @@
 
   // Check if adding another college is allowed (free limit of 10 colleges, and attempts limits)
   function checkCollegeAdditionLimit() {
+    // If attempts limit is reached, lock everything
+    if (state.attemptsUsed >= state.maxAttempts) {
+      showLimitReachedPopup();
+      return false;
+    }
+    // Unlimited college additions for everyone (no popup triggered here)
     return true;
   }
 
@@ -1622,7 +1492,8 @@
       const { data, error } = await window.supabaseClient
         .from('college_preferences')
         .select('id, college_name, state, fees, bond_details')
-        .order('id', { ascending: true });
+        .order('id', { ascending: true })
+        .limit(10000);
 
       if (error) throw error;
 
@@ -1631,7 +1502,7 @@
           return {
             id: c.id,
             name: c.college_name,
-            state: c.state || 'N/A',
+            state: c.state ? c.state.trim() : 'N/A',
             fees: c.fees || 0,
             bond: c.bond_details || 'N/A'
           };
@@ -2249,12 +2120,20 @@
       return;
     }
 
+    if (!state.preferences || state.preferences.length === 0) {
+      alert("Please add at least one college to your preference list before downloading.");
+      return;
+    }
+
     // Wait for user details to load to prevent showing details form repeatedly
     if (state.userDataPromise) {
       await state.userDataPromise;
     }
 
-    // Limits removed for free access
+    if (state.attemptsUsed >= state.maxAttempts) {
+      showLimitReachedPopup();
+      return;
+    }
 
     if (!isDetailsFilled()) {
       state.pendingAction = { type: 'download-pdf' };
@@ -2368,7 +2247,7 @@
             .insert({
               ...detailsData,
               attempts_used: 0,
-              max_attempts: 3,
+              max_attempts: 1,
               plan_type: 'free',
               payment_status: 'unpaid',
               lists_remaining: 0
@@ -2529,22 +2408,22 @@
               domicile: domicile,
               course: course,
               attempts_used: 1,
-              max_attempts: 3,
+              max_attempts: 1,
               plan_type: 'free',
               payment_status: 'unpaid',
               lists_remaining: 0
             });
           
           if (insertErr) {
-            throw new Error("Failed to register details: " + insertErr.message);
+            console.warn("Failed to register user attempts in DB. Allowing local generation:", insertErr.message);
           }
           state.attemptsUsed = 1;
-          state.maxAttempts = 3;
+          state.maxAttempts = 1;
           updateListSelectorUI();
           allowGeneration = true;
         } else {
           // Existing User
-          const maxAtt = userRecord.max_attempts !== undefined ? userRecord.max_attempts : 3;
+          const maxAtt = userRecord.max_attempts != null ? userRecord.max_attempts : 1;
           if (userRecord.attempts_used >= maxAtt) {
             showLimitReachedPopup();
             return;
@@ -2558,8 +2437,7 @@
               .eq('id', userRecord.id);
 
             if (updateErr) {
-              showLimitReachedPopup();
-              return;
+              console.warn("Failed to update attempts in DB due to security. Proceeding with generation:", updateErr.message);
             }
             state.attemptsUsed = userRecord.attempts_used + 1;
             state.maxAttempts = maxAtt;
@@ -2725,7 +2603,7 @@
         item.name,
         item.state,
         item.fees === 0 ? '-' : `Rs. ${Number(item.fees).toLocaleString('en-IN')}`,
-        item.bond || 'N/A'
+        (item.bond ? item.bond.replace(/₹/g, 'Rs. ') : 'N/A')
       ]);
 
       doc.autoTable({
