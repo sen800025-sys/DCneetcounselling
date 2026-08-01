@@ -487,3 +487,14 @@ Only then deployment is allowed ✅
 This file must always be reviewed before implementing any system change.
 
 Failure to follow this protocol risks system instability and is not allowed.
+
+---
+
+# Blog Download Button Styling Rule
+
+When creating or modifying blog posts, Agent MUST:
+
+* Always style download buttons with a green background (e.g., background:#28a745)
+* Always style download buttons with white text (e.g., color:#ffffff)
+
+This applies to all anchor links or buttons meant for downloading files in blog contents.

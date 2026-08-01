@@ -8457,7 +8457,7 @@
   <script defer src="js/app_v2.js?v=2026.05.31.3"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.6.0/jspdf.plugin.autotable.min.js"></script>
-  <script defer src="js/preference_maker.js?v=2026.06.02.7"></script>
+  <script defer src="js/preference_maker.js?v=2026.07.29.1"></script>
 
   <!-- Auth Popup Modal -->
   <div id="authModal" style="
@@ -10898,7 +10898,7 @@
         text-align: left;
         line-height: 1.4;
       }
-      .bd-content th { background: rgba(255,255,255,0.15); color: #fff !important; font-weight: 700; }
+      .bd-content th { background: #f2f2f2 !important; color: #000 !important; font-weight: 700; }
       
       @media (max-width: 600px) {
         .bd-content table { font-size: 12px; }
@@ -11400,7 +11400,7 @@
 
                 const ctaHtml = `
 <div style="text-align:center; margin:30px 0; clear:both;">
-  <a href="https://chat.whatsapp.com/C6FfV9MqTHd8mU0CliYW2T?s=cl&p=a&ilr=4" target="_blank"
+  <a href="https://chat.whatsapp.com/Lbo7phiz2dzEpKQsPbGEAu?s=cl&p=a&ilr=4" target="_blank"
      style="background:#25D366;color:white !important;padding:12px 20px;margin:5px;border-radius:8px;text-decoration:none !important;font-weight:bold;display:inline-block;box-shadow:0 4px 10px rgba(37,211,102,0.3);transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
      <i class="fa-brands fa-whatsapp" style="margin-right:6px;font-size:16px;"></i>Join WhatsApp Group
   </a>
@@ -11410,7 +11410,7 @@
   </a>
 </div>`;
 
-                if (!contentHtml.includes('https://chat.whatsapp.com/C6FfV9MqTHd8mU0CliYW2T')) {
+                if (!contentHtml.includes('https://chat.whatsapp.com/Lbo7phiz2dzEpKQsPbGEAu')) {
                   let pCount = 0;
                   let insertIndex = -1;
                   let searchIdx = 0;
@@ -11464,8 +11464,8 @@
 
                 if (pk) {
                   let h1 = tempDiv.querySelector('h1');
-                  if (!h1) { h1 = document.createElement('h1'); tempDiv.prepend(h1); }
-                  if (!h1.textContent.toLowerCase().includes(pk.toLowerCase())) { h1.textContent = h1.textContent + " - " + pk; }
+                  if (!h1) { h1 = document.createElement('h1'); h1.textContent = data.title; tempDiv.prepend(h1); }
+                  else if (!h1.textContent.toLowerCase().includes(pk.toLowerCase())) { h1.textContent = h1.textContent + " - " + pk; }
                   const firstP = tempDiv.querySelector('p');
                   if (firstP && !firstP.textContent.toLowerCase().includes(pk.toLowerCase())) { firstP.innerHTML = `<strong>${pk}</strong>: ${firstP.innerHTML}`; }
                 }
@@ -13110,7 +13110,7 @@
 <div id="wa-popup-overlay">
   <div id="wa-blog-popup">
     <button id="wa-blog-popup-close">&times;</button>
-    <a href="https://whatsapp.com/channel/0029Vb5vTfr5Ui2bSSyw4L46" target="_blank" id="wa-blog-popup-link">
+    <a href="https://chat.whatsapp.com/Lbo7phiz2dzEpKQsPbGEAu?s=cl&p=a&ilr=4" target="_blank" id="wa-blog-popup-link">
       <img src="assets/banner%20pop%20up.webp" alt="Join WhatsApp Group" loading="lazy" />
     </a>
   </div>
@@ -15667,7 +15667,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <div class="exit-popup-overlay" id="exitPopupOverlay">
   <div class="exit-popup-content">
     <div class="exit-close-btn" id="exitCloseBtn"><i class="fas fa-times"></i></div>
-    <a href="https://chat.whatsapp.com/C6FfV9MqTHd8mU0CliYW2T?s=cl&p=a&ilr=4" target="_blank">
+    <a href="https://chat.whatsapp.com/Lbo7phiz2dzEpKQsPbGEAu?s=cl&p=a&ilr=4" target="_blank">
       <img src="assets/banner pop up.webp" alt="Special Offer" class="exit-popup-img">
     </a>
   </div>
