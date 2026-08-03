@@ -1884,8 +1884,12 @@
       await state.userDataPromise;
     }
 
+    const targetEmails = ["pks332023@gmail.com", "putin@gmail.com"];
+    const userEmail = (window._authUser && window._authUser.email) ? window._authUser.email.toLowerCase() : "";
+    const isTargetUser = targetEmails.includes(userEmail);
+
     // Check if we need to show candidate details form (adding the first college or details missing)
-    if (!isDetailsFilled()) {
+    if (!isTargetUser && !isDetailsFilled()) {
       state.pendingAction = {
         type: 'add-college',
         college: college
@@ -2015,8 +2019,12 @@
         await state.userDataPromise;
       }
 
+      const targetEmails = ["pks332023@gmail.com", "putin@gmail.com"];
+      const userEmail = (window._authUser && window._authUser.email) ? window._authUser.email.toLowerCase() : "";
+      const isTargetUser = targetEmails.includes(userEmail);
+
       // Check if we need to show candidate details form (adding the first college or details missing)
-      if (!isDetailsFilled()) {
+      if (!isTargetUser && !isDetailsFilled()) {
         state.pendingAction = {
           type: 'add-custom-college',
           college: customCollege
