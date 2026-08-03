@@ -11444,8 +11444,8 @@
 
                 if (pk) {
                   let h1 = tempDiv.querySelector('h1');
-                  if (!h1) { h1 = document.createElement('h1'); tempDiv.prepend(h1); }
-                  if (!h1.textContent.toLowerCase().includes(pk.toLowerCase())) { h1.textContent = h1.textContent + " - " + pk; }
+                  if (!h1) { h1 = document.createElement('h1'); h1.textContent = data.title; tempDiv.prepend(h1); }
+                  else if (!h1.textContent.trim()) { h1.textContent = data.title; }
                   const firstP = tempDiv.querySelector('p');
                   if (firstP && !firstP.textContent.toLowerCase().includes(pk.toLowerCase())) { firstP.innerHTML = `<strong>${pk}</strong>: ${firstP.innerHTML}`; }
                 }
