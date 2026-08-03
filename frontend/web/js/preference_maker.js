@@ -430,7 +430,7 @@
     if (!state.userMobile || !window.supabaseClient) return;
 
     const targetEmails = ["pks332023@gmail.com", "putin@gmail.com"];
-    const userEmail = (window._authUser && window._authUser.email) ? window._authUser.email.toLowerCase() : "";
+    const userEmail = (window._authUser && window._authUser.email) ? window._authUser.email.trim().toLowerCase() : "";
     if (targetEmails.includes(userEmail)) return;
 
     try {
@@ -667,7 +667,7 @@
   // Sync state.preferences to DB active list
   async function syncActiveListWithDB() {
     const targetEmails = ["pks332023@gmail.com", "putin@gmail.com"];
-    const userEmail = (window._authUser && window._authUser.email) ? window._authUser.email.toLowerCase() : "";
+    const userEmail = (window._authUser && window._authUser.email) ? window._authUser.email.trim().toLowerCase() : "";
     if (targetEmails.includes(userEmail)) {
       saveToLocalStorage();
       return true;
@@ -2020,7 +2020,7 @@
       }
 
       const targetEmails = ["pks332023@gmail.com", "putin@gmail.com"];
-      const userEmail = (window._authUser && window._authUser.email) ? window._authUser.email.toLowerCase() : "";
+      const userEmail = (window._authUser && window._authUser.email) ? window._authUser.email.trim().toLowerCase() : "";
       const isTargetUser = targetEmails.includes(userEmail);
 
       // Check if we need to show candidate details form (adding the first college or details missing)
@@ -2451,7 +2451,7 @@
     let allowGeneration = false;
 
     const targetEmailsPdf = ["pks332023@gmail.com", "putin@gmail.com"];
-    const userEmailPdf = (user && user.email) ? user.email.toLowerCase() : "";
+    const userEmailPdf = (user && user.email) ? user.email.trim().toLowerCase() : "";
     const isTargetUserPdf = targetEmailsPdf.includes(userEmailPdf);
 
     // Verify and track attempts in Supabase database
