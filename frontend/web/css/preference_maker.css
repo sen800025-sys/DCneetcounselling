@@ -324,20 +324,18 @@
   border-radius: 99px;
   font-size: 14px;
   font-weight: 600;
-  color: #FFFFFF;
+  color: #FFFFFF !important;
   text-align: center;
   white-space: nowrap;
+  background-color: var(--pm-accent-purple) !important;
 }
 
-/* Custom color classes for state badges based on JSON backgrounds mapping */
-.pm-badge-delhi { background-color: var(--pm-accent-purple); }
-.pm-badge-tamilnadu { background-color: var(--pm-accent-purple); }
-.pm-badge-gujarat { background-color: var(--pm-accent-purple); }
-.pm-badge-maharashtra { background-color: var(--pm-accent-purple); }
-.pm-badge-karnataka { background-color: var(--pm-accent-purple); }
-.pm-badge-uttarpradesh { background-color: var(--pm-accent-purple); }
-.pm-badge-puducherry { background-color: var(--pm-accent-purple); } /* fallback / custom state badge */
-.pm-badge-default { background-color: var(--pm-accent-purple); }
+/* Ensure all state badges in table have the same background color */
+.pm-badge,
+[class*="pm-badge-"] {
+  background-color: var(--pm-accent-purple) !important;
+  color: #FFFFFF !important;
+}
 
 .pm-fees {
   font-weight: 600;

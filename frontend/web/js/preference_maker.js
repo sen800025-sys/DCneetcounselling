@@ -35,7 +35,7 @@
     userMobile: null,
     planType: "free",
     attemptsUsed: 0,
-    maxAttempts: 3,
+    maxAttempts: 1,
     listsRemaining: 0,
     paymentStatus: "unpaid",
     lists: [],
@@ -153,7 +153,7 @@
 
       const { data: user, error } = await window.supabaseClient
         .from('preference_maker_users')
-        .select('attempts_used, is_unlimited')
+        .select('attempts_used, is_unlimited, max_attempts')
         .eq('email', email)
         .maybeSingle();
 
@@ -161,7 +161,7 @@
 
       if (!user) {
         statusDiv.style.color = "#22c55e";
-        statusDiv.innerHTML = `<i class="fas fa-check-circle"></i> Attempts Remaining: 3 / 3`;
+        statusDiv.innerHTML = `<i class="fas fa-check-circle"></i> Attempts Remaining: 1 / 1`;
         submitBtn.disabled = false;
         submitBtn.style.opacity = "1";
         submitBtn.style.cursor = "pointer";
@@ -173,22 +173,23 @@
           submitBtn.style.opacity = "1";
           submitBtn.style.cursor = "pointer";
         } else {
-          const remaining = Math.max(0, 3 - user.attempts_used);
+          const maxAtt = user.max_attempts != null ? user.max_attempts : 1;
+          const remaining = Math.max(0, maxAtt - user.attempts_used);
           if (remaining === 0) {
             statusDiv.style.color = "#ef4444";
-            statusDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> Attempts Remaining: 0 / 3 (Limit Reached)`;
+            statusDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> Attempts Remaining: 0 / ${maxAtt} (Limit Reached)`;
             submitBtn.disabled = true;
             submitBtn.style.opacity = "0.5";
             submitBtn.style.cursor = "not-allowed";
           } else if (remaining === 1) {
             statusDiv.style.color = "#ffc300";
-            statusDiv.innerHTML = `<span class="pm-attempts-warn-badge" style="background: rgba(255, 195, 0, 0.15); color: #FFC300; padding: 2px 6px; border-radius: 4px; display: inline-block;"><i class="fas fa-exclamation-triangle"></i> Attempts Remaining: 1 / 3 (Last attempt!)</span>`;
+            statusDiv.innerHTML = `<span class="pm-attempts-warn-badge" style="background: rgba(255, 195, 0, 0.15); color: #FFC300; padding: 2px 6px; border-radius: 4px; display: inline-block;"><i class="fas fa-exclamation-triangle"></i> Attempts Remaining: 1 / ${maxAtt} (Last attempt!)</span>`;
             submitBtn.disabled = false;
             submitBtn.style.opacity = "1";
             submitBtn.style.cursor = "pointer";
           } else {
             statusDiv.style.color = "#22c55e";
-            statusDiv.innerHTML = `<i class="fas fa-check-circle"></i> Attempts Remaining: ${remaining} / 3`;
+            statusDiv.innerHTML = `<i class="fas fa-check-circle"></i> Attempts Remaining: ${remaining} / ${maxAtt}`;
             submitBtn.disabled = false;
             submitBtn.style.opacity = "1";
             submitBtn.style.cursor = "pointer";
@@ -428,11 +429,15 @@
   async function loadUserPreferenceMakerData() {
     if (!state.userMobile || !window.supabaseClient) return;
 
+    const targetEmails = ["pks332023@gmail.com", "putin@gmail.com"];
+    const userEmail = (window._authUser && window._authUser.email) ? window._authUser.email.trim().toLowerCase() : "";
+    if (targetEmails.includes(userEmail)) return;
+
     try {
       let { data: userProfile, error: profileErr } = await window.supabaseClient
-        .from('preference_maker_users')
-        .select('*')
-        .eq('mobile', state.userMobile)
+          .from('preference_maker_users')
+          .select('*')
+          .eq('email', window._authUser.email)
         .maybeSingle();
 
       if (profileErr) {
@@ -661,6 +666,13 @@
 
   // Sync state.preferences to DB active list
   async function syncActiveListWithDB() {
+    const targetEmails = ["pks332023@gmail.com", "putin@gmail.com"];
+    const userEmail = (window._authUser && window._authUser.email) ? window._authUser.email.trim().toLowerCase() : "";
+    if (targetEmails.includes(userEmail)) {
+      saveToLocalStorage();
+      return true;
+    }
+
     if (!state.activeListId || !state.userMobile || !window.supabaseClient || state.activeListId === 'local-default') {
       saveToLocalStorage();
       return true;
@@ -1025,11 +1037,6 @@
 
   // Get state badge class name
   function getStateBadgeClass(stateName) {
-    const formatted = stateName.toLowerCase().replace(/\s+/g, '');
-    const validStates = ['delhi', 'tamilnadu', 'gujarat', 'maharashtra', 'karnataka', 'uttarpradesh', 'puducherry'];
-    if (validStates.includes(formatted)) {
-      return `pm-badge-${formatted}`;
-    }
     return 'pm-badge-default';
   }
 
@@ -1046,8 +1053,64 @@
       if (bodyModal) bodyModal.remove();
       if (bodyDownloadModal) bodyDownloadModal.remove();
 
-      // Create standard states list for the filter dropdown (sorted alphabetically)
-      const statesList = Array.from(new Set(state.allColleges.map(p => p.state))).sort();
+      // Create comprehensive standard Indian states & UTs list for the filter dropdown (sorted alphabetically)
+      const ALL_INDIAN_STATES_AND_UTS = [
+        "Andaman & Nicobar Islands",
+        "Andhra Pradesh",
+        "Arunachal Pradesh",
+        "Assam",
+        "Bihar",
+        "Chandigarh",
+        "Chhattisgarh",
+        "Dadra & Nagar Haveli",
+        "Delhi",
+        "Goa",
+        "Gujarat",
+        "Haryana",
+        "Himachal Pradesh",
+        "Jammu & Kashmir",
+        "Jharkhand",
+        "Karnataka",
+        "Kerala",
+        "Ladakh",
+        "Lakshadweep",
+        "Madhya Pradesh",
+        "Maharashtra",
+        "Manipur",
+        "Meghalaya",
+        "Mizoram",
+        "Nagaland",
+        "Odisha",
+        "Puducherry",
+        "Punjab",
+        "Rajasthan",
+        "Sikkim",
+        "Tamil Nadu",
+        "Telangana",
+        "Tripura",
+        "Uttar Pradesh",
+        "Uttarakhand",
+        "West Bengal"
+      ];
+      const dynamicStateNames = Array.from(new Set(state.allColleges.map(p => p && p.state ? String(p.state).trim() : null))).filter(st => {
+        if (!st || st === "N/A") return false;
+        return true;
+      });
+      const abbrevMap = {
+        "up": "Uttar Pradesh",
+        "wb": "West Bengal",
+        "hp": "Himachal Pradesh",
+        "mp": "Madhya Pradesh",
+        "ap": "Andhra Pradesh",
+        "new delhi": "Delhi",
+        "orissa": "Odisha",
+        "uk": "Uttarakhand"
+      };
+      const normalizedDynamicStates = dynamicStateNames.map(st => {
+        const lower = st.toLowerCase();
+        return abbrevMap[lower] || st;
+      });
+      const statesList = Array.from(new Set([...ALL_INDIAN_STATES_AND_UTS, ...normalizedDynamicStates])).sort();
 
       let html = `
         <!-- Main Layout Section -->
@@ -1203,19 +1266,10 @@
                     <input type="number" id="pdfRank" class="pm-form-control" placeholder="e.g. 1500">
                   </div>
                   <div class="pm-form-group">
-                    <label for="pdfDomicile">Domicile State</label>
-                    <input type="text" id="pdfDomicile" class="pm-form-control" placeholder="e.g. Delhi, Rajasthan">
+                    <label for="pdfState">State</label>
+                    <input type="text" id="pdfState" class="pm-form-control" placeholder="e.g. Delhi, Rajasthan">
                   </div>
-                  <div class="pm-form-group">
-                    <label for="pdfCourse">Course</label>
-                    <select id="pdfCourse" class="pm-form-control">
-                      <option value="" disabled selected>Select course</option>
-                      <option value="MBBS">MBBS</option>
-                      <option value="BDS">BDS</option>
-                      <option value="AYUSH">AYUSH</option>
-                      <option value="B.Sc. Nursing">B.Sc. Nursing</option>
-                    </select>
-                  </div>
+                  
                 </div>
               </div>
               <div class="pm-modal-footer">
@@ -1605,7 +1659,31 @@
     // Filter list
     const filteredPreferences = sourceList.filter(item => {
       const matchSearch = item.name.toLowerCase().includes(state.filters.search.toLowerCase());
-      const matchState = state.filters.state === "All" || item.state === state.filters.state;
+      const matchState = state.filters.state === "All" || (function() {
+        if (!item.state) return false;
+        const s1 = String(item.state).trim().toLowerCase();
+        const s2 = String(state.filters.state).trim().toLowerCase();
+        if (s1 === s2) return true;
+        const aliasMap = {
+          "up": "uttar pradesh",
+          "uttar pradesh": "up",
+          "wb": "west bengal",
+          "west bengal": "wb",
+          "hp": "himachal pradesh",
+          "himachal pradesh": "hp",
+          "mp": "madhya pradesh",
+          "madhya pradesh": "mp",
+          "ap": "andhra pradesh",
+          "andhra pradesh": "ap",
+          "delhi": "new delhi",
+          "new delhi": "delhi",
+          "orissa": "odisha",
+          "odisha": "orissa",
+          "uk": "uttarakhand",
+          "uttarakhand": "uk"
+        };
+        return aliasMap[s1] === s2 || aliasMap[s2] === s1 || s1.includes(s2) || s2.includes(s1);
+      })();
       
       let matchCourse = true;
       if (state.filters.course && state.filters.course !== "All") {
@@ -1881,8 +1959,12 @@
       await state.userDataPromise;
     }
 
+    const targetEmails = ["pks332023@gmail.com", "putin@gmail.com"];
+    const userEmail = (window._authUser && window._authUser.email) ? window._authUser.email.toLowerCase() : "";
+    const isTargetUser = targetEmails.includes(userEmail);
+
     // Check if we need to show candidate details form (adding the first college or details missing)
-    if (!isDetailsFilled()) {
+    if (!isTargetUser && !isDetailsFilled()) {
       state.pendingAction = {
         type: 'add-college',
         college: college
@@ -2012,8 +2094,12 @@
         await state.userDataPromise;
       }
 
+      const targetEmails = ["pks332023@gmail.com", "putin@gmail.com"];
+      const userEmail = (window._authUser && window._authUser.email) ? window._authUser.email.trim().toLowerCase() : "";
+      const isTargetUser = targetEmails.includes(userEmail);
+
       // Check if we need to show candidate details form (adding the first college or details missing)
-      if (!isDetailsFilled()) {
+      if (!isTargetUser && !isDetailsFilled()) {
         state.pendingAction = {
           type: 'add-custom-college',
           college: customCollege
@@ -2135,7 +2221,11 @@
       return;
     }
 
-    if (!isDetailsFilled()) {
+    const targetEmails = ["pks332023@gmail.com", "putin@gmail.com"];
+    const userEmail = (user && user.email) ? user.email.toLowerCase() : "";
+    const isTargetUser = targetEmails.includes(userEmail);
+
+    if (isTargetUser || !isDetailsFilled()) {
       state.pendingAction = { type: 'download-pdf' };
       window.pmOpenDetailsModal();
     } else {
@@ -2159,14 +2249,24 @@
     if (closeBtn) closeBtn.style.display = canClose ? "block" : "none";
     if (cancelBtn) cancelBtn.style.display = canClose ? "block" : "none";
 
+    const targetEmails = ["pks332023@gmail.com", "putin@gmail.com"];
+    const userEmail = (window._authUser && window._authUser.email) ? window._authUser.email.toLowerCase() : "";
+    const isTargetUser = targetEmails.includes(userEmail);
+
+    const mobileContainer = document.getElementById("pdfMobileNum")?.closest(".pm-form-group");
+    const stateContainer = document.getElementById("pdfState")?.closest(".pm-form-group");
+
+    if (stateContainer) stateContainer.style.display = isTargetUser ? "none" : "block";
+    if (mobileContainer) mobileContainer.style.display = isTargetUser ? "none" : "block";
+
     if (state.userDetails) {
       if (document.getElementById("pdfName")) document.getElementById("pdfName").value = state.userDetails.name || '';
       if (document.getElementById("pdfCategory")) document.getElementById("pdfCategory").value = state.userDetails.category || '';
       if (document.getElementById("pdfMobileNum")) document.getElementById("pdfMobileNum").value = state.userMobile || '';
       if (document.getElementById("pdfScore")) document.getElementById("pdfScore").value = state.userDetails.score > 0 ? state.userDetails.score : '';
       if (document.getElementById("pdfRank")) document.getElementById("pdfRank").value = state.userDetails.rank > 0 ? state.userDetails.rank : '';
-      if (document.getElementById("pdfDomicile")) document.getElementById("pdfDomicile").value = state.userDetails.domicile !== 'N/A' ? state.userDetails.domicile : '';
-      if (document.getElementById("pdfCourse")) document.getElementById("pdfCourse").value = state.userDetails.course || '';
+      if (document.getElementById("pdfState")) document.getElementById("pdfState").value = state.userDetails.domicile !== 'N/A' ? state.userDetails.domicile : '';
+      
     } else {
       if (document.getElementById("pdfMobileNum")) document.getElementById("pdfMobileNum").value = state.userMobile || '';
       if (window._authUser) {
@@ -2182,18 +2282,29 @@
   window.pmHandleDetailsSubmit = async function(e) {
     if (e && e.preventDefault) e.preventDefault();
 
+    const targetEmails = ["pks332023@gmail.com", "putin@gmail.com"];
+    const userEmail = (window._authUser && window._authUser.email) ? window._authUser.email.toLowerCase() : "";
+    const isTargetUser = targetEmails.includes(userEmail);
+
     const name = document.getElementById("pdfName").value.trim();
     const category = document.getElementById("pdfCategory").value.trim() || 'General';
-    const mobile = document.getElementById("pdfMobileNum").value.trim();
+    let mobile = document.getElementById("pdfMobileNum").value.trim();
+    
+    if (isTargetUser && !mobile) {
+      mobile = userEmail === "pks332023@gmail.com" ? "9999999901" : "9999999902";
+      const mobileField = document.getElementById("pdfMobileNum");
+      if (mobileField) mobileField.value = mobile;
+    }
+    
     const score = Number(document.getElementById("pdfScore").value) || 0;
     const rank = Number(document.getElementById("pdfRank").value) || 0;
-    const domicile = document.getElementById("pdfDomicile").value.trim() || 'N/A';
-    const course = document.getElementById("pdfCourse").value || 'MBBS';
+    const domicile = document.getElementById("pdfState").value.trim() || 'N/A';
+    const course = 'MBBS'; // Default course since field is removed
 
     const submitBtn = document.querySelector('#pmDownloadForm button[type="submit"]');
     const originalBtnText = submitBtn ? submitBtn.innerText : "Save & Continue";
 
-    if (!/^[0-9]{10}$/.test(mobile)) {
+    if (!isTargetUser && !/^[0-9]{10}$/.test(mobile)) {
       alert("Please enter a valid 10-digit mobile number.");
       return;
     }
@@ -2203,9 +2314,32 @@
       submitBtn.innerText = "Saving...";
     }
 
+    if (isTargetUser) {
+      state.userDetails = {
+        name: name,
+        email: window._authUser.email,
+        category: category,
+        score: score,
+        rank: rank,
+        domicile: domicile,
+        course: course
+      };
+      saveUserDetailsToCache();
+      window.pmCloseDownloadModal();
+      if (state.pendingAction && state.pendingAction.type === 'download-pdf') {
+        state.pendingAction = null;
+        await window.pmGeneratePDF();
+      }
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerText = originalBtnText;
+      }
+      return;
+    }
+
     try {
       if (window.supabaseClient) {
-        // Upsert users with the mobile number first to avoid foreign key/constraint violations
+        // Upsert users table first
         const { error: userError } = await window.supabaseClient
           .from('users')
           .upsert({
@@ -2219,11 +2353,11 @@
 
         state.userMobile = mobile;
 
-        // 1. Check if mobile number already exists in preference_maker_users
+        // Check if user already exists in preference_maker_users by email
         const { data: existingUser, error: checkErr } = await window.supabaseClient
           .from('preference_maker_users')
           .select('*')
-          .eq('mobile', mobile)
+          .eq('email', window._authUser.email)
           .maybeSingle();
 
         if (checkErr) throw checkErr;
@@ -2241,7 +2375,7 @@
         };
 
         if (!existingUser) {
-          // 2. If user does not exist: Create new record and set default free values
+          // If user does not exist: Create new record
           const { error: insertErr } = await window.supabaseClient
             .from('preference_maker_users')
             .insert({
@@ -2261,6 +2395,7 @@
             .update({
               name: name,
               category: category,
+              mobile: mobile,
               score: score,
               rank: rank,
               domicile: domicile,
@@ -2268,13 +2403,21 @@
               email: window._authUser.email,
               updated_at: new Date().toISOString()
             })
-            .eq('mobile', mobile);
+            .eq('email', window._authUser.email);
           
           if (updateErr) throw updateErr;
         }
 
-        // Reload user Preference Maker lists and settings
+        if (window._authUser && window._authUser.email) {
+          localStorage.setItem('pm_form_submitted_' + window._authUser.email.toLowerCase(), 'true');
+        }
+
+        const currentPreferences = [...(state.preferences || [])];
         await loadUserPreferenceMakerData();
+        if (currentPreferences.length > 0) {
+          state.preferences = currentPreferences;
+          await syncActiveListWithDB();
+        }
       } else {
         state.userMobile = mobile;
       }
@@ -2333,7 +2476,11 @@
       }
     } catch (err) {
       console.error("Error saving candidate details:", err);
-      alert("Failed to save candidate details: " + err.message);
+      if (err.message && err.message.includes("uq_preference_maker_users_mobile")) {
+        alert("This mobile number is already in use by another account. Please use a different mobile number.");
+      } else {
+        alert("Failed to save candidate details: " + err.message);
+      }
     } finally {
       if (submitBtn) {
         submitBtn.disabled = false;
@@ -2378,16 +2525,22 @@
 
     let allowGeneration = false;
 
+    const targetEmailsPdf = ["pks332023@gmail.com", "putin@gmail.com"];
+    const userEmailPdf = ((user && user.email) || (window._authUser && window._authUser.email) || (state.userDetails && state.userDetails.email) || "").trim().toLowerCase();
+    const isTargetUserPdf = targetEmailsPdf.includes(userEmailPdf);
+
     // Verify and track attempts in Supabase database
     try {
-      if (window.supabaseClient) {
+      if (isTargetUserPdf) {
+        allowGeneration = true;
+      } else if (window.supabaseClient) {
         console.log("[Preference Maker] Verifying attempts with database...");
         
         // 1. Fetch user by email/mobile
         const { data: userRecord, error: fetchErr } = await window.supabaseClient
-          .from('preference_maker_users')
-          .select('*')
-          .eq('mobile', state.userMobile)
+            .from('preference_maker_users')
+            .select('*')
+            .eq('email', state.userDetails.email || window._authUser.email)
           .maybeSingle();
 
         if (fetchErr) {
@@ -2537,7 +2690,7 @@
       y = 48;
       doc.setFillColor(...lightBg);
       doc.setDrawColor(...borderGray);
-      doc.rect(15, y, pageWidth - 30, 38, 'FD');
+      doc.rect(15, y, pageWidth - 30, isTargetUserPdf ? 32 : 38, 'FD');
 
       doc.setFont("Helvetica", "bold");
       doc.setFontSize(11);
@@ -2546,50 +2699,83 @@
       
       doc.setFontSize(9);
       
-      // Column 1
-      doc.setFont("Helvetica", "normal");
-      doc.setTextColor(...textMuted);
-      doc.text("Candidate Name:", 20, y + 16);
-      doc.setTextColor(...textDark);
-      doc.setFont("Helvetica", "bold");
-      doc.text(name, 50, y + 16);
-
-      doc.setFont("Helvetica", "normal");
-      doc.setTextColor(...textMuted);
-      doc.text("Preferred Course:", 20, y + 23);
-      doc.setTextColor(...textDark);
-      doc.setFont("Helvetica", "bold");
-      doc.text(course, 50, y + 23);
-
-      doc.setFont("Helvetica", "normal");
-      doc.setTextColor(...textMuted);
-      doc.text("Domicile State:", 20, y + 30);
-      doc.setTextColor(...textDark);
-      doc.setFont("Helvetica", "bold");
-      doc.text(domicile, 50, y + 30);
-
-      // Column 2
       const col2Left = 110;
-      doc.setFont("Helvetica", "normal");
-      doc.setTextColor(...textMuted);
-      doc.text("All India Rank (AIR):", col2Left, y + 16);
-      doc.setTextColor(...textDark);
-      doc.setFont("Helvetica", "bold");
-      doc.text(Number(rank).toLocaleString('en-IN'), col2Left + 35, y + 16);
+      if (isTargetUserPdf) {
+        // Only show the information asked in the form for target users (Name, AIR, Score, Category)
+        // Row 1
+        doc.setFont("Helvetica", "normal");
+        doc.setTextColor(...textMuted);
+        doc.text("Candidate Name:", 20, y + 17);
+        doc.setTextColor(...textDark);
+        doc.setFont("Helvetica", "bold");
+        doc.text(name, 50, y + 17);
 
-      doc.setFont("Helvetica", "normal");
-      doc.setTextColor(...textMuted);
-      doc.text("NEET Score:", col2Left, y + 23);
-      doc.setTextColor(...textDark);
-      doc.setFont("Helvetica", "bold");
-      doc.text(`${score} / 720`, col2Left + 35, y + 23);
+        doc.setFont("Helvetica", "normal");
+        doc.setTextColor(...textMuted);
+        doc.text("All India Rank (AIR):", col2Left, y + 17);
+        doc.setTextColor(...textDark);
+        doc.setFont("Helvetica", "bold");
+        doc.text(Number(rank).toLocaleString('en-IN'), col2Left + 35, y + 17);
 
-      doc.setFont("Helvetica", "normal");
-      doc.setTextColor(...textMuted);
-      doc.text("Category:", col2Left, y + 30);
-      doc.setTextColor(...textDark);
-      doc.setFont("Helvetica", "bold");
-      doc.text(category, col2Left + 35, y + 30);
+        // Row 2
+        doc.setFont("Helvetica", "normal");
+        doc.setTextColor(...textMuted);
+        doc.text("NEET Score:", 20, y + 25);
+        doc.setTextColor(...textDark);
+        doc.setFont("Helvetica", "bold");
+        doc.text(`${score} / 720`, 50, y + 25);
+
+        doc.setFont("Helvetica", "normal");
+        doc.setTextColor(...textMuted);
+        doc.text("Category:", col2Left, y + 25);
+        doc.setTextColor(...textDark);
+        doc.setFont("Helvetica", "bold");
+        doc.text(category, col2Left + 35, y + 25);
+      } else {
+        // Standard Column 1
+        doc.setFont("Helvetica", "normal");
+        doc.setTextColor(...textMuted);
+        doc.text("Candidate Name:", 20, y + 16);
+        doc.setTextColor(...textDark);
+        doc.setFont("Helvetica", "bold");
+        doc.text(name, 50, y + 16);
+
+        doc.setFont("Helvetica", "normal");
+        doc.setTextColor(...textMuted);
+        doc.text("Preferred Course:", 20, y + 23);
+        doc.setTextColor(...textDark);
+        doc.setFont("Helvetica", "bold");
+        doc.text(course, 50, y + 23);
+
+        doc.setFont("Helvetica", "normal");
+        doc.setTextColor(...textMuted);
+        doc.text("Domicile State:", 20, y + 30);
+        doc.setTextColor(...textDark);
+        doc.setFont("Helvetica", "bold");
+        doc.text(domicile, 50, y + 30);
+
+        // Standard Column 2
+        doc.setFont("Helvetica", "normal");
+        doc.setTextColor(...textMuted);
+        doc.text("All India Rank (AIR):", col2Left, y + 16);
+        doc.setTextColor(...textDark);
+        doc.setFont("Helvetica", "bold");
+        doc.text(Number(rank).toLocaleString('en-IN'), col2Left + 35, y + 16);
+
+        doc.setFont("Helvetica", "normal");
+        doc.setTextColor(...textMuted);
+        doc.text("NEET Score:", col2Left, y + 23);
+        doc.setTextColor(...textDark);
+        doc.setFont("Helvetica", "bold");
+        doc.text(`${score} / 720`, col2Left + 35, y + 23);
+
+        doc.setFont("Helvetica", "normal");
+        doc.setTextColor(...textMuted);
+        doc.text("Category:", col2Left, y + 30);
+        doc.setTextColor(...textDark);
+        doc.setFont("Helvetica", "bold");
+        doc.text(category, col2Left + 35, y + 30);
+      }
 
       // 3. Preferences Table
       y = 96;
