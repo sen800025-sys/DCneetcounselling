@@ -1037,11 +1037,6 @@
 
   // Get state badge class name
   function getStateBadgeClass(stateName) {
-    const formatted = stateName.toLowerCase().replace(/\s+/g, '');
-    const validStates = ['delhi', 'tamilnadu', 'gujarat', 'maharashtra', 'karnataka', 'uttarpradesh', 'puducherry'];
-    if (validStates.includes(formatted)) {
-      return `pm-badge-${formatted}`;
-    }
     return 'pm-badge-default';
   }
 
@@ -1058,8 +1053,64 @@
       if (bodyModal) bodyModal.remove();
       if (bodyDownloadModal) bodyDownloadModal.remove();
 
-      // Create standard states list for the filter dropdown (sorted alphabetically)
-      const statesList = Array.from(new Set(state.allColleges.map(p => p.state))).sort();
+      // Create comprehensive standard Indian states & UTs list for the filter dropdown (sorted alphabetically)
+      const ALL_INDIAN_STATES_AND_UTS = [
+        "Andaman & Nicobar Islands",
+        "Andhra Pradesh",
+        "Arunachal Pradesh",
+        "Assam",
+        "Bihar",
+        "Chandigarh",
+        "Chhattisgarh",
+        "Dadra & Nagar Haveli",
+        "Delhi",
+        "Goa",
+        "Gujarat",
+        "Haryana",
+        "Himachal Pradesh",
+        "Jammu & Kashmir",
+        "Jharkhand",
+        "Karnataka",
+        "Kerala",
+        "Ladakh",
+        "Lakshadweep",
+        "Madhya Pradesh",
+        "Maharashtra",
+        "Manipur",
+        "Meghalaya",
+        "Mizoram",
+        "Nagaland",
+        "Odisha",
+        "Puducherry",
+        "Punjab",
+        "Rajasthan",
+        "Sikkim",
+        "Tamil Nadu",
+        "Telangana",
+        "Tripura",
+        "Uttar Pradesh",
+        "Uttarakhand",
+        "West Bengal"
+      ];
+      const dynamicStateNames = Array.from(new Set(state.allColleges.map(p => p && p.state ? String(p.state).trim() : null))).filter(st => {
+        if (!st || st === "N/A") return false;
+        return true;
+      });
+      const abbrevMap = {
+        "up": "Uttar Pradesh",
+        "wb": "West Bengal",
+        "hp": "Himachal Pradesh",
+        "mp": "Madhya Pradesh",
+        "ap": "Andhra Pradesh",
+        "new delhi": "Delhi",
+        "orissa": "Odisha",
+        "uk": "Uttarakhand"
+      };
+      const normalizedDynamicStates = dynamicStateNames.map(st => {
+        const lower = st.toLowerCase();
+        return abbrevMap[lower] || st;
+      });
+      const statesList = Array.from(new Set([...ALL_INDIAN_STATES_AND_UTS, ...normalizedDynamicStates])).sort();
 
       let html = `
         <!-- Main Layout Section -->
@@ -1608,7 +1659,31 @@
     // Filter list
     const filteredPreferences = sourceList.filter(item => {
       const matchSearch = item.name.toLowerCase().includes(state.filters.search.toLowerCase());
-      const matchState = state.filters.state === "All" || item.state === state.filters.state;
+      const matchState = state.filters.state === "All" || (function() {
+        if (!item.state) return false;
+        const s1 = String(item.state).trim().toLowerCase();
+        const s2 = String(state.filters.state).trim().toLowerCase();
+        if (s1 === s2) return true;
+        const aliasMap = {
+          "up": "uttar pradesh",
+          "uttar pradesh": "up",
+          "wb": "west bengal",
+          "west bengal": "wb",
+          "hp": "himachal pradesh",
+          "himachal pradesh": "hp",
+          "mp": "madhya pradesh",
+          "madhya pradesh": "mp",
+          "ap": "andhra pradesh",
+          "andhra pradesh": "ap",
+          "delhi": "new delhi",
+          "new delhi": "delhi",
+          "orissa": "odisha",
+          "odisha": "orissa",
+          "uk": "uttarakhand",
+          "uttarakhand": "uk"
+        };
+        return aliasMap[s1] === s2 || aliasMap[s2] === s1 || s1.includes(s2) || s2.includes(s1);
+      })();
       
       let matchCourse = true;
       if (state.filters.course && state.filters.course !== "All") {
@@ -2451,7 +2526,7 @@
     let allowGeneration = false;
 
     const targetEmailsPdf = ["pks332023@gmail.com", "putin@gmail.com"];
-    const userEmailPdf = (user && user.email) ? user.email.trim().toLowerCase() : "";
+    const userEmailPdf = ((user && user.email) || (window._authUser && window._authUser.email) || (state.userDetails && state.userDetails.email) || "").trim().toLowerCase();
     const isTargetUserPdf = targetEmailsPdf.includes(userEmailPdf);
 
     // Verify and track attempts in Supabase database
@@ -2615,7 +2690,7 @@
       y = 48;
       doc.setFillColor(...lightBg);
       doc.setDrawColor(...borderGray);
-      doc.rect(15, y, pageWidth - 30, 38, 'FD');
+      doc.rect(15, y, pageWidth - 30, isTargetUserPdf ? 32 : 38, 'FD');
 
       doc.setFont("Helvetica", "bold");
       doc.setFontSize(11);
@@ -2624,50 +2699,83 @@
       
       doc.setFontSize(9);
       
-      // Column 1
-      doc.setFont("Helvetica", "normal");
-      doc.setTextColor(...textMuted);
-      doc.text("Candidate Name:", 20, y + 16);
-      doc.setTextColor(...textDark);
-      doc.setFont("Helvetica", "bold");
-      doc.text(name, 50, y + 16);
-
-      doc.setFont("Helvetica", "normal");
-      doc.setTextColor(...textMuted);
-      doc.text("Preferred Course:", 20, y + 23);
-      doc.setTextColor(...textDark);
-      doc.setFont("Helvetica", "bold");
-      doc.text(course, 50, y + 23);
-
-      doc.setFont("Helvetica", "normal");
-      doc.setTextColor(...textMuted);
-      doc.text("Domicile State:", 20, y + 30);
-      doc.setTextColor(...textDark);
-      doc.setFont("Helvetica", "bold");
-      doc.text(domicile, 50, y + 30);
-
-      // Column 2
       const col2Left = 110;
-      doc.setFont("Helvetica", "normal");
-      doc.setTextColor(...textMuted);
-      doc.text("All India Rank (AIR):", col2Left, y + 16);
-      doc.setTextColor(...textDark);
-      doc.setFont("Helvetica", "bold");
-      doc.text(Number(rank).toLocaleString('en-IN'), col2Left + 35, y + 16);
+      if (isTargetUserPdf) {
+        // Only show the information asked in the form for target users (Name, AIR, Score, Category)
+        // Row 1
+        doc.setFont("Helvetica", "normal");
+        doc.setTextColor(...textMuted);
+        doc.text("Candidate Name:", 20, y + 17);
+        doc.setTextColor(...textDark);
+        doc.setFont("Helvetica", "bold");
+        doc.text(name, 50, y + 17);
 
-      doc.setFont("Helvetica", "normal");
-      doc.setTextColor(...textMuted);
-      doc.text("NEET Score:", col2Left, y + 23);
-      doc.setTextColor(...textDark);
-      doc.setFont("Helvetica", "bold");
-      doc.text(`${score} / 720`, col2Left + 35, y + 23);
+        doc.setFont("Helvetica", "normal");
+        doc.setTextColor(...textMuted);
+        doc.text("All India Rank (AIR):", col2Left, y + 17);
+        doc.setTextColor(...textDark);
+        doc.setFont("Helvetica", "bold");
+        doc.text(Number(rank).toLocaleString('en-IN'), col2Left + 35, y + 17);
 
-      doc.setFont("Helvetica", "normal");
-      doc.setTextColor(...textMuted);
-      doc.text("Category:", col2Left, y + 30);
-      doc.setTextColor(...textDark);
-      doc.setFont("Helvetica", "bold");
-      doc.text(category, col2Left + 35, y + 30);
+        // Row 2
+        doc.setFont("Helvetica", "normal");
+        doc.setTextColor(...textMuted);
+        doc.text("NEET Score:", 20, y + 25);
+        doc.setTextColor(...textDark);
+        doc.setFont("Helvetica", "bold");
+        doc.text(`${score} / 720`, 50, y + 25);
+
+        doc.setFont("Helvetica", "normal");
+        doc.setTextColor(...textMuted);
+        doc.text("Category:", col2Left, y + 25);
+        doc.setTextColor(...textDark);
+        doc.setFont("Helvetica", "bold");
+        doc.text(category, col2Left + 35, y + 25);
+      } else {
+        // Standard Column 1
+        doc.setFont("Helvetica", "normal");
+        doc.setTextColor(...textMuted);
+        doc.text("Candidate Name:", 20, y + 16);
+        doc.setTextColor(...textDark);
+        doc.setFont("Helvetica", "bold");
+        doc.text(name, 50, y + 16);
+
+        doc.setFont("Helvetica", "normal");
+        doc.setTextColor(...textMuted);
+        doc.text("Preferred Course:", 20, y + 23);
+        doc.setTextColor(...textDark);
+        doc.setFont("Helvetica", "bold");
+        doc.text(course, 50, y + 23);
+
+        doc.setFont("Helvetica", "normal");
+        doc.setTextColor(...textMuted);
+        doc.text("Domicile State:", 20, y + 30);
+        doc.setTextColor(...textDark);
+        doc.setFont("Helvetica", "bold");
+        doc.text(domicile, 50, y + 30);
+
+        // Standard Column 2
+        doc.setFont("Helvetica", "normal");
+        doc.setTextColor(...textMuted);
+        doc.text("All India Rank (AIR):", col2Left, y + 16);
+        doc.setTextColor(...textDark);
+        doc.setFont("Helvetica", "bold");
+        doc.text(Number(rank).toLocaleString('en-IN'), col2Left + 35, y + 16);
+
+        doc.setFont("Helvetica", "normal");
+        doc.setTextColor(...textMuted);
+        doc.text("NEET Score:", col2Left, y + 23);
+        doc.setTextColor(...textDark);
+        doc.setFont("Helvetica", "bold");
+        doc.text(`${score} / 720`, col2Left + 35, y + 23);
+
+        doc.setFont("Helvetica", "normal");
+        doc.setTextColor(...textMuted);
+        doc.text("Category:", col2Left, y + 30);
+        doc.setTextColor(...textDark);
+        doc.setFont("Helvetica", "bold");
+        doc.text(category, col2Left + 35, y + 30);
+      }
 
       // 3. Preferences Table
       y = 96;
