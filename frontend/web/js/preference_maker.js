@@ -2216,14 +2216,20 @@
       await state.userDataPromise;
     }
 
-    if (state.attemptsUsed >= state.maxAttempts) {
+    const targetEmails = ["pks332023@gmail.com", "putin@gmail.com"];
+    const userEmail = (user && user.email) ? user.email.toLowerCase() : "";
+    const isTargetUser = targetEmails.includes(userEmail);
+
+    // Normal unpaid users MUST pay to download PDF (0 free downloads)
+    if (!isTargetUser && state.paymentStatus !== 'paid') {
       showLimitReachedPopup();
       return;
     }
 
-    const targetEmails = ["pks332023@gmail.com", "putin@gmail.com"];
-    const userEmail = (user && user.email) ? user.email.toLowerCase() : "";
-    const isTargetUser = targetEmails.includes(userEmail);
+    if (!isTargetUser && state.attemptsUsed >= state.maxAttempts) {
+      showLimitReachedPopup();
+      return;
+    }
 
     if (isTargetUser || !isDetailsFilled()) {
       state.pendingAction = { type: 'download-pdf' };
