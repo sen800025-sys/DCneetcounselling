@@ -978,14 +978,30 @@
     }
   }
 
-  // Check if adding another college is allowed (free limit of 10 colleges, and attempts limits)
+  // Check if adding another college is allowed (free limit of 20 colleges, and attempts limits)
   function checkCollegeAdditionLimit() {
-    // If attempts limit is reached, lock everything
+    const sessionUser = window._authUser;
+    const targetEmails = ["pks332023@gmail.com", "putin@gmail.com"];
+    const userEmail = (sessionUser && sessionUser.email) ? sessionUser.email.toLowerCase() : "";
+    const isTargetUser = targetEmails.includes(userEmail);
+
+    // Target users and paid users have unlimited additions
+    if (isTargetUser || state.paymentStatus === 'paid') {
+      return true;
+    }
+
+    // Free normal users are limited to 20 colleges
+    if (state.preferences && state.preferences.length >= 20) {
+      showLimitReachedPopup();
+      return false;
+    }
+
+    // If attempts limit is reached (from other actions)
     if (state.attemptsUsed >= state.maxAttempts) {
       showLimitReachedPopup();
       return false;
     }
-    // Unlimited college additions for everyone (no popup triggered here)
+
     return true;
   }
 
