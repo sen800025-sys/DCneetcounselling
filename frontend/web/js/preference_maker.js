@@ -429,7 +429,7 @@
   async function loadUserPreferenceMakerData() {
     if (!state.userMobile || !window.supabaseClient) return;
 
-    const targetEmails = ["pks332023@gmail.com", "putin@gmail.com"];
+    const targetEmails = ["pks332023@gmail.com", "putin@gmail.com", "sen9316chetan@gmail.com"];
     const userEmail = (window._authUser && window._authUser.email) ? window._authUser.email.trim().toLowerCase() : "";
     if (targetEmails.includes(userEmail)) return;
 
@@ -666,7 +666,7 @@
 
   // Sync state.preferences to DB active list
   async function syncActiveListWithDB() {
-    const targetEmails = ["pks332023@gmail.com", "putin@gmail.com"];
+    const targetEmails = ["pks332023@gmail.com", "putin@gmail.com", "sen9316chetan@gmail.com"];
     const userEmail = (window._authUser && window._authUser.email) ? window._authUser.email.trim().toLowerCase() : "";
     if (targetEmails.includes(userEmail)) {
       saveToLocalStorage();
@@ -981,7 +981,7 @@
   // Check if adding another college is allowed (free limit of 20 colleges, and attempts limits)
   function checkCollegeAdditionLimit() {
     const sessionUser = window._authUser;
-    const targetEmails = ["pks332023@gmail.com", "putin@gmail.com"];
+    const targetEmails = ["pks332023@gmail.com", "putin@gmail.com", "sen9316chetan@gmail.com"];
     const userEmail = (sessionUser && sessionUser.email) ? sessionUser.email.toLowerCase() : "";
     const isTargetUser = targetEmails.includes(userEmail);
 
@@ -1975,7 +1975,7 @@
       await state.userDataPromise;
     }
 
-    const targetEmails = ["pks332023@gmail.com", "putin@gmail.com"];
+    const targetEmails = ["pks332023@gmail.com", "putin@gmail.com", "sen9316chetan@gmail.com"];
     const userEmail = (window._authUser && window._authUser.email) ? window._authUser.email.toLowerCase() : "";
     const isTargetUser = targetEmails.includes(userEmail);
 
@@ -2110,7 +2110,7 @@
         await state.userDataPromise;
       }
 
-      const targetEmails = ["pks332023@gmail.com", "putin@gmail.com"];
+      const targetEmails = ["pks332023@gmail.com", "putin@gmail.com", "sen9316chetan@gmail.com"];
       const userEmail = (window._authUser && window._authUser.email) ? window._authUser.email.trim().toLowerCase() : "";
       const isTargetUser = targetEmails.includes(userEmail);
 
@@ -2232,7 +2232,7 @@
       await state.userDataPromise;
     }
 
-    const targetEmails = ["pks332023@gmail.com", "putin@gmail.com"];
+    const targetEmails = ["pks332023@gmail.com", "putin@gmail.com", "sen9316chetan@gmail.com"];
     const userEmail = (user && user.email) ? user.email.toLowerCase() : "";
     const isTargetUser = targetEmails.includes(userEmail);
 
@@ -2271,7 +2271,7 @@
     if (closeBtn) closeBtn.style.display = canClose ? "block" : "none";
     if (cancelBtn) cancelBtn.style.display = canClose ? "block" : "none";
 
-    const targetEmails = ["pks332023@gmail.com", "putin@gmail.com"];
+    const targetEmails = ["pks332023@gmail.com", "putin@gmail.com", "sen9316chetan@gmail.com"];
     const userEmail = (window._authUser && window._authUser.email) ? window._authUser.email.toLowerCase() : "";
     const isTargetUser = targetEmails.includes(userEmail);
 
@@ -2304,7 +2304,7 @@
   window.pmHandleDetailsSubmit = async function(e) {
     if (e && e.preventDefault) e.preventDefault();
 
-    const targetEmails = ["pks332023@gmail.com", "putin@gmail.com"];
+    const targetEmails = ["pks332023@gmail.com", "putin@gmail.com", "sen9316chetan@gmail.com"];
     const userEmail = (window._authUser && window._authUser.email) ? window._authUser.email.toLowerCase() : "";
     const isTargetUser = targetEmails.includes(userEmail);
 
@@ -2313,7 +2313,7 @@
     let mobile = document.getElementById("pdfMobileNum").value.trim();
     
     if (isTargetUser && !mobile) {
-      mobile = userEmail === "pks332023@gmail.com" ? "9999999901" : "9999999902";
+      mobile = userEmail === "pks332023@gmail.com" ? "9999999901" : (userEmail === "sen9316chetan@gmail.com" ? "9999999903" : "9999999902");
       const mobileField = document.getElementById("pdfMobileNum");
       if (mobileField) mobileField.value = mobile;
     }
@@ -2547,7 +2547,7 @@
 
     let allowGeneration = false;
 
-    const targetEmailsPdf = ["pks332023@gmail.com", "putin@gmail.com"];
+    const targetEmailsPdf = ["pks332023@gmail.com", "putin@gmail.com", "sen9316chetan@gmail.com"];
     const userEmailPdf = ((user && user.email) || (window._authUser && window._authUser.email) || (state.userDetails && state.userDetails.email) || "").trim().toLowerCase();
     const isTargetUserPdf = targetEmailsPdf.includes(userEmailPdf);
 
